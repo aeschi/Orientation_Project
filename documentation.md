@@ -40,29 +40,29 @@ Finish 🎊
 
 #### Processing/WebGL Inspiration
 
-https://www.openprocessing.org/sketch/178381
+- https://www.openprocessing.org/sketch/178381
 ￼￼
-https://www.openprocessing.org/sketch/445955
+- https://www.openprocessing.org/sketch/445955
 ￼
-https://www.openprocessing.org/sketch/559923
+- https://www.openprocessing.org/sketch/559923
 ￼
-https://www.openprocessing.org/sketch/642782
+- https://www.openprocessing.org/sketch/642782
 ￼
-https://www.openprocessing.org/sketch/494388
+- https://www.openprocessing.org/sketch/494388
 ￼
-https://www.openprocessing.org/sketch/647747
+- https://www.openprocessing.org/sketch/647747
 ￼
-https://www.openprocessing.org/sketch/747716
+- https://www.openprocessing.org/sketch/747716
 ￼
-https://www.openprocessing.org/sketch/496509
+- https://www.openprocessing.org/sketch/496509
 ￼
-https://www.openprocessing.org/sketch/627398
+- https://www.openprocessing.org/sketch/627398
  
-https://www.openprocessing.org/sketch/503559
+- https://www.openprocessing.org/sketch/503559
 ￼
 ![](img/moods/p5js_exampleVisuals.png)
-https://www.openprocessing.org/sketch/748916
-https://observablehq.com/@rreusser/instanced-webgl-circles
+- https://www.openprocessing.org/sketch/748916
+- https://observablehq.com/@rreusser/instanced-webgl-circles
 
 ### 6.11.2019
 
