@@ -38,3 +38,33 @@ OUTPUT
 ---
 ### TIMING
 ![](img/Zeitplan.png)
+
+#### NOVEMBER
+- concept finalisation
+- moodboard
+- research for prerecorded mocap data, sound data, pulse,..
+- test out visualisation in p5.js
+- search for tracking devices
+
+#### DECEMBER
+- create workflow
+- test out visualisation in p5.js
+- style testing
+- search for tracking devices
+
+#### JANUARY 
+- decide on visual style
+- recording the data input myself 
+
+#### FEBRUARY
+- platform/website for final product
+- polishing animation
+
+#### MARCH
+- interaction with visualisation 
+- beautification of input features
+- still frames from animation for product design
+- preperation for presentation
+
+#### APRIL
+Finish 🎊
