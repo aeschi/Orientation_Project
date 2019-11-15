@@ -41,28 +41,18 @@ Finish 🎊
 #### Processing/WebGL Inspiration
 
 - [Blue grwoth](https://www.openprocessing.org/sketch/178381)
-￼￼
-- [Circle color gradient](https://www.openprocessing.org/sketch/445955)
-￼
-- [Gradient blobs](https://www.openprocessing.org/sketch/559923)
-￼
-- [Color wave](https://www.openprocessing.org/sketch/642782)
-￼
-- [Point light animation](https://www.openprocessing.org/sketch/494388)
-￼
-- [WEBGL Camera Sample](https://www.openprocessing.org/sketch/647747)
-￼
-- [Dot line Pattern](https://www.openprocessing.org/sketch/747716)
-￼
-- [p5 fbo gradien](https://www.openprocessing.org/sketch/496509)
-￼
+￼￼- [Circle color gradient](https://www.openprocessing.org/sketch/445955)
+￼- [Gradient blobs](https://www.openprocessing.org/sketch/559923)
+￼- [Color wave](https://www.openprocessing.org/sketch/642782)
+￼- [Point light animation](https://www.openprocessing.org/sketch/494388)
+￼- [WEBGL Camera Sample](https://www.openprocessing.org/sketch/647747)
+￼- [Dot line Pattern](https://www.openprocessing.org/sketch/747716)
+￼- [p5 fbo gradien](https://www.openprocessing.org/sketch/496509)
 - [Trees](https://www.openprocessing.org/sketch/627398)
- 
 - [Tree noise](https://www.openprocessing.org/sketch/503559)
-￼
-![](img/moods/p5js_exampleVisuals.png =200x100)
 - [Waltz of Circles](https://www.openprocessing.org/sketch/748916)
 - [Reference](https://observablehq.com/@rreusser/instanced-webgl-circles)
+![](img/moods/p5js_exampleVisuals.png)
 
 ### 6.11.2019
 
