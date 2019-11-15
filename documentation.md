@@ -1,3 +1,9 @@
+### 15.11.2019
+#### IDEAS
+- interactive part: viewer can guess sport
+- still images -> mix of athletes/face and viz
+
+
 ### 13.11.2019
 
 ### TIMING
