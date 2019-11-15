@@ -1,7 +1,7 @@
 ### 13.11.2019
 
 ### TIMING
-![](../img/Zeitplan.png)
+![](img/Zeitplan.png)
 
 #### NOVEMBER
 - concept finalisation
