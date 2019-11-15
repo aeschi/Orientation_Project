@@ -2,6 +2,7 @@
 #### IDEAS
 - interactive part: viewer can guess sport
 - still images -> mix of athletes/face and viz
+![](https://www.collater.al/wp-content/uploads/2018/07/Dorian-Legret-visioni-astratte-di-un-artista-digitale-Collater.al_-819x1024.jpg)
 
 
 ### 13.11.2019
