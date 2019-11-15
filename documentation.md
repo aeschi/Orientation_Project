@@ -60,7 +60,7 @@ Finish 🎊
  
 - [Tree noise](https://www.openprocessing.org/sketch/503559)
 ￼
-![](img/moods/p5js_exampleVisuals.png)
+![](img/moods/p5js_exampleVisuals.png =200x100)
 - [Waltz of Circles](https://www.openprocessing.org/sketch/748916)
 - [Reference](https://observablehq.com/@rreusser/instanced-webgl-circles)
 
