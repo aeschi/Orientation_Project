@@ -11,6 +11,8 @@
 
 ------
 ### 15.01.20
+- Test Athlete Portrait + Visual:
+<img scr="https://i.imgur.com/PjvvS5t.jpg" width="60%">
 
 - smaller particle size works better
 (maybe random between 0.5 - 1.5 or influenced by another factor like sound)
@@ -25,7 +27,7 @@ function getRandomFloat(min, max) {
    return Math.random() * (max - min) + min;
 }
 ```
-first OK visual output
+first OK visual output with small particles 
 
 ### 14.01.20
 - [creating particles](https://aerotwist.com/tutorials/creating-particles-with-three-js/)
