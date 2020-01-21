@@ -12,7 +12,7 @@
 ------
 ### 15.01.20
 - Test Athlete Portrait + Visual:
-<img scr="https://i.imgur.com/PjvvS5t.jpg" width="60%">
+<img src="https://i.imgur.com/PjvvS5t.jpg" width="60%">
 
 - smaller particle size works better
 (maybe random between 0.5 - 1.5 or influenced by another factor like sound)
