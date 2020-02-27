@@ -1,0 +1,49 @@
+{
+  "title": "Modern Business",
+  "name": "startbootstrap-modern-business",
+  "version": "4.2.1",
+  "scripts": {
+    "start": "node_modules/.bin/gulp watch"
+  },
+  "description": "A multipurpose HTML website template built with Bootstrap",
+  "keywords": [
+    "css",
+    "sass",
+    "html",
+    "responsive",
+    "theme",
+    "template"
+  ],
+  "homepage": "https://startbootstrap.com/template-overviews/modern-business",
+  "bugs": {
+    "url": "https://github.com/BlackrockDigital/startbootstrap-modern-business/issues",
+    "email": "feedback@startbootstrap.com"
+  },
+  "license": "MIT",
+  "author": "Start Bootstrap",
+  "contributors": [
+    "David Miller (http://davidmiller.io/)"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/BlackrockDigital/startbootstrap-modern-business.git"
+  },
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "bootstrap": "4.3.1",
+    "cloudinary": "^1.19.0",
+    "dat.gui": "^0.7.6",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "formidable": "^1.2.2",
+    "jquery": "3.4.1",
+    "mongoose": "^5.9.2",
+    "multer": "^1.4.2"
+  },
+  "devDependencies": {
+    "browser-sync": "2.26.7",
+    "del": "^4.1.1",
+    "gulp": "4.0.2",
+    "merge-stream": "2.0.0"
+  }
+}
