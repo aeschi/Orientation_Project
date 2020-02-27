@@ -4,12 +4,23 @@
 - look further into plotter file (d3, [scatterplot](https://rdrr.io/cran/threejs/man/scatterplot3js.html),..)
 - try out different inputs/interpretations of data 
 - try out more 3D-ish style
-- focus on website/ endproduct
+- how to switch between sports (via GUI?)
 - still images/ porttraits and viz
-- decide on sports
 - create narrative/connection for sports to viz
 
 ------
+### 27.02.20
+- created website with 'About', 'Home' & 'Compare Sports' routes
+- ABOUT page with some basic information
+- HOME page with slideshow of visualizations/athletes
+- COMPARE SPORTS page with centered Three.js canvas
+- decided on primary sports: bouldering, swimming, skating
+- secondary: running, cycling, yoga
+
+<img src="https://i.imgur.com/o1wBOht.png" width="60%">
+<img src="https://i.imgur.com/IRYJgmt.png" width="60%">
+<img src="https://i.imgur.com/dLJo2aI.png" width="60%">
+
 ### 15.01.20
 - Test Athlete Portrait + Visual:
 <img src="https://i.imgur.com/PjvvS5t.jpg" width="60%">
