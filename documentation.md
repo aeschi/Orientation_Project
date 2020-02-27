@@ -10,7 +10,7 @@
 - create narrative/connection for sports to viz
 
 ------
-### 27.02.20
+### 27.02.20 (2h)
 - created website with 'About', 'Home' & 'Compare Sports' routes
 - ABOUT page with some basic information
 - HOME page with slideshow of visualizations/athletes
