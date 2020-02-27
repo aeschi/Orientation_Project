@@ -1,16 +1,30 @@
 #### Next Steps
+- adjust time table
 - functionality before further style (several data files, animation, zooming into data)
 - add animation (influenced by sound?)
 - look further into plotter file (d3, [scatterplot](https://rdrr.io/cran/threejs/man/scatterplot3js.html),..)
 - try out different inputs/interpretations of data 
 - try out more 3D-ish style
-- focus on website/ endproduct
+- how to switch between sports (via GUI?)
 - still images/ porttraits and viz
-- decide on sports
 - create narrative/connection for sports to viz
 
 ------
+### 27.02.20 (2h)
+- created website with 'About', 'Home' & 'Compare Sports' routes
+- ABOUT page with some basic information
+- HOME page with slideshow of visualizations/athletes
+- COMPARE SPORTS page with centered Three.js canvas
+- decided on primary sports: bouldering, swimming, skating
+- secondary: running, cycling, yoga
+
+<img src="https://i.imgur.com/o1wBOht.png" width="60%">
+<img src="https://i.imgur.com/IRYJgmt.png" width="60%">
+<img src="https://i.imgur.com/dLJo2aI.png" width="60%">
+
 ### 15.01.20
+- Test Athlete Portrait + Visual:
+<img src="https://i.imgur.com/PjvvS5t.jpg" width="60%">
 
 - smaller particle size works better
 (maybe random between 0.5 - 1.5 or influenced by another factor like sound)
@@ -25,7 +39,7 @@ function getRandomFloat(min, max) {
    return Math.random() * (max - min) + min;
 }
 ```
-first OK visual output
+first OK visual output with small particles 
 
 ### 14.01.20
 - [creating particles](https://aerotwist.com/tutorials/creating-particles-with-three-js/)
@@ -180,7 +194,7 @@ Footageanalyse + rotation, tilt, location from iphone? + pulse + sound
 #### IDEAS
 - interactive part: viewer can guess sport
 - still images -> mix of athletes/face and viz
-![](https://www.collater.al/wp-content/uploads/2018/07/Dorian-Legret-visioni-astratte-di-un-artista-digitale-Collater.al_-819x1024.jpg)
+<img src="https://www.collater.al/wp-content/uploads/2018/07/Dorian-Legret-visioni-astratte-di-un-artista-digitale-Collater.al_-819x1024.jpg" width="60%">
 
 
 ### 13.11.2019
