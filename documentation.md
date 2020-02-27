@@ -1,4 +1,5 @@
 #### Next Steps
+- adjust time table
 - functionality before further style (several data files, animation, zooming into data)
 - add animation (influenced by sound?)
 - look further into plotter file (d3, [scatterplot](https://rdrr.io/cran/threejs/man/scatterplot3js.html),..)
