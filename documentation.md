@@ -13,16 +13,16 @@
 ### 01.03.20 (6h)
 - added 3d object (cubes)
 
-<img src="https://i.imgur.com/EKqIkrX.png" width="50%"><img src="https://i.imgur.com/phyQpig.png" width="50%">
+<img src="https://i.imgur.com/EKqIkrX.png" width="50%"><img src="https://i.imgur.com/7Eaemb5.png" width="50%">
 
 - better understanding of d3 (how data is read) and animate function
 - added time aspect to each data point with let x = xScale(data.unfiltered[i].x + i * 0.0005); should depend on range of dataset
 
-<img src="https://i.imgur.com/oggZ1jT.png" width="50%"><img src="https://i.imgur.com/7Eaemb5.png" width="50%">
+<img src="https://i.imgur.com/oggZ1jT.png" width="50%"><img src="https://i.imgur.com/j918I43.png" width="50%">
 
 - connected data points with lines (only x coordniate = smooth line, x,y,z = more jagged line)
 
-<img src="https://i.imgur.com/phyQpig.png" width="50%"><img src="https://i.imgur.com/oggZ1jT.png" width="50%">
+<img src="https://i.imgur.com/phyQpig.png" width="50%"><img src="https://i.imgur.com/pKbdVTq.png" width="50%">
 
 - testing apple watch/iphone data from sensorLog and heartgraph
 (motion pitch, roll, yaw looks nice)
