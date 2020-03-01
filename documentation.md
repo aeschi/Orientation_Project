@@ -1,13 +1,14 @@
 #### Next Steps
 
-- functionality before further style (several data files, animation, zooming into data)
-- add animation (influenced by sound?)
-- look further into plotter file (d3, [scatterplot](https://rdrr.io/cran/threejs/man/scatterplot3js.html),..)
-- try out different inputs/interpretations of data 
-- try out more 3D-ish style
-- how to switch between sports (via GUI?)
-- still images/ porttraits and viz
-- create narrative/connection for sports to viz
+- [ ]  functionality before further style (several data files, animation, zooming into data)
+- [ ]  add animation (influenced by sound?)
+- [x]  look further into plotter file (d3, [scatterplot](https://rdrr.io/cran/threejs/man/scatterplot3js.html),..)
+- [x]  try out different inputs/interpretations of data 
+- [ ]  try out more 3D-ish style
+- [ ]  how to switch between sports (via GUI?)
+- [ ]  still images/ porttraits and viz
+- [x] website
+- [ ]  create narrative/connection for sports to viz
 
 ------
 ### 01.03.20 (6,5h)
@@ -40,18 +41,18 @@
    - Apple Watch: accelerometer, gyroscope (rotation)
 
 ##### Next steps:
-- check for app that records sound in background
-- write down exact protocoll for how to record data - and while recording
-- decide on swimming (I guess I can just record it..)
-- try creating an mesh array so it can be animated
-- go through animate function & try to animate data with sound or heart rate or other data set
-- add scroll function
-- add GUI (blend in/out data sets)
-- use data set csv with several sensors and pull different data with unfiltered, lowPass arrays.. (rename them)
-- color scheme for 3d objects
-- maybe try one 3d object created out of data points as vertices
-- mix 2/3D look
-- integrate csv file load in js file
+- [ ] check for app that records sound in background
+- [ ]  write down exact protocoll for how to record data - and while recording
+- [ ]  decide on swimming (I guess I can just record it..)
+- [ ]  try creating an mesh array so it can be animated
+- [ ]  go through animate function & try to animate data with sound or heart rate or other data set
+- [ ]  add scroll function
+- [ ]  add GUI (blend in/out data sets)
+- [ ]  use data set csv with several sensors and pull different data with unfiltered, lowPass arrays.. (rename them)
+- [ ]  color scheme for 3d objects
+- [ ]  maybe try one 3d object created out of data points as vertices
+- [ ]  mix 2/3D look
+- [ ]  integrate csv file load in js file
 
 ### 29.02.20 (0,5h)
 - adjust time table
