@@ -12,6 +12,7 @@
 ------
 ### 01.03.20 (1h)
 - testing apple watch/iphone data from sensorLog and heartgraph
+(motion pitch, roll, yaw looks nice)
 <img src="https://i.imgur.com/P9KUrjw.png">
 
 ### 29.02.20 (0,5h)
