@@ -51,6 +51,7 @@
 - color scheme for 3d objects
 - maybe try one 3d object created out of data points as vertices
 - mix 2/3D look
+- integrate csv file load in js file
 
 ### 29.02.20 (0,5h)
 - adjust time table
