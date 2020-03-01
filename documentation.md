@@ -1,5 +1,5 @@
 #### Next Steps
-- adjust time table
+
 - functionality before further style (several data files, animation, zooming into data)
 - add animation (influenced by sound?)
 - look further into plotter file (d3, [scatterplot](https://rdrr.io/cran/threejs/man/scatterplot3js.html),..)
@@ -10,6 +10,51 @@
 - create narrative/connection for sports to viz
 
 ------
+### 01.03.20 (6,5h)
+- added 3d object (cubes)
+
+<img src="https://i.imgur.com/EKqIkrX.png" width="50%"><img src="https://i.imgur.com/7Eaemb5.png" width="50%">
+
+- better understanding of d3 (how data is read) and animate function
+- added time aspect to each data point with let x = xScale(data.unfiltered[i].x + i * 0.0005); should depend on range of dataset
+
+<img src="https://i.imgur.com/oggZ1jT.png" width="50%"><img src="https://i.imgur.com/j918I43.png" width="50%">
+
+- connected data points with lines (only x coordniate = smooth line, x,y,z = more jagged line)
+
+<img src="https://i.imgur.com/phyQpig.png" width="50%"><img src="https://i.imgur.com/pKbdVTq.png" width="50%">
+
+- testing apple watch/iphone data from sensorLog and heartgraph
+(motion pitch, roll, yaw looks nice)
+<img src="https://i.imgur.com/P9KUrjw.png">
+
+- should use high Hz rate for more data points = better visuals
+
+#### Necessary for recording:
+- Camera: Sony, iPhone, Hasselblad/ Nikon
+- Backup microphone (from camera?)
+- Sports: Bouldering, Skating, Swimming, Ice Skating, Cycling
+- iPhone/ Apple Watch 
+- Sensory data from
+   - iPhone: accelerometer, gyroscope, magnetometer
+   - Apple Watch: accelerometer, gyroscope (rotation)
+
+##### Next steps:
+- check for app that records sound in background
+- write down exact protocoll for how to record data - and while recording
+- decide on swimming (I guess I can just record it..)
+- try creating an mesh array so it can be animated
+- go through animate function & try to animate data with sound or heart rate or other data set
+- add scroll function
+- add GUI (blend in/out data sets)
+- use data set csv with several sensors and pull different data with unfiltered, lowPass arrays.. (rename them)
+- color scheme for 3d objects
+- maybe try one 3d object created out of data points as vertices
+- mix 2/3D look
+
+### 29.02.20 (0,5h)
+- adjust time table
+
 ### 27.02.20 (2h)
 - created website with 'About', 'Home' & 'Compare Sports' routes
 - ABOUT page with some basic information
