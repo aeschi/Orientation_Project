@@ -1,5 +1,5 @@
 #### Next Steps
-- adjust time table
+
 - functionality before further style (several data files, animation, zooming into data)
 - add animation (influenced by sound?)
 - look further into plotter file (d3, [scatterplot](https://rdrr.io/cran/threejs/man/scatterplot3js.html),..)
@@ -12,7 +12,10 @@
 ------
 ### 01.03.20 (1h)
 - testing apple watch/iphone data from sensorLog and heartgraph
-<img src=https://i.imgur.com/P9KUrjw.png">
+<img src="https://i.imgur.com/P9KUrjw.png">
+
+### 29.02.20 (0,5h)
+- adjust time table
 
 ### 27.02.20 (2h)
 - created website with 'About', 'Home' & 'Compare Sports' routes
