@@ -10,6 +10,10 @@
 - create narrative/connection for sports to viz
 
 ------
+### 01.03.20 (1h)
+- testing apple watch/iphone data from sensorLog and heartgraph
+<img src=https://i.imgur.com/P9KUrjw.png">
+
 ### 27.02.20 (2h)
 - created website with 'About', 'Home' & 'Compare Sports' routes
 - ABOUT page with some basic information
