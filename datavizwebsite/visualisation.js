@@ -1,5 +1,5 @@
 function createTextCanvas(text, color, font, size) {
-  size = size || 16;
+  size = size || 30;
   let canvas = document.createElement("canvas");
   let ctx = canvas.getContext("2d"); // 2D rendering
   let fontStr = size + "px " + (font || "Arial");
@@ -39,7 +39,7 @@ function getRandomFloat(min, max) {
   return Math.random() * (max - min) + min;
 }
 
-// FILTER DATA?
+// get data from csv file
 function getPts(x) {
   //console.log(x)
   let unfiltered = [],
@@ -47,12 +47,14 @@ function getPts(x) {
     highPass = [];
 
   x.forEach(function(d, i) {
-    let line = d.split(",");
+    // nochmal js functin anschauen (d, i)
+    let line = d.split(","); //trennugn durch , in csv
 
+    // spalte 2,3,4
     unfiltered[i] = {
-      x: +line[0],
-      y: +line[1],
-      z: +line[2]
+      x: +line[1],
+      y: +line[2],
+      z: +line[3]
     };
     lowPass[i] = {
       x: +line[4],
@@ -96,6 +98,53 @@ function handleFiles() {
   reader.readAsText(file);
 }
 
+// let guis = {
+//   BoxBufferGeometry: function(mesh) {
+//     var data = {
+//       width: 15,
+//       height: 15,
+//       depth: 15,
+//       widthSegments: 1,
+//       heightSegments: 1,
+//       depthSegments: 1
+//     };
+
+//     function generateGeometry() {
+//       updateGroupGeometry(
+//         mesh,
+//         new BoxBufferGeometry(
+//           data.width,
+//           data.height,
+//           data.depth,
+//           data.widthSegments,
+//           data.heightSegments,
+//           data.depthSegments
+//         )
+//       );
+//     }
+
+//     var folder = gui.addFolder("THREE.BoxBufferGeometry");
+
+//     folder.add(data, "width", 1, 30).onChange(generateGeometry);
+//     folder.add(data, "height", 1, 30).onChange(generateGeometry);
+//     folder.add(data, "depth", 1, 30).onChange(generateGeometry);
+//     folder
+//       .add(data, "widthSegments", 1, 10)
+//       .step(1)
+//       .onChange(generateGeometry);
+//     folder
+//       .add(data, "heightSegments", 1, 10)
+//       .step(1)
+//       .onChange(generateGeometry);
+//     folder
+//       .add(data, "depthSegments", 1, 10)
+//       .step(1)
+//       .onChange(generateGeometry);
+
+//     generateGeometry();
+//   }
+// };
+
 // THREE SETUP
 let renderer = new THREE.WebGLRenderer({
   antialias: true
@@ -107,6 +156,7 @@ renderer.setSize(w, h);
 document.getElementById("container").appendChild(renderer.domElement);
 
 // renderer.setClearColorHex(0xeeeeee, 1.0);
+// let gui = new GUI();
 
 let camera = new THREE.PerspectiveCamera(45, w / h, 1, 10000);
 camera.position.z = 200;
@@ -114,24 +164,15 @@ camera.position.x = -100;
 camera.position.y = 100;
 
 let scene = new THREE.Scene();
-
-// let controls = new THREE.OrbitControls(camera, renderer.domElement); s
-// controls = new TrackballControls(camera, renderer.domElement);
-// controls.rotateSpeed = 1.0;
-// controls.zoomSpeed = 1.2;
-// controls.panSpeed = 0.8;
-// controls.noZoom = false;
-// controls.noPan = false;
-// controls.staticMoving = true;
-// controls.dynamicDampingFactor = 0.3;
+scene.background = new THREE.Color("#f8f8ff");
 
 // SCATTERPLOT
 let scatterPlot = new THREE.Object3D();
 scene.add(scatterPlot);
 
-scatterPlot.rotation.y = 0;
+scatterPlot.rotation.y = 0; // start orientation of dataviz
 
-function v(x, y, z) {
+function vec(x, y, z) {
   return new THREE.Vector3(x, y, z);
 }
 
@@ -140,17 +181,21 @@ let format = d3.format("+.3f");
 function scatter(data) {
   let temp = data.unfiltered;
 
+  // find extent (min & max values) of either x, y or z to use for scaling
+  // d3.extent returns a two element array of the minimum and maximum values from the array.
+  // https://benclinkinbeard.com/d3tips/utility-methods-with-d3-array/?utm_content=buffer90c0a&utm_medium=social&utm_source=twitter.com&utm_campaign=buffer
   let xExent = d3.extent(temp, function(d) {
       return d.x;
     }),
-    yExent = d3.extent(data.unfiltered, function(d) {
+    yExent = d3.extent(temp, function(d) {
       return d.y;
     }),
-    zExent = d3.extent(data.unfiltered, function(d) {
+    zExent = d3.extent(temp, function(d) {
       return d.z;
     });
 
-  let vpts = {
+  // points for labels and grid overlay
+  let orientPoint = {
     xMax: xExent[1],
     xCen: (xExent[1] + xExent[0]) / 2,
     xMin: xExent[0],
@@ -166,105 +211,138 @@ function scatter(data) {
   // https://github.com/d3/d3-scale
   // http://www.jeromecukier.net/2011/08/11/d3-scales-and-color/
   // https://www.d3indepth.com/scales/
-
-  let xScale = d3.scale
-    .linear()
+  // Simply put: scales transform a number in a certain interval (called the domain)
+  // into a number in another interval (called the range).
+  let xScale = d3
+    .scaleLinear()
     .domain(xExent)
     .range([-50, 50]);
-  let yScale = d3.scale
-    .linear()
+  //array min & max of data set
+  let yScale = d3
+    .scaleLinear()
     .domain(yExent)
     .range([-50, 50]);
-  let zScale = d3.scale
-    .linear()
+  let zScale = d3
+    .scaleLinear()
     .domain(zExent)
     .range([-50, 50]);
 
-  // MESH around VIZ
-  let lineGeo = new THREE.Geometry();
-  lineGeo.vertices.push(
-    v(xScale(vpts.xMin), yScale(vpts.yCen), zScale(vpts.zCen)),
-    v(xScale(vpts.xMax), yScale(vpts.yCen), zScale(vpts.zCen)),
-    v(xScale(vpts.xCen), yScale(vpts.yMin), zScale(vpts.zCen)),
-    v(xScale(vpts.xCen), yScale(vpts.yMax), zScale(vpts.zCen)),
-    v(xScale(vpts.xCen), yScale(vpts.yCen), zScale(vpts.zMax)),
-    v(xScale(vpts.xCen), yScale(vpts.yCen), zScale(vpts.zMin)),
+  function labelOrientation() {
+    // MESH around VIZ
+    let lineGeo = new THREE.Geometry();
+    lineGeo.vertices.push(
+      // rectangle on one side (xMin)
+      vec(xScale(orientPoint.xMin), yScale(orientPoint.yMin), zScale(orientPoint.zMin)),
+      vec(xScale(orientPoint.xMin), yScale(orientPoint.yMin), zScale(orientPoint.zMax)),
+      vec(xScale(orientPoint.xMin), yScale(orientPoint.yMax), zScale(orientPoint.zMax)),
+      vec(xScale(orientPoint.xMin), yScale(orientPoint.yMax), zScale(orientPoint.zMin)),
+      vec(xScale(orientPoint.xMin), yScale(orientPoint.yMin), zScale(orientPoint.zMin)),
 
-    v(xScale(vpts.xMin), yScale(vpts.yMax), zScale(vpts.zMin)),
-    v(xScale(vpts.xMax), yScale(vpts.yMax), zScale(vpts.zMin)),
-    v(xScale(vpts.xMin), yScale(vpts.yMin), zScale(vpts.zMin)),
-    v(xScale(vpts.xMax), yScale(vpts.yMin), zScale(vpts.zMin)),
-    v(xScale(vpts.xMin), yScale(vpts.yMax), zScale(vpts.zMax)),
-    v(xScale(vpts.xMax), yScale(vpts.yMax), zScale(vpts.zMax)),
-    v(xScale(vpts.xMin), yScale(vpts.yMin), zScale(vpts.zMax)),
-    v(xScale(vpts.xMax), yScale(vpts.yMin), zScale(vpts.zMax)),
+      // rectangle on other side (xMax) + bridging lines
+      vec(xScale(orientPoint.xMax), yScale(orientPoint.yMin), zScale(orientPoint.zMin)),
 
-    v(xScale(vpts.xMin), yScale(vpts.yCen), zScale(vpts.zMax)),
-    v(xScale(vpts.xMax), yScale(vpts.yCen), zScale(vpts.zMax)),
-    v(xScale(vpts.xMin), yScale(vpts.yCen), zScale(vpts.zMin)),
-    v(xScale(vpts.xMax), yScale(vpts.yCen), zScale(vpts.zMin)),
-    v(xScale(vpts.xMin), yScale(vpts.yMax), zScale(vpts.zCen)),
-    v(xScale(vpts.xMax), yScale(vpts.yMax), zScale(vpts.zCen)),
-    v(xScale(vpts.xMin), yScale(vpts.yMin), zScale(vpts.zCen)),
-    v(xScale(vpts.xMax), yScale(vpts.yMin), zScale(vpts.zCen)),
+      vec(xScale(orientPoint.xMax), yScale(orientPoint.yMin), zScale(orientPoint.zMax)),
+      vec(xScale(orientPoint.xMin), yScale(orientPoint.yMin), zScale(orientPoint.zMax)),
+      vec(xScale(orientPoint.xMax), yScale(orientPoint.yMin), zScale(orientPoint.zMax)),
 
-    v(xScale(vpts.xMax), yScale(vpts.yMin), zScale(vpts.zMin)),
-    v(xScale(vpts.xMax), yScale(vpts.yMax), zScale(vpts.zMin)),
-    v(xScale(vpts.xMin), yScale(vpts.yMin), zScale(vpts.zMin)),
-    v(xScale(vpts.xMin), yScale(vpts.yMax), zScale(vpts.zMin)),
-    v(xScale(vpts.xMax), yScale(vpts.yMin), zScale(vpts.zMax)),
-    v(xScale(vpts.xMax), yScale(vpts.yMax), zScale(vpts.zMax)),
-    v(xScale(vpts.xMin), yScale(vpts.yMin), zScale(vpts.zMax)),
-    v(xScale(vpts.xMin), yScale(vpts.yMax), zScale(vpts.zMax)),
+      vec(xScale(orientPoint.xMax), yScale(orientPoint.yMax), zScale(orientPoint.zMax)),
+      vec(xScale(orientPoint.xMin), yScale(orientPoint.yMax), zScale(orientPoint.zMax)),
+      vec(xScale(orientPoint.xMax), yScale(orientPoint.yMax), zScale(orientPoint.zMax)),
 
-    v(xScale(vpts.xCen), yScale(vpts.yMin), zScale(vpts.zMax)),
-    v(xScale(vpts.xCen), yScale(vpts.yMax), zScale(vpts.zMax)),
-    v(xScale(vpts.xCen), yScale(vpts.yMin), zScale(vpts.zMin)),
-    v(xScale(vpts.xCen), yScale(vpts.yMax), zScale(vpts.zMin)),
-    v(xScale(vpts.xMax), yScale(vpts.yMin), zScale(vpts.zCen)),
-    v(xScale(vpts.xMax), yScale(vpts.yMax), zScale(vpts.zCen)),
-    v(xScale(vpts.xMin), yScale(vpts.yMin), zScale(vpts.zCen)),
-    v(xScale(vpts.xMin), yScale(vpts.yMax), zScale(vpts.zCen)),
+      vec(xScale(orientPoint.xMax), yScale(orientPoint.yMax), zScale(orientPoint.zMin)),
+      vec(xScale(orientPoint.xMin), yScale(orientPoint.yMax), zScale(orientPoint.zMin)),
+      vec(xScale(orientPoint.xMax), yScale(orientPoint.yMax), zScale(orientPoint.zMin)),
 
-    v(xScale(vpts.xMax), yScale(vpts.yMax), zScale(vpts.zMin)),
-    v(xScale(vpts.xMax), yScale(vpts.yMax), zScale(vpts.zMax)),
-    v(xScale(vpts.xMax), yScale(vpts.yMin), zScale(vpts.zMin)),
-    v(xScale(vpts.xMax), yScale(vpts.yMin), zScale(vpts.zMax)),
-    v(xScale(vpts.xMin), yScale(vpts.yMax), zScale(vpts.zMin)),
-    v(xScale(vpts.xMin), yScale(vpts.yMax), zScale(vpts.zMax)),
-    v(xScale(vpts.xMin), yScale(vpts.yMin), zScale(vpts.zMin)),
-    v(xScale(vpts.xMin), yScale(vpts.yMin), zScale(vpts.zMax)),
+      vec(xScale(orientPoint.xMax), yScale(orientPoint.yMin), zScale(orientPoint.zMin))
+    );
 
-    v(xScale(vpts.xMin), yScale(vpts.yCen), zScale(vpts.zMin)),
-    v(xScale(vpts.xMin), yScale(vpts.yCen), zScale(vpts.zMax)),
-    v(xScale(vpts.xMax), yScale(vpts.yCen), zScale(vpts.zMin)),
-    v(xScale(vpts.xMax), yScale(vpts.yCen), zScale(vpts.zMax)),
-    v(xScale(vpts.xCen), yScale(vpts.yMax), zScale(vpts.zMin)),
-    v(xScale(vpts.xCen), yScale(vpts.yMax), zScale(vpts.zMin)),
-    v(xScale(vpts.xCen), yScale(vpts.yMin), zScale(vpts.zMin)),
-    v(xScale(vpts.xCen), yScale(vpts.yMin), zScale(vpts.zMax))
-  );
+    let lineMat = new THREE.LineBasicMaterial({
+      color: 0x3a3a3a,
+      lineWidth: 1
+    });
+    let line = new THREE.Line(lineGeo, lineMat);
+    line.type = THREE.Lines;
+    scatterPlot.add(line); // add mesh around scatterplot
 
-  let lineMat = new THREE.LineBasicMaterial({
-    color: 0x3a3a3a,
-    lineWidth: 1
-  });
-  let line = new THREE.Line(lineGeo, lineMat);
-  line.type = THREE.Lines;
-  // scatterPlot.add(line); // ADD mesh around scatterplot
+    // add coordinate system labels
+    var titleX = createText2D("-X");
+    (titleX.position.x = xScale(orientPoint.xMin) - 12), (titleX.position.y = 5);
+    scatterPlot.add(titleX);
+
+    var valueX = createText2D(format(xExent[0]));
+    (valueX.position.x = xScale(orientPoint.xMin) - 12), (valueX.position.y = -5);
+    scatterPlot.add(valueX);
+
+    var titleX = createText2D("X");
+    titleX.position.x = xScale(orientPoint.xMax) + 12;
+    titleX.position.y = 5;
+    scatterPlot.add(titleX);
+
+    var valueX = createText2D(format(xExent[1]));
+    (valueX.position.x = xScale(orientPoint.xMax) + 12), (valueX.position.y = -5);
+    scatterPlot.add(valueX);
+
+    var titleY = createText2D("-Y");
+    titleY.position.y = yScale(orientPoint.yMin) - 5;
+    scatterPlot.add(titleY);
+
+    var valueY = createText2D(format(yExent[0]));
+    (valueY.position.y = yScale(orientPoint.yMin) - 15), scatterPlot.add(valueY);
+
+    var titleY = createText2D("Y");
+    titleY.position.y = yScale(orientPoint.yMax) + 15;
+    scatterPlot.add(titleY);
+
+    var valueY = createText2D(format(yExent[1]));
+    (valueY.position.y = yScale(orientPoint.yMax) + 5), scatterPlot.add(valueY);
+
+    var titleZ = createText2D("-Z " + format(zExent[0]));
+    titleZ.position.z = zScale(orientPoint.zMin) + 2;
+    scatterPlot.add(titleZ);
+
+    var titleZ = createText2D("Z " + format(zExent[1]));
+    titleZ.position.z = zScale(orientPoint.zMax) + 2;
+    scatterPlot.add(titleZ);
+  }
+  labelOrientation();
 
   // PARTICLE SIZE & COLOR
   let mat = new THREE.PointsMaterial({
     vertexColors: true, // ?
     size: getRandomFloat(0.5, 1) //size of particle
   });
-  let pointCount = data.unfiltered.length; //number of all data points
-  let pointGeo = new THREE.Geometry();
-  for (let i = 0; i < pointCount; i++) {
-    let x = xScale(data.unfiltered[i].x);
-    let y = yScale(data.unfiltered[i].y);
-    let z = zScale(data.unfiltered[i].z);
 
+  let pointCount = data.unfiltered.length; //amount of all data points
+  let pointGeo = new THREE.Geometry();
+
+  // CUBE
+  let cubeGeometry = new THREE.CubeGeometry(0.5, 0.5, 0.5);
+  let cubeMaterial = new THREE.MeshLambertMaterial({ color: "#0000ff" });
+  let cube = [];
+
+  // going through all data points - draw point, with color
+  for (let i = 1; i < pointCount; i++) {
+    // let x = xScale(data.unfiltered[i].x);
+    // let y = yScale(data.unfiltered[i].y);
+    // let z = zScale(data.unfiltered[i].z);
+    let timeFactor = 0.0003;
+    let x = xScale(data.unfiltered[i].x + i * timeFactor);
+    let y = yScale(data.unfiltered[i].y + i * timeFactor);
+    let z = zScale(data.unfiltered[i].z + i * timeFactor);
+
+    let u = xScale(data.unfiltered[i - 1].x);
+    let v = yScale(data.unfiltered[i - 1].y);
+    let w = zScale(data.unfiltered[i - 1].z);
+
+    cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
+    cube.position.x = x;
+    cube.position.y = y;
+    cube.position.z = z;
+
+    cube.rotation.y = (Math.PI * 45) / 180;
+    // scene.add(cube);
+
+    // pointGeo.vertices.push(new THREE.Vector3(x, y, z), new THREE.Vector3(u, y, z)); // connecting lines
     pointGeo.vertices.push(new THREE.Vector3(x, y, z));
 
     pointGeo.colors.push(
@@ -274,6 +352,15 @@ function scatter(data) {
 
   let points = new THREE.ParticleSystem(pointGeo, mat);
   scatterPlot.add(points);
+
+  // LINE
+  let lineMaterial = new THREE.LineBasicMaterial({
+    color: 0x820000,
+    lineWidth: 1
+  });
+  let lineData = new THREE.Line(pointGeo, lineMaterial);
+  lineData.type = THREE.Lines;
+  //   scatterPlot.add(lineData);
 
   // PARTICLE SIZE & COLOR II
   let secondMat = new THREE.PointsMaterial({
@@ -287,16 +374,21 @@ function scatter(data) {
     let y = yScale(data.unfiltered[i].y);
     let z = zScale(data.unfiltered[i].z);
 
-    secondPointGeo.vertices.push(new THREE.Vector3(x, z, y));
+    secondPointGeo.vertices.push(new THREE.Vector3(-x, -z, y));
 
     secondPointGeo.colors.push(
       new THREE.Color().setRGB(225 / 255, (170 - i / 100) / 255, 22 / 255) //Gradient from yellow to orange
-      // new THREE.Color().setRGB((150 - i / 90) / 255, 50 / 255, 67 / 255) //Gradient from red to blue
+      //   new THREE.Color().setRGB((150 - i / 90) / 255, 50 / 255, 67 / 255) //Gradient from red to blue
     );
   }
 
   let secondPoints = new THREE.ParticleSystem(secondPointGeo, secondMat);
-  scatterPlot.add(secondPoints);
+  //   scatterPlot.add(secondPoints);
+
+  // light for cube
+  let pointLight = new THREE.PointLight(0xffffff);
+  pointLight.position.set(0, 300, 200);
+  scene.add(pointLight);
 
   // INTERACTION
   renderer.render(scene, camera);
@@ -332,11 +424,27 @@ function scatter(data) {
     animating = !animating;
   };
 
+  // for cube rotation
+  let clock = new THREE.Clock();
+
+  //   let controls = new THREE.OrbitControls(camera, renderer.domElement);
+  //   controls = new TrackballControls(camera, renderer.domElement);
+
   function animate(t) {
     if (!paused) {
       last = t;
       renderer.clear();
       camera.lookAt(scene.position);
+
+      //   cube.rotation.y -= clock.getDelta();
+      //   controls.rotateSpeed = 1.0;
+      //   controls.zoomSpeed = 1.2;
+      //   controls.panSpeed = 0.8;
+      //   controls.noZoom = false;
+      //   controls.noPan = false;
+      //   controls.staticMoving = true;
+      //   controls.dynamicDampingFactor = 0.3;
+
       renderer.render(scene, camera);
     }
     window.requestAnimationFrame(animate, renderer.domElement);
