@@ -10,7 +10,7 @@
 - create narrative/connection for sports to viz
 
 ------
-### 01.03.20 (6h)
+### 01.03.20 (6,5h)
 - added 3d object (cubes)
 
 <img src="https://i.imgur.com/EKqIkrX.png" width="50%"><img src="https://i.imgur.com/7Eaemb5.png" width="50%">
