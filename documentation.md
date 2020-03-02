@@ -41,7 +41,7 @@
    - Apple Watch: accelerometer, gyroscope (rotation)
 
 ##### Next steps:
-- [ ] check for app that records sound in background
+- [x] check for app that records sound in background (AVR App + decibel in SensorLog) [Music visualization with Web Audio and three.js](http://programmersought.com/article/563055099/)
 - [ ]  write down exact protocoll for how to record data - and while recording
 - [ ]  decide on swimming (I guess I can just record it..)
 - [ ]  try creating an mesh array so it can be animated
