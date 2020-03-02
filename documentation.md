@@ -19,6 +19,8 @@
    - [Awesome Audio Viz](https://github.com/willianjusten/awesome-audio-visualization)
    - [Audio visualizer experiments](https://github.com/soniaboller/audible-visuals)
    - [Three.js Audio Analyser](https://threejs.org/docs/#api/en/audio/AudioAnalyser)
+- used data set csv with several sensors and pulled different data with unfiltered, lowPass arrays.. 
+   - Problem: need to change position of datasets so they're at the same "origin/location" in space
 
 ### 01.03.20 (6,5h)
 
@@ -30,7 +32,7 @@
 - [ ]  go through animate function & try to animate data with sound or heart rate or other data set
 - [ ]  add scroll function
 - [ ]  add GUI (blend in/out data sets)
-- [ ]  use data set csv with several sensors and pull different data with unfiltered, lowPass arrays.. (rename them)
+- [x]  use data set csv with several sensors and pull different data with unfiltered, lowPass arrays.. (rename them)
 - [ ]  color scheme for 3d objects
 - [ ]  maybe try one 3d object created out of data points as vertices
 - [ ]  mix 2/3D look
