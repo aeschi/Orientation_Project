@@ -35,6 +35,10 @@ function sq(x) {
   return s;
 }
 
+function mapValues(num, in_min, in_max, out_min, out_max) {
+  return ((num - in_min) * (out_max - out_min)) / (in_max - in_min) + out_min;
+}
+
 function getRandomFloat(min, max) {
   return Math.random() * (max - min) + min;
 }
@@ -52,14 +56,14 @@ function getPts(x) {
 
     // spalte 2,3,4
     unfiltered[i] = {
-      x: +line[1],
-      y: +line[2],
-      z: +line[3]
+      x: +line[2],
+      y: +line[3],
+      z: +line[4]
     };
     lowPass[i] = {
-      x: +line[4],
-      y: +line[5],
-      z: +line[6]
+      x: +line[6],
+      y: +line[7],
+      z: +line[8]
     };
     highPass[i] = {
       x: +line[7],
@@ -317,43 +321,43 @@ function scatter(data) {
 
   // CUBE
   let cubeGeometry = new THREE.CubeGeometry(0.5, 0.5, 0.5);
-  let cubeMaterial = new THREE.MeshLambertMaterial({ color: "#0000ff" });
-  let cube = [];
+
+  let cube;
 
   // going through all data points - draw point, with color
   for (let i = 1; i < pointCount; i++) {
-    // let x = xScale(data.unfiltered[i].x);
-    // let y = yScale(data.unfiltered[i].y);
-    // let z = zScale(data.unfiltered[i].z);
-    let timeFactor = 0.0003;
-    let x = xScale(data.unfiltered[i].x + i * timeFactor);
-    let y = yScale(data.unfiltered[i].y + i * timeFactor);
-    let z = zScale(data.unfiltered[i].z + i * timeFactor);
+    let timeFactor = 0; //.00003;
+    let x = xScale(data.lowPass[i].x + i * timeFactor);
+    let y = yScale(data.lowPass[i].y + i * timeFactor);
+    let z = zScale(data.lowPass[i].z + i * timeFactor);
 
-    let u = xScale(data.unfiltered[i - 1].x);
-    let v = yScale(data.unfiltered[i - 1].y);
-    let w = zScale(data.unfiltered[i - 1].z);
+    // let u = xScale(data.unfiltered[i - 1].x);
+    // let v = yScale(data.unfiltered[i - 1].y);
+    // let w = zScale(data.unfiltered[i - 1].z);
 
+    let colorMap = mapValues(i, 1, pointCount, 0, 150);
+
+    let cubeMaterial = new THREE.MeshLambertMaterial();
+    cubeMaterial.color.setRGB((230 - colorMap) / 255, 150 / 255, 67 / 255);
     cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
     cube.position.x = x;
     cube.position.y = y;
     cube.position.z = z;
 
     cube.rotation.y = (Math.PI * 45) / 180;
-    // scene.add(cube);
+    scene.add(cube);
 
     // pointGeo.vertices.push(new THREE.Vector3(x, y, z), new THREE.Vector3(u, y, z)); // connecting lines
     pointGeo.vertices.push(new THREE.Vector3(x, y, z));
-
+    console.log(pointCount);
     pointGeo.colors.push(
-      new THREE.Color().setRGB((170 - i / 70) / 255, 50 / 255, 67 / 255) //Gradient from red to blue
+      new THREE.Color().setRGB((170 - colorMap) / 255, 50 / 255, 67 / 255) //Gradient from red to blue
     );
   }
-
   let points = new THREE.ParticleSystem(pointGeo, mat);
   scatterPlot.add(points);
 
-  // LINE
+  // LINE VERSION
   let lineMaterial = new THREE.LineBasicMaterial({
     color: 0x820000,
     lineWidth: 1
@@ -374,16 +378,15 @@ function scatter(data) {
     let y = yScale(data.unfiltered[i].y);
     let z = zScale(data.unfiltered[i].z);
 
-    secondPointGeo.vertices.push(new THREE.Vector3(-x, -z, y));
-
+    secondPointGeo.vertices.push(new THREE.Vector3(x, z, y));
+    let colorMap = mapValues(i, 1, pointCount, 0, 70);
     secondPointGeo.colors.push(
-      new THREE.Color().setRGB(225 / 255, (170 - i / 100) / 255, 22 / 255) //Gradient from yellow to orange
-      //   new THREE.Color().setRGB((150 - i / 90) / 255, 50 / 255, 67 / 255) //Gradient from red to blue
+      new THREE.Color().setRGB(215 / 255, (150 - colorMap) / 255, 22 / 255) //Gradient from yellow to orange
     );
   }
 
   let secondPoints = new THREE.ParticleSystem(secondPointGeo, secondMat);
-  //   scatterPlot.add(secondPoints);
+  scatterPlot.add(secondPoints);
 
   // light for cube
   let pointLight = new THREE.PointLight(0xffffff);
