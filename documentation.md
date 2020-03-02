@@ -13,6 +13,7 @@
 ------
 ### 02.03.20 (9.45h - )
 - check for app that records sound in background (AVR App + decibel in SensorLog) 
+- Audio Visualisations:
    - [Music visualization with Web Audio and three.js](http://programmersought.com/article/563055099/)
    - [Music Visualiser with THREE.js & Web Audio API](https://medium.com/@mag_ops/music-visualiser-with-three-js-web-audio-api-b30175e7b5ba)
    - [Awesome Audio Viz](https://github.com/willianjusten/awesome-audio-visualization)
