@@ -21,6 +21,8 @@
    - [Three.js Audio Analyser](https://threejs.org/docs/#api/en/audio/AudioAnalyser)
 - used data set csv with several sensors and pulled different data with unfiltered, lowPass arrays.. 
    - Problem: need to change position of datasets so they're at the same "origin/location" in space
+- added map function for color gradient (slows it down quite a bit..?)
+<img src="https://i.imgur.com/kCYq1F4.png" width="80%">
 
 ### 01.03.20 (6,5h)
 
