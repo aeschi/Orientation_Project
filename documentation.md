@@ -11,6 +11,14 @@
 - [ ]  create narrative/connection for sports to viz
 
 ------
+### 02.03.20 (9.45h - )
+- check for app that records sound in background (AVR App + decibel in SensorLog) 
+   - [Music visualization with Web Audio and three.js](http://programmersought.com/article/563055099/)
+   - [Music Visualiser with THREE.js & Web Audio API](https://medium.com/@mag_ops/music-visualiser-with-three-js-web-audio-api-b30175e7b5ba)
+   - [Awesome Audio Viz](https://github.com/willianjusten/awesome-audio-visualization)
+   - [Audio visualizer experiments](https://github.com/soniaboller/audible-visuals)
+   - [Three.js Audio Analyser](https://threejs.org/docs/#api/en/audio/AudioAnalyser)
+
 ### 01.03.20 (6,5h)
 - added 3d object (cubes)
 
@@ -41,7 +49,7 @@
    - Apple Watch: accelerometer, gyroscope (rotation)
 
 ##### Next steps:
-- [x] check for app that records sound in background (AVR App + decibel in SensorLog) [Music visualization with Web Audio and three.js](http://programmersought.com/article/563055099/)
+- [x] check for app that records sound in background (AVR App + decibel in SensorLog) [Music visualization with Web Audio and three.js](http://programmersought.com/article/563055099/)  
 - [ ]  write down exact protocoll for how to record data - and while recording
 - [ ]  decide on swimming (I guess I can just record it..)
 - [ ]  try creating an mesh array so it can be animated
