@@ -23,6 +23,7 @@
    - Problem: need to change position of datasets so they're at the same "origin/location" in space
 - added map function for color gradient (slows it down quite a bit..?)
 <img src="https://i.imgur.com/kCYq1F4.png" width="80%">
+- color gradient for 3D cubes (same as points) should try with textures..
 
 ### 01.03.20 (6,5h)
 
@@ -35,7 +36,7 @@
 - [ ]  add scroll function
 - [ ]  add GUI (blend in/out data sets)
 - [x]  use data set csv with several sensors and pull different data with unfiltered, lowPass arrays.. (rename them)
-- [ ]  color scheme for 3d objects
+- [x]  color scheme for 3d objects
 - [ ]  maybe try one 3d object created out of data points as vertices
 - [ ]  mix 2/3D look
 - [ ]  integrate csv file load in js file
