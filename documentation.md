@@ -21,6 +21,21 @@
    - [Three.js Audio Analyser](https://threejs.org/docs/#api/en/audio/AudioAnalyser)
 
 ### 01.03.20 (6,5h)
+
+##### Following steps:
+- [x] check for app that records sound in background (AVR App + decibel in SensorLog) [Music visualization with Web Audio and three.js](http://programmersought.com/article/563055099/)  
+- [ ]  write down exact protocoll for how to record data - and while recording (on tuesday)
+- [x]  decide on swimming (I guess I can just record it..)
+- [ ]  try creating an mesh array so it can be animated
+- [ ]  go through animate function & try to animate data with sound or heart rate or other data set
+- [ ]  add scroll function
+- [ ]  add GUI (blend in/out data sets)
+- [ ]  use data set csv with several sensors and pull different data with unfiltered, lowPass arrays.. (rename them)
+- [ ]  color scheme for 3d objects
+- [ ]  maybe try one 3d object created out of data points as vertices
+- [ ]  mix 2/3D look
+- [ ]  integrate csv file load in js file
+
 - added 3d object (cubes)
 
 <img src="https://i.imgur.com/EKqIkrX.png" width="50%"><img src="https://i.imgur.com/7Eaemb5.png" width="50%">
@@ -48,20 +63,6 @@
 - Sensory data from
    - iPhone: accelerometer, gyroscope, magnetometer
    - Apple Watch: accelerometer, gyroscope (rotation)
-
-##### Next steps:
-- [x] check for app that records sound in background (AVR App + decibel in SensorLog) [Music visualization with Web Audio and three.js](http://programmersought.com/article/563055099/)  
-- [ ]  write down exact protocoll for how to record data - and while recording
-- [ ]  decide on swimming (I guess I can just record it..)
-- [ ]  try creating an mesh array so it can be animated
-- [ ]  go through animate function & try to animate data with sound or heart rate or other data set
-- [ ]  add scroll function
-- [ ]  add GUI (blend in/out data sets)
-- [ ]  use data set csv with several sensors and pull different data with unfiltered, lowPass arrays.. (rename them)
-- [ ]  color scheme for 3d objects
-- [ ]  maybe try one 3d object created out of data points as vertices
-- [ ]  mix 2/3D look
-- [ ]  integrate csv file load in js file
 
 ### 29.02.20 (0,5h)
 - adjust time table
