@@ -11,7 +11,7 @@
 - [ ]  create narrative/connection for sports to viz
 
 ------
-### 02.03.20 (9.45h - )
+### 02.03.20 (2h)
 - check for app that records sound in background (AVR App + decibel in SensorLog) 
 - Audio Visualisations:
    - [Music visualization with Web Audio and three.js](http://programmersought.com/article/563055099/)
