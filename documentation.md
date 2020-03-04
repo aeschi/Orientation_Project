@@ -11,6 +11,11 @@
 - [ ]  create narrative/connection for sports to viz
 
 ------
+### 03.03.20 (12:40 -)
+- added rotation to 3D objects (spheres)
+- bundled sphere objects into Object3D Group
+- adding more lights to scene (hemispheric, spotlight,..)
+
 ### 02.03.20 (2h)
 - check for app that records sound in background (AVR App + decibel in SensorLog) 
 - Audio Visualisations:
