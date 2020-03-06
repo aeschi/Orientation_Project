@@ -13,9 +13,9 @@
 ------
 ### 06.03.20 (3h)
 - creating new basic three js scene 
-- with lighting and endless space/horizon/fog
+- with lighting and endless space/horizon/fog [inspo](https://github.com/dli/vortexspheres)
 - with gui
--> need to combine with dataviz and integrate csv file not upload
+-> need to combine with dataviz and integrate csv file not upload & try shader
 <img src="https://i.imgur.com/tLobVx3.png" width="80%">
 
 ### 03.03.20 (1,5h)
