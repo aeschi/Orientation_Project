@@ -102,65 +102,18 @@ function handleFiles() {
   reader.readAsText(file);
 }
 
-// let guis = {
-//   BoxBufferGeometry: function(mesh) {
-//     var data = {
-//       width: 15,
-//       height: 15,
-//       depth: 15,
-//       widthSegments: 1,
-//       heightSegments: 1,
-//       depthSegments: 1
-//     };
-
-//     function generateGeometry() {
-//       updateGroupGeometry(
-//         mesh,
-//         new BoxBufferGeometry(
-//           data.width,
-//           data.height,
-//           data.depth,
-//           data.widthSegments,
-//           data.heightSegments,
-//           data.depthSegments
-//         )
-//       );
-//     }
-
-//     var folder = gui.addFolder("THREE.BoxBufferGeometry");
-
-//     folder.add(data, "width", 1, 30).onChange(generateGeometry);
-//     folder.add(data, "height", 1, 30).onChange(generateGeometry);
-//     folder.add(data, "depth", 1, 30).onChange(generateGeometry);
-//     folder
-//       .add(data, "widthSegments", 1, 10)
-//       .step(1)
-//       .onChange(generateGeometry);
-//     folder
-//       .add(data, "heightSegments", 1, 10)
-//       .step(1)
-//       .onChange(generateGeometry);
-//     folder
-//       .add(data, "depthSegments", 1, 10)
-//       .step(1)
-//       .onChange(generateGeometry);
-
-//     generateGeometry();
-//   }
-// };
-
 // THREE SETUP
 let renderer = new THREE.WebGLRenderer({
   antialias: true
 });
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap; // default THREE.PCFShadowMap
+
 let w = window.innerWidth * 0.9;
 let h = window.innerHeight * 0.9;
 
 renderer.setSize(w, h);
 document.getElementById("container").appendChild(renderer.domElement);
-
-// renderer.setClearColorHex(0xeeeeee, 1.0);
-// let gui = new GUI();
 
 let camera = new THREE.PerspectiveCamera(45, w / h, 1, 10000);
 camera.position.z = 200;
@@ -168,7 +121,7 @@ camera.position.x = -100;
 camera.position.y = 100;
 
 let scene = new THREE.Scene();
-scene.background = new THREE.Color("#f8f8ff");
+scene.background = new THREE.Color("#131313");
 
 // SCATTERPLOT
 let scatterPlot = new THREE.Object3D();
@@ -320,9 +273,12 @@ function scatter(data) {
   let pointGeo = new THREE.Geometry();
 
   // CUBE
-  let cubeGeometry = new THREE.CubeGeometry(0.5, 0.5, 0.5);
-
+  let cubeGeometry = new THREE.CubeGeometry(2, 8, 3);
   let cube;
+
+  let sphereGroup = new THREE.Object3D();
+  let sphereGeometry = new THREE.SphereGeometry(3, 20, 20);
+  let sphere;
 
   // going through all data points - draw point, with color
   for (let i = 1; i < pointCount; i++) {
@@ -338,14 +294,23 @@ function scatter(data) {
     let colorMap = mapValues(i, 1, pointCount, 0, 150);
 
     let cubeMaterial = new THREE.MeshLambertMaterial();
-    cubeMaterial.color.setRGB((230 - colorMap) / 255, 150 / 255, 67 / 255);
+    cubeMaterial.color.setRGB((180 - colorMap) / 255, 100 / 255, 150 / 255);
     cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
     cube.position.x = x;
     cube.position.y = y;
     cube.position.z = z;
 
-    cube.rotation.y = (Math.PI * 45) / 180;
+    cube.rotation.x = (Math.PI / 2) * (i % 2);
     scene.add(cube);
+
+    let sphereMaterial = new THREE.MeshBasicMaterial();
+    sphereMaterial.color.setRGB((180 - colorMap) / 255, 100 / 255, 150 / 255);
+    let sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
+    sphere.position.x = x;
+    sphere.position.y = y;
+    sphere.position.z = z;
+
+    sphereGroup.add(cube);
 
     // pointGeo.vertices.push(new THREE.Vector3(x, y, z), new THREE.Vector3(u, y, z)); // connecting lines
     pointGeo.vertices.push(new THREE.Vector3(x, y, z));
@@ -354,8 +319,10 @@ function scatter(data) {
       new THREE.Color().setRGB((170 - colorMap) / 255, 50 / 255, 67 / 255) //Gradient from red to blue
     );
   }
+
+  scene.add(sphereGroup);
   let points = new THREE.ParticleSystem(pointGeo, mat);
-  scatterPlot.add(points);
+  //   scatterPlot.add(points);
 
   // LINE VERSION
   let lineMaterial = new THREE.LineBasicMaterial({
@@ -388,10 +355,44 @@ function scatter(data) {
   let secondPoints = new THREE.ParticleSystem(secondPointGeo, secondMat);
   scatterPlot.add(secondPoints);
 
+  var material = new THREE.MeshStandardMaterial({ color: 0x00cc00 });
+
+  //create a triangular geometry
+  var geometryFace = new THREE.Geometry();
+  geometryFace.vertices.push(new THREE.Vector3(-10, -50, 0));
+  geometryFace.vertices.push(new THREE.Vector3(50, -10, 0));
+  geometryFace.vertices.push(new THREE.Vector3(50, 50, 0));
+
   // light for cube
-  let pointLight = new THREE.PointLight(0xffffff);
-  pointLight.position.set(0, 300, 200);
-  scene.add(pointLight);
+  //   let hemisLight = new THREE.HemisphereLight(0xffffff, 0x080820, 0.8);
+  //   scene.add(hemisLight);
+
+  let ambientLight = new THREE.AmbientLight(0x414141);
+  scene.add(ambientLight);
+
+  let pointLight1 = new THREE.PointLight(0xff7f00, 0.6);
+  pointLight1.position.set(0, 0, 0);
+  scene.add(pointLight1);
+
+  var spotLight1 = createSpotlight(0xff7f00);
+  var spotLight2 = createSpotlight(0x00ff7f);
+  var spotLight3 = createSpotlight(0x7f00ff);
+  spotLight1.position.set(200, -100, 100);
+  spotLight2.position.set(-200, 100, 0);
+  spotLight3.position.set(100, 100, 200);
+  scene.add(spotLight1, spotLight2, spotLight3);
+
+  function createSpotlight(color) {
+    var newObj = new THREE.SpotLight(color, 2);
+
+    newObj.castShadow = true;
+    newObj.angle = 0.3;
+    newObj.penumbra = 0.5;
+    newObj.decay = 2;
+    newObj.distance = 400;
+
+    return newObj;
+  }
 
   // INTERACTION
   renderer.render(scene, camera);
@@ -417,6 +418,8 @@ function scatter(data) {
 
       scatterPlot.rotation.y += dx * 0.01;
       scatterPlot.rotation.x += dy * 0.01;
+      sphereGroup.rotation.y += dx * 0.01;
+      sphereGroup.rotation.x += dy * 0.01;
 
       sx += dx;
       sy += dy;
@@ -430,24 +433,11 @@ function scatter(data) {
   // for cube rotation
   let clock = new THREE.Clock();
 
-  //   let controls = new THREE.OrbitControls(camera, renderer.domElement);
-  //   controls = new TrackballControls(camera, renderer.domElement);
-
   function animate(t) {
     if (!paused) {
       last = t;
       renderer.clear();
       camera.lookAt(scene.position);
-
-      //   cube.rotation.y -= clock.getDelta();
-      //   controls.rotateSpeed = 1.0;
-      //   controls.zoomSpeed = 1.2;
-      //   controls.panSpeed = 0.8;
-      //   controls.noZoom = false;
-      //   controls.noPan = false;
-      //   controls.staticMoving = true;
-      //   controls.dynamicDampingFactor = 0.3;
-
       renderer.render(scene, camera);
     }
     window.requestAnimationFrame(animate, renderer.domElement);

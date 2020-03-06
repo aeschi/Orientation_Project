@@ -81,9 +81,8 @@ body {
   margin-bottom: 30px;
 }
 
-#my-gui-container {
+#gui {
   position: absolute;
-  top: 70px;
-  left: 20px;
-  z-index: 10;
+  top: 120px;
+  right: 100px;
 }
