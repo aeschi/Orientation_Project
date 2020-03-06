@@ -11,6 +11,13 @@
 - [ ]  create narrative/connection for sports to viz
 
 ------
+### 06.03.20 (3h)
+- creating new basic three js scene 
+- with lighting and endless space/horizon/fog
+- with gui
+-> need to combine with dataviz and integrate csv file not upload
+<img src="https://i.imgur.com/tLobVx3.png" width="80%">
+
 ### 03.03.20 (1,5h)
 - added rotation to 3D objects (spheres)
 - bundled sphere objects into Object3D Group
@@ -44,7 +51,7 @@
 - [x]  use data set csv with several sensors and pull different data with unfiltered, lowPass arrays.. (rename them)
 - [x]  color scheme for 3d objects
 - [ ]  maybe try one 3d object created out of data points as vertices
-- [ ]  mix 2/3D look
+- [x]  mix 2/3D look
 - [ ]  integrate csv file load in js file
 
 - added 3d object (cubes)
