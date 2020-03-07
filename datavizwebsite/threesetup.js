@@ -16,7 +16,7 @@ function init() {
   let w = window.innerWidth * 0.9;
   let h = window.innerHeight * 0.9;
   renderer.setSize(w, h);
-  document.getElementById("container").appendChild(renderer.domElement);
+  document.body.appendChild(renderer.domElement);
 
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
@@ -145,21 +145,21 @@ function onResize() {
 }
 
 function render() {
-  requestAnimationFrame(render);
-  delta += clock.getDelta();
+  //   requestAnimationFrame(render);
+  //   delta += clock.getDelta();
 
-  if (delta > interval) {
-    stats.begin();
+  //   if (delta > interval) {
+  //     stats.begin();
 
-    lightHelper1.update();
-    lightHelper2.update();
-    lightHelper3.update();
+  lightHelper1.update();
+  lightHelper2.update();
+  lightHelper3.update();
 
-    // renderer.render(scene, camera);
-    stats.end();
+  // renderer.render(scene, camera);
+  stats.end();
 
-    delta = delta % interval;
-  }
+  // delta = delta % interval;
+  //   }
   renderer.render(scene, camera);
   //   mesh.rotation.x += 0.01;
   //   mesh.rotation.y += 0.01;

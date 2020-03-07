@@ -144,24 +144,25 @@ var format = d3.format("+.3f");
 
 let dataTest = d3.csv("defaultData.csv");
 
-console.log("dataTest: ", dataTest);
+d3.csv("testCSV.csv", function(data) {
+  var dataValues = d3.values(data)[0]; // top row of columns = names
+  var columnNum = Object.keys(dataValues); // putting names into array
 
-d3.csv("defaultData.csv", function(data) {
   data.forEach(function(mydata, i) {
     unfiltered[i] = {
-      x: +mydata.x,
-      y: +mydata.y,
-      z: +mydata.z
+      x: +mydata[columnNum[2]],
+      y: +mydata[columnNum[3]],
+      z: +mydata[columnNum[4]]
     };
     lowPass[i] = {
-      x: +mydata.lp_x,
-      y: +mydata.lp_y,
-      z: +mydata.lp_z
+      x: +mydata[columnNum[5]],
+      y: +mydata[columnNum[6]],
+      z: +mydata[columnNum[7]]
     };
     highPass[i] = {
-      x: +mydata.hp_x,
-      y: +mydata.hp_y,
-      z: +mydata.hp_z
+      x: +mydata[columnNum[0]],
+      y: +mydata[columnNum[1]],
+      z: +mydata[columnNum[2]]
     };
   });
 
