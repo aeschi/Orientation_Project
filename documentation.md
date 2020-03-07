@@ -11,9 +11,9 @@
 - [ ]  create narrative/connection for sports to viz
 
 ------
-### 07.03.20 (4,5h)
+### 07.03.20 (5,5h)
 - csv integrated (back to d3 version 3)
-- access to rows could be easier..
+- access to rows fixed :)
 - added animated cube
 - mouse orientation with zoom (could be more)
 
