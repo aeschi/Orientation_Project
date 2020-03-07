@@ -9,7 +9,7 @@ function createTextCanvas(text, color, font, size) {
   canvas.width = w;
   canvas.height = h;
   ctx.font = fontStr;
-  ctx.fillStyle = color || "black";
+  ctx.fillStyle = color || "white";
   ctx.fillText(text, 0, Math.ceil(size * 0.8));
   return canvas;
 }
@@ -263,6 +263,13 @@ function scatter(data) {
   }
   labelOrientation();
 
+  var cube1Geometry = new THREE.CubeGeometry(10, 10, 20);
+  var cube1Material = new THREE.MeshLambertMaterial({ color: 0xffffff });
+  var cube1 = new THREE.Mesh(cube1Geometry, cube1Material);
+  cube1.position.z = 0;
+  cube1.rotation.y = (Math.PI * 45) / 180;
+  scene.add(cube1);
+
   // PARTICLE SIZE & COLOR
   let mat = new THREE.PointsMaterial({
     vertexColors: true, // ?
@@ -355,18 +362,6 @@ function scatter(data) {
   let secondPoints = new THREE.ParticleSystem(secondPointGeo, secondMat);
   scatterPlot.add(secondPoints);
 
-  var material = new THREE.MeshStandardMaterial({ color: 0x00cc00 });
-
-  //create a triangular geometry
-  var geometryFace = new THREE.Geometry();
-  geometryFace.vertices.push(new THREE.Vector3(-10, -50, 0));
-  geometryFace.vertices.push(new THREE.Vector3(50, -10, 0));
-  geometryFace.vertices.push(new THREE.Vector3(50, 50, 0));
-
-  // light for cube
-  //   let hemisLight = new THREE.HemisphereLight(0xffffff, 0x080820, 0.8);
-  //   scene.add(hemisLight);
-
   let ambientLight = new THREE.AmbientLight(0x414141);
   scene.add(ambientLight);
 
@@ -420,6 +415,8 @@ function scatter(data) {
       scatterPlot.rotation.x += dy * 0.01;
       sphereGroup.rotation.y += dx * 0.01;
       sphereGroup.rotation.x += dy * 0.01;
+      cube1.rotation.y += dx * 0.01;
+      cube1.rotation.x += dy * 0.01;
 
       sx += dx;
       sy += dy;
@@ -438,11 +435,13 @@ function scatter(data) {
       last = t;
       renderer.clear();
       camera.lookAt(scene.position);
+      cube1.rotation.y -= clock.getDelta();
       renderer.render(scene, camera);
     }
     window.requestAnimationFrame(animate, renderer.domElement);
   }
   animate(new Date().getTime());
+
   onmessage = function(ev) {
     paused = ev.data == "pause";
   };

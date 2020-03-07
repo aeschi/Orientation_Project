@@ -4,7 +4,11 @@ let spotLight1, spotLight2, spotLight3, lightHelper1, lightHelper2, lightHelper3
 
 let gui;
 
+let stats;
+
 let clock = new THREE.Clock();
+let delta = 0;
+let interval = 1 / 30;
 
 function init() {
   renderer = new THREE.WebGLRenderer();
@@ -17,6 +21,10 @@ function init() {
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
   renderer.outputEncoding = THREE.sRGBEncoding;
+
+  stats = new Stats();
+  stats.showPanel(0); // 0: fps, 1: ms, 2: mb, 3+: custom
+  document.body.appendChild(stats.dom);
 
   scene = new THREE.Scene();
   scene.background = new THREE.Color().setHSL(0.6, 0, 1);
@@ -47,8 +55,8 @@ function init() {
 
   spotLight1 = new THREE.SpotLight(0xffffff, 0.1);
   spotLight1.position.set(0, 30, -18);
-  spotLight1.angle = Math.PI / 4;
-  spotLight1.penumbra = 0.05;
+  spotLight1.angle = Math.PI / 8;
+  spotLight1.penumbra = 0.2;
   spotLight1.decay = 2;
   spotLight1.distance = 200;
   spotLight1.castShadow = true;
@@ -60,10 +68,10 @@ function init() {
 
   spotLight2 = new THREE.SpotLight(0xf4148d, 0.3);
   spotLight2.position.set(-10, 10, -5);
-  spotLight2.angle = Math.PI / 4;
+  spotLight2.angle = Math.PI / 6;
   spotLight2.penumbra = 0.05;
   spotLight2.decay = 2;
-  spotLight2.distance = 200;
+  spotLight2.distance = 100;
   spotLight2.castShadow = true;
   spotLight2.shadow.mapSize.width = 1024;
   spotLight2.shadow.mapSize.height = 1024;
@@ -73,10 +81,10 @@ function init() {
 
   spotLight3 = new THREE.SpotLight(0x19fc, 0.3);
   spotLight3.position.set(10, 10, 5);
-  spotLight3.angle = Math.PI / 4;
+  spotLight3.angle = Math.PI / 6;
   spotLight3.penumbra = 0.05;
   spotLight3.decay = 2;
-  spotLight3.distance = 200;
+  spotLight3.distance = 100;
   spotLight3.castShadow = true;
   spotLight3.shadow.mapSize.width = 1024;
   spotLight3.shadow.mapSize.height = 1024;
@@ -137,13 +145,25 @@ function onResize() {
 }
 
 function render() {
-  lightHelper1.update();
-  lightHelper2.update();
-  lightHelper3.update();
+  requestAnimationFrame(render);
+  delta += clock.getDelta();
 
-  shadowCameraHelper.update();
+  if (delta > interval) {
+    stats.begin();
 
+    lightHelper1.update();
+    lightHelper2.update();
+    lightHelper3.update();
+
+    // renderer.render(scene, camera);
+    stats.end();
+
+    delta = delta % interval;
+  }
   renderer.render(scene, camera);
+  //   mesh.rotation.x += 0.01;
+  //   mesh.rotation.y += 0.01;
+  //   shadowCameraHelper.update();
 }
 
 function buildGui() {
@@ -196,4 +216,4 @@ init();
 
 buildGui();
 
-render();
+// render();
