@@ -7,10 +7,16 @@
 - [ ]  try out more 3D-ish style
 - [ ]  how to switch between sports (via GUI?)
 - [ ]  still images/ porttraits and viz
-- [x] website
+- [x]  website
 - [ ]  create narrative/connection for sports to viz
 
 ------
+### 07.03.20 (4,5h)
+- csv integrated (back to d3 version 3)
+- access to rows could be easier..
+- added animated cube
+- mouse orientation with zoom (could be more)
+
 ### 06.03.20 (3h)
 - creating new basic three js scene 
 - with lighting and endless space/horizon/fog [inspo](https://github.com/dli/vortexspheres)
