@@ -39,73 +39,41 @@ function mapValues(num, in_min, in_max, out_min, out_max) {
   return ((num - in_min) * (out_max - out_min)) / (in_max - in_min) + out_min;
 }
 
-function getRandomFloat(min, max) {
-  return Math.random() * (max - min) + min;
-}
+// function getRandomFloat(min, max) {
+//   return Math.random() * (max - min) + min;
+// }
 
-// get data from csv file
-function getPts(x) {
-  //console.log(x)
-  let unfiltered = [],
-    lowPass = [],
-    highPass = [];
+// // UPLOAD DATA FILE
+// let uploader = document.getElementById("uploader");
+// let reader = new FileReader();
+// let data;
+// let dataTest = d3.csv("defaultData.csv");
 
-  x.forEach(function(d, i) {
-    // nochmal js functin anschauen (d, i)
-    let line = d.split(","); //trennugn durch , in csv
+// console.log("dataTest: ", dataTest);
 
-    // spalte 2,3,4
-    unfiltered[i] = {
-      x: +line[2],
-      y: +line[3],
-      z: +line[4]
-    };
-    lowPass[i] = {
-      x: +line[6],
-      y: +line[7],
-      z: +line[8]
-    };
-    highPass[i] = {
-      x: +line[7],
-      y: +line[8],
-      z: +line[9]
-    };
-  });
-  let xyzData = {
-    unfiltered: unfiltered,
-    lowPass: lowPass,
-    highPass: highPass
-  };
-  return xyzData;
-}
+// reader.onload = function(e) {
+//   let contents = e.target.result;
+//   let rawData = contents.split(/\n/);
+//   let tempData = rawData.slice(2, rawData.length);
 
-// UPLOAD DATA FILE
-let uploader = document.getElementById("uploader");
-let reader = new FileReader();
-let data;
+//   data = getPts(dataTest);
+//   scatter(data);
+//   // remove button after loading file
+//   uploader.parentNode.removeChild(uploader);
+// };
 
-reader.onload = function(e) {
-  let contents = e.target.result;
-  let rawData = contents.split(/\n/);
-  let tempData = rawData.slice(2, rawData.length);
-  data = getPts(tempData);
-  scatter(data);
+// uploader.addEventListener("change", handleFiles, false);
 
-  // remove button after loading file
-  uploader.parentNode.removeChild(uploader);
-};
-
-uploader.addEventListener("change", handleFiles, false);
-
-function handleFiles() {
-  let file = this.files[0];
-  reader.readAsText(file);
-}
+// function handleFiles() {
+//   let file = this.files[0];
+//   reader.readAsText(file);
+// }
 
 // THREE SETUP
 let renderer = new THREE.WebGLRenderer({
   antialias: true
 });
+
 renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap; // default THREE.PCFShadowMap
 
@@ -113,7 +81,7 @@ let w = window.innerWidth * 0.9;
 let h = window.innerHeight * 0.9;
 
 renderer.setSize(w, h);
-document.getElementById("container").appendChild(renderer.domElement);
+document.body.appendChild(renderer.domElement);
 
 let camera = new THREE.PerspectiveCamera(45, w / h, 1, 10000);
 camera.position.z = 200;
@@ -133,10 +101,74 @@ function vec(x, y, z) {
   return new THREE.Vector3(x, y, z);
 }
 
-let format = d3.format("+.3f");
+// get data from csv file
+// function getPts(x) {
+//   let unfiltered = [],
+//     lowPass = [],
+//     highPass = [];
 
-function scatter(data) {
-  let temp = data.unfiltered;
+//   x.forEach(function(d, i) {
+//     // nochmal js function anschauen (d, i)
+//     let line = d.split(","); //trennugn durch , in csv
+
+//     // spalte 2,3,4
+//     unfiltered[i] = {
+//       x: +line[2],
+//       y: +line[3],
+//       z: +line[4]
+//     };
+//     lowPass[i] = {
+//       x: +line[6],
+//       y: +line[7],
+//       z: +line[8]
+//     };
+//     highPass[i] = {
+//       x: +line[7],
+//       y: +line[8],
+//       z: +line[9]
+//     };
+//   });
+//   let xyzData = {
+//     unfiltered: unfiltered,
+//     lowPass: lowPass,
+//     highPass: highPass
+//   };
+//   return xyzData;
+// }
+
+var unfiltered = [],
+  lowPass = [],
+  highPass = [];
+
+var format = d3.format("+.3f");
+
+let dataTest = d3.csv("defaultData.csv");
+
+console.log("dataTest: ", dataTest);
+
+d3.csv("defaultData.csv", function(data) {
+  data.forEach(function(mydata, i) {
+    unfiltered[i] = {
+      x: +mydata.x,
+      y: +mydata.y,
+      z: +mydata.z
+    };
+    lowPass[i] = {
+      x: +mydata.lp_x,
+      y: +mydata.lp_y,
+      z: +mydata.lp_z
+    };
+    highPass[i] = {
+      x: +mydata.hp_x,
+      y: +mydata.hp_y,
+      z: +mydata.hp_z
+    };
+  });
+
+  // let format = d3.format("+.3f");
+
+  // function scatter(data) {
+  let temp = unfiltered;
 
   // find extent (min & max values) of either x, y or z to use for scaling
   // d3.extent returns a two element array of the minimum and maximum values from the array.
@@ -170,17 +202,17 @@ function scatter(data) {
   // https://www.d3indepth.com/scales/
   // Simply put: scales transform a number in a certain interval (called the domain)
   // into a number in another interval (called the range).
-  let xScale = d3
-    .scaleLinear()
+  let xScale = d3.scale
+    .linear()
     .domain(xExent)
     .range([-50, 50]);
   //array min & max of data set
-  let yScale = d3
-    .scaleLinear()
+  let yScale = d3.scale
+    .linear()
     .domain(yExent)
     .range([-50, 50]);
-  let zScale = d3
-    .scaleLinear()
+  let zScale = d3.scale
+    .linear()
     .domain(zExent)
     .range([-50, 50]);
 
@@ -273,10 +305,10 @@ function scatter(data) {
   // PARTICLE SIZE & COLOR
   let mat = new THREE.PointsMaterial({
     vertexColors: true, // ?
-    size: getRandomFloat(0.5, 1) //size of particle
+    size: 0.5 //size of particle
   });
 
-  let pointCount = data.unfiltered.length; //amount of all data points
+  let pointCount = unfiltered.length; //amount of all data points
   let pointGeo = new THREE.Geometry();
 
   // CUBE
@@ -289,10 +321,10 @@ function scatter(data) {
 
   // going through all data points - draw point, with color
   for (let i = 1; i < pointCount; i++) {
-    let timeFactor = 0; //.00003;
-    let x = xScale(data.lowPass[i].x + i * timeFactor);
-    let y = yScale(data.lowPass[i].y + i * timeFactor);
-    let z = zScale(data.lowPass[i].z + i * timeFactor);
+    let timeFactor = 0; //.00003; // stretching data over time
+    let x = xScale(lowPass[i].x + i * timeFactor);
+    let y = yScale(lowPass[i].y + i * timeFactor);
+    let z = zScale(lowPass[i].z + i * timeFactor);
 
     // let u = xScale(data.unfiltered[i - 1].x);
     // let v = yScale(data.unfiltered[i - 1].y);
@@ -308,7 +340,7 @@ function scatter(data) {
     cube.position.z = z;
 
     cube.rotation.x = (Math.PI / 2) * (i % 2);
-    scene.add(cube);
+    // scene.add(cube);
 
     let sphereMaterial = new THREE.MeshBasicMaterial();
     sphereMaterial.color.setRGB((180 - colorMap) / 255, 100 / 255, 150 / 255);
@@ -317,7 +349,7 @@ function scatter(data) {
     sphere.position.y = y;
     sphere.position.z = z;
 
-    sphereGroup.add(cube);
+    // sphereGroup.add(cube);
 
     // pointGeo.vertices.push(new THREE.Vector3(x, y, z), new THREE.Vector3(u, y, z)); // connecting lines
     pointGeo.vertices.push(new THREE.Vector3(x, y, z));
@@ -343,14 +375,14 @@ function scatter(data) {
   // PARTICLE SIZE & COLOR II
   let secondMat = new THREE.PointsMaterial({
     vertexColors: true, // ?
-    size: 1 //size of particle
+    size: 0.5
   });
   // let pointCount = data.unfiltered.length; //number of all data points
   let secondPointGeo = new THREE.Geometry();
   for (let i = 0; i < pointCount; i++) {
-    let x = xScale(data.unfiltered[i].x);
-    let y = yScale(data.unfiltered[i].y);
-    let z = zScale(data.unfiltered[i].z);
+    let x = xScale(unfiltered[i].x);
+    let y = yScale(unfiltered[i].y);
+    let z = zScale(unfiltered[i].z);
 
     secondPointGeo.vertices.push(new THREE.Vector3(x, z, y));
     let colorMap = mapValues(i, 1, pointCount, 0, 70);
@@ -417,14 +449,11 @@ function scatter(data) {
       sphereGroup.rotation.x += dy * 0.01;
       cube1.rotation.y += dx * 0.01;
       cube1.rotation.x += dy * 0.01;
+      camera.position.y += dy; // zoom in out with mouse y change
 
       sx += dx;
       sy += dy;
     }
-  };
-  let animating = false;
-  window.ondblclick = function() {
-    animating = !animating;
   };
 
   // for cube rotation
@@ -438,6 +467,7 @@ function scatter(data) {
       cube1.rotation.y -= clock.getDelta();
       renderer.render(scene, camera);
     }
+
     window.requestAnimationFrame(animate, renderer.domElement);
   }
   animate(new Date().getTime());
@@ -445,4 +475,4 @@ function scatter(data) {
   onmessage = function(ev) {
     paused = ev.data == "pause";
   };
-}
+});
