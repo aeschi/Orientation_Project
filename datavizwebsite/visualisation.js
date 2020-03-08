@@ -61,7 +61,7 @@ renderer.setSize(w, h);
 document.body.appendChild(renderer.domElement);
 
 let camera = new THREE.PerspectiveCamera(35, w / h, 1, 10000);
-camera.position.z = 200; //50;
+camera.position.z = 100; //50;
 camera.position.x = -100; //-50;
 camera.position.y = 100; //50;
 
@@ -88,7 +88,7 @@ var unfiltered = [],
 
 var format = d3.format("+.3f");
 
-d3.csv("testCSV.csv", function(data) {
+d3.csv("data/watch_50hz_gerade_topout_13_28_13.csv", function(data) {
   var dataValues = d3.values(data)[0]; // top row of columns = names
   var columnNum = Object.keys(dataValues); // putting names into array
   //   console.log(Object.keys(dataValues));
@@ -111,7 +111,7 @@ d3.csv("testCSV.csv", function(data) {
     };
   });
 
-  let temp = unfiltered;
+  let temp = lowPass;
 
   // find extent (min & max values) of either x, y or z to use for scaling
   // d3.extent returns a two element array of the minimum and maximum values from the array.
@@ -244,28 +244,27 @@ d3.csv("testCSV.csv", function(data) {
   var cube1 = new THREE.Mesh(cube1Geometry, cube1Material);
   cube1.position.z = 0;
   cube1.rotation.y = (Math.PI * 45) / 180;
-  //   scene.add(cube1);
+  // scene.add(cube1);
 
-  var sphere_geometry = new THREE.SphereGeometry(5, 128, 128);
-  var material = new THREE.MeshNormalMaterial();
-  var sphereNoise = new THREE.Mesh(sphere_geometry, material);
+  var sphere_geometry = new THREE.SphereGeometry(5, 30, 30);
+  var material = new THREE.MeshLambertMaterial();
 
   var update = function() {
-    var time = performance.now() * 0.0005;
+    var time = performance.now() * 0.0003;
     var k = 2;
     for (var i = 0; i < sphereNoise.geometry.faces.length; i++) {
       var uv = sphereNoise.geometry.faceVertexUvs[0][i]; //faceVertexUvs is a huge arrayed stored inside of another array
       var f = sphereNoise.geometry.faces[i];
       var p = sphereNoise.geometry.vertices[f.a]; //take the first vertex from each face
       //   p.normalize().multiplyScalar(10 + 2.3 * noise.perlin3(uv[0].x * k, uv[0].y * k, time));
-      p.normalize().multiplyScalar(5 + 2 * noise.perlin3(p.x * k + time, p.y * k, p.z * k + time));
+      p.normalize().multiplyScalar(5 + 1 * noise.perlin3(p.x * k + time, p.y * k, p.z * k + time));
     }
     sphereNoise.geometry.verticesNeedUpdate = true; //must be set or vertices will not update
     sphereNoise.geometry.computeVertexNormals();
     sphereNoise.geometry.normalsNeedUpdate = true;
   };
 
-  scene.add(sphereNoise);
+  //   scene.add(sphereNoise);
 
   // PARTICLE SIZE & COLOR
   let mat = new THREE.PointsMaterial({
@@ -290,35 +289,43 @@ d3.csv("testCSV.csv", function(data) {
     let y = yScale(lowPass[i].y + i * timeFactor);
     let z = zScale(lowPass[i].z + i * timeFactor);
 
-    let u = xScale(lowPass[i - 1].x);
-    let v = yScale(lowPass[i - 1].y);
-    let w = zScale(lowPass[i - 1].z);
+    // let u = xScale(lowPass[i - 1].x);
+    // let v = yScale(lowPass[i - 1].y);
+    // let w = zScale(lowPass[i - 1].z);
 
     let colorMap = mapValues(i, 1, pointCount, 0, 150);
 
-    let cubeMaterial = new THREE.MeshLambertMaterial({ color: 0xd5d5d5 });
-    cubeMaterial.color.setRGB((180 - colorMap) / 255, 100 / 255, 150 / 255);
-    // cubeMaterial.color.setRGB(50, 50, 50);
-    cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
-    cube.position.x = x;
-    cube.position.y = y;
-    cube.position.z = z;
+    // let cubeMaterial = new THREE.MeshLambertMaterial({ color: 0xd5d5d5 });
+    // cubeMaterial.color.setRGB((180 - colorMap) / 255, 100 / 255, 150 / 255);
+    // // cubeMaterial.color.setRGB(50, 50, 50);
+    // cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
+    // cube.position.x = x;
+    // cube.position.y = y;
+    // cube.position.z = z;
 
-    cube.rotation.x = (Math.PI / 2) * (i % 2);
-    // scene.add(cube);
+    // cube.rotation.x = (Math.PI / 2) * (i % 2);
+    // // scene.add(cube);
 
-    let sphereMaterial = new THREE.MeshLambertMaterial();
-    sphereMaterial.color.setRGB((180 - colorMap) / 255, 100 / 255, 150 / 255);
-    let sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
-    sphere.position.x = x;
-    sphere.position.y = y;
-    sphere.position.z = z;
+    // let sphereMaterial = new THREE.MeshLambertMaterial();
+    // sphereMaterial.color.setRGB((180 - colorMap) / 255, 100 / 255, 150 / 255);
+    // let sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
+    // sphere.position.x = x;
+    // sphere.position.y = y;
+    // sphere.position.z = z;
     // scene.add(sphere);
     // sphereGroup.add(sphere);
 
+    var sphereNoise = new THREE.Mesh(sphere_geometry, material);
+    sphereNoise.position.x = x;
+    sphereNoise.position.y = y;
+    sphereNoise.position.z = z;
+    sphereNoise.rotation.x = (Math.PI / 4) * (i % 4);
+    scene.add(sphereNoise);
+    sphereGroup.add(sphereNoise);
+
     // pointGeo.vertices.push(new THREE.Vector3(x, y, z), new THREE.Vector3(u, v, w)); // connecting lines
     pointGeo.vertices.push(new THREE.Vector3(x, y, z));
-    // console.log(pointCount);
+    console.log(pointCount);
     pointGeo.colors.push(
       new THREE.Color().setRGB((170 - colorMap) / 255, 50 / 255, 67 / 255) //Gradient from red to blue
     );
@@ -486,13 +493,12 @@ d3.csv("testCSV.csv", function(data) {
     // if (!paused) {
     // last = t;
     renderer.clear();
-    // scene.children.forEach(el => {
-    //   el.scale.y += 0.0005;
-    //   el.scale.y += 0.0005;
-    //   el.scale.z += 0.0005;
-    // });
+    scene.children.forEach(el => {
+      el.rotation.y += 0.001;
+      el.rotation.z += 0.0005;
+    });
     camera.lookAt(scene.position);
-    cube1.rotation.y -= clock.getDelta();
+    // cube1.rotation.y -= clock.getDelta();
     // lightHelper1.update();
     // lightHelper2.update();
     // lightHelper3.update();
