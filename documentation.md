@@ -1,10 +1,10 @@
 #### Next Steps
 
-- [ ]  functionality before further style (several data files, animation, zooming into data)
+- [x]  functionality before further style (several data files, animation, zooming into data)
 - [ ]  add animation (influenced by sound?)
 - [x]  look further into plotter file (d3, [scatterplot](https://rdrr.io/cran/threejs/man/scatterplot3js.html),..)
 - [x]  try out different inputs/interpretations of data 
-- [ ]  try out more 3D-ish style
+- [x]  try out more 3D-ish style
 - [ ]  how to switch between sports (via GUI?)
 - [ ]  still images/ porttraits and viz
 - [x]  website
@@ -12,6 +12,11 @@
 
 ------
 ### 08.03.20 (5,5h)
+Next steps:
+- try out noise distortion with all points for animation
+- add slight rotation of all elements
+- switch between data sets with gui
+
 - added gui and stats to working file
 - possible data from apple watch sensorLog
  <img src="https://i.imgur.com/9IVeb38.png" width="40%">
