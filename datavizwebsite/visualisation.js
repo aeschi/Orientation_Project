@@ -45,6 +45,8 @@ let stats;
 
 let gui;
 
+let ambientLight;
+
 let renderer = new THREE.WebGLRenderer({
   antialias: true
 });
@@ -59,9 +61,9 @@ renderer.setSize(w, h);
 document.body.appendChild(renderer.domElement);
 
 let camera = new THREE.PerspectiveCamera(35, w / h, 1, 10000);
-camera.position.z = 200;
-camera.position.x = -100;
-camera.position.y = 100;
+camera.position.z = 200; //50;
+camera.position.x = -100; //-50;
+camera.position.y = 100; //50;
 
 stats = new Stats();
 stats.showPanel(0); // 0: fps, 1: ms, 2: mb, 3+: custom
@@ -242,7 +244,28 @@ d3.csv("testCSV.csv", function(data) {
   var cube1 = new THREE.Mesh(cube1Geometry, cube1Material);
   cube1.position.z = 0;
   cube1.rotation.y = (Math.PI * 45) / 180;
-  scene.add(cube1);
+  //   scene.add(cube1);
+
+  var sphere_geometry = new THREE.SphereGeometry(5, 128, 128);
+  var material = new THREE.MeshNormalMaterial();
+  var sphereNoise = new THREE.Mesh(sphere_geometry, material);
+
+  var update = function() {
+    var time = performance.now() * 0.0005;
+    var k = 2;
+    for (var i = 0; i < sphereNoise.geometry.faces.length; i++) {
+      var uv = sphereNoise.geometry.faceVertexUvs[0][i]; //faceVertexUvs is a huge arrayed stored inside of another array
+      var f = sphereNoise.geometry.faces[i];
+      var p = sphereNoise.geometry.vertices[f.a]; //take the first vertex from each face
+      //   p.normalize().multiplyScalar(10 + 2.3 * noise.perlin3(uv[0].x * k, uv[0].y * k, time));
+      p.normalize().multiplyScalar(5 + 2 * noise.perlin3(p.x * k + time, p.y * k, p.z * k + time));
+    }
+    sphereNoise.geometry.verticesNeedUpdate = true; //must be set or vertices will not update
+    sphereNoise.geometry.computeVertexNormals();
+    sphereNoise.geometry.normalsNeedUpdate = true;
+  };
+
+  scene.add(sphereNoise);
 
   // PARTICLE SIZE & COLOR
   let mat = new THREE.PointsMaterial({
@@ -259,7 +282,6 @@ d3.csv("testCSV.csv", function(data) {
 
   let sphereGroup = new THREE.Object3D();
   let sphereGeometry = new THREE.SphereBufferGeometry(1, 10, 10);
-  let sphere;
 
   // going through all data points - draw point, with color
   for (let i = 1; i < lowPass.length; i++) {
@@ -268,9 +290,9 @@ d3.csv("testCSV.csv", function(data) {
     let y = yScale(lowPass[i].y + i * timeFactor);
     let z = zScale(lowPass[i].z + i * timeFactor);
 
-    // let u = xScale(data.unfiltered[i - 1].x);
-    // let v = yScale(data.unfiltered[i - 1].y);
-    // let w = zScale(data.unfiltered[i - 1].z);
+    let u = xScale(lowPass[i - 1].x);
+    let v = yScale(lowPass[i - 1].y);
+    let w = zScale(lowPass[i - 1].z);
 
     let colorMap = mapValues(i, 1, pointCount, 0, 150);
 
@@ -291,25 +313,25 @@ d3.csv("testCSV.csv", function(data) {
     sphere.position.x = x;
     sphere.position.y = y;
     sphere.position.z = z;
-    scene.add(sphere);
-    sphereGroup.add(sphere);
+    // scene.add(sphere);
+    // sphereGroup.add(sphere);
 
-    // pointGeo.vertices.push(new THREE.Vector3(x, y, z), new THREE.Vector3(u, y, z)); // connecting lines
+    // pointGeo.vertices.push(new THREE.Vector3(x, y, z), new THREE.Vector3(u, v, w)); // connecting lines
     pointGeo.vertices.push(new THREE.Vector3(x, y, z));
-    console.log(pointCount);
+    // console.log(pointCount);
     pointGeo.colors.push(
       new THREE.Color().setRGB((170 - colorMap) / 255, 50 / 255, 67 / 255) //Gradient from red to blue
     );
   }
 
   scene.add(sphereGroup);
-  let points = new THREE.ParticleSystem(pointGeo, mat);
+  let points = new THREE.Points(pointGeo, mat);
   //   scatterPlot.add(points);
 
   // LINE VERSION
   let lineMaterial = new THREE.LineBasicMaterial({
     color: 0x820000,
-    lineWidth: 1
+    linewidth: 1
   });
   let lineData = new THREE.Line(pointGeo, lineMaterial);
   lineData.type = THREE.Lines;
@@ -335,94 +357,90 @@ d3.csv("testCSV.csv", function(data) {
     );
   }
 
-  let secondPoints = new THREE.ParticleSystem(secondPointGeo, secondMat);
+  let secondPoints = new THREE.Points(secondPointGeo, secondMat);
   scatterPlot.add(secondPoints);
 
-  //   let ambientLight = new THREE.AmbientLight(0x414141);
-  //   scene.add(ambientLight);
-
-  //   var spotLight1 = createSpotlight(0xff7f00);
-  //   var spotLight2 = createSpotlight(0x00ff7f);
-  //   var spotLight3 = createSpotlight(0x7f00ff);
-  //   spotLight1.position.set(200, -100, 100);
-  //   spotLight2.position.set(-200, 100, 0);
-  //   spotLight3.position.set(100, 100, 200);
-  //     scene.add(spotLight1, spotLight2, spotLight3);
-
-  //   function createSpotlight(color) {
-  //     var newObj = new THREE.SpotLight(color, 2);
-
-  //     newObj.castShadow = true;
-  //     newObj.angle = 0.3;
-  //     newObj.penumbra = 0.5;
-  //     newObj.decay = 2;
-  //     newObj.distance = 400;
-
-  //     return newObj;
-  //   }
-
   // LIGHT
+  function lighting() {
+    ambientLight = new THREE.AmbientLight(0x9d9d9d, 0.4);
+    scene.add(ambientLight);
 
-  let ambient = new THREE.AmbientLight(0x9d9d9d, 0.4);
-  scene.add(ambient);
+    let pointLight1 = new THREE.PointLight(0xff7f00, 0.8);
+    pointLight1.position.set(0, 0, 0);
+    pointLight1.castShadow = true;
+    pointLight1.shadow.mapSize.width = 1024;
+    pointLight1.shadow.mapSize.height = 1024;
+    pointLight1.shadow.camera.near = 1;
+    pointLight1.shadow.camera.far = 400;
+    scene.add(pointLight1);
 
-  let pointLight1 = new THREE.PointLight(0xff7f00, 0.8);
-  pointLight1.position.set(0, 0, 0);
-  pointLight1.castShadow = true;
-  pointLight1.shadow.mapSize.width = 1024;
-  pointLight1.shadow.mapSize.height = 1024;
-  pointLight1.shadow.camera.near = 1;
-  pointLight1.shadow.camera.far = 400;
-  scene.add(pointLight1);
+    spotLight1 = new THREE.SpotLight(0xffffff, 1);
+    spotLight1.position.set(-70, -100, 100);
+    spotLight1.angle = Math.PI / 8;
+    spotLight1.penumbra = 0.2;
+    spotLight1.decay = 1.5;
+    spotLight1.distance = 300;
+    spotLight1.castShadow = true;
+    spotLight1.shadow.mapSize.width = 1024;
+    spotLight1.shadow.mapSize.height = 1024;
+    spotLight1.shadow.camera.near = 10;
+    spotLight1.shadow.camera.far = 200;
+    scene.add(spotLight1);
 
-  spotLight1 = new THREE.SpotLight(0xffffff, 1);
-  spotLight1.position.set(-70, -100, 100);
-  spotLight1.angle = Math.PI / 8;
-  spotLight1.penumbra = 0.2;
-  spotLight1.decay = 1.5;
-  spotLight1.distance = 300;
-  spotLight1.castShadow = true;
-  spotLight1.shadow.mapSize.width = 1024;
-  spotLight1.shadow.mapSize.height = 1024;
-  spotLight1.shadow.camera.near = 10;
-  spotLight1.shadow.camera.far = 200;
-  scene.add(spotLight1);
+    spotLight2 = new THREE.SpotLight(0xf4148d, 1);
+    spotLight2.position.set(100, 100, 50);
+    spotLight2.angle = Math.PI / 6;
+    spotLight2.penumbra = 0.05;
+    spotLight2.decay = 1.5;
+    spotLight2.distance = 300;
+    spotLight2.castShadow = true;
+    spotLight2.shadow.mapSize.width = 1024;
+    spotLight2.shadow.mapSize.height = 1024;
+    spotLight2.shadow.camera.near = 10;
+    spotLight2.shadow.camera.far = 200;
+    scene.add(spotLight2);
 
-  spotLight2 = new THREE.SpotLight(0xf4148d, 1);
-  spotLight2.position.set(100, 100, 50);
-  spotLight2.angle = Math.PI / 6;
-  spotLight2.penumbra = 0.05;
-  spotLight2.decay = 1.5;
-  spotLight2.distance = 300;
-  spotLight2.castShadow = true;
-  spotLight2.shadow.mapSize.width = 1024;
-  spotLight2.shadow.mapSize.height = 1024;
-  spotLight2.shadow.camera.near = 10;
-  spotLight2.shadow.camera.far = 200;
-  scene.add(spotLight2);
+    spotLight3 = new THREE.SpotLight(0x5dd1fb, 2);
+    spotLight3.position.set(-100, 20, -80);
+    spotLight3.angle = Math.PI / 6;
+    spotLight3.penumbra = 0.05;
+    spotLight3.decay = 1.5;
+    spotLight3.distance = 300;
+    spotLight3.castShadow = true;
+    spotLight3.shadow.mapSize.width = 1024;
+    spotLight3.shadow.mapSize.height = 1024;
+    spotLight3.shadow.camera.near = 10;
+    spotLight3.shadow.camera.far = 200;
+    scene.add(spotLight3);
 
-  spotLight3 = new THREE.SpotLight(0x5dd1fb, 2);
-  spotLight3.position.set(-100, 20, -80);
-  spotLight3.angle = Math.PI / 6;
-  spotLight3.penumbra = 0.05;
-  spotLight3.decay = 1.5;
-  spotLight3.distance = 300;
-  spotLight3.castShadow = true;
-  spotLight3.shadow.mapSize.width = 1024;
-  spotLight3.shadow.mapSize.height = 1024;
-  spotLight3.shadow.camera.near = 10;
-  spotLight3.shadow.camera.far = 200;
-  scene.add(spotLight3);
+    //   // HELPER GRID FOR LIGHTS/CAMERA
+    //   lightHelper1 = new THREE.SpotLightHelper(spotLight1);
+    //   scene.add(lightHelper1);
 
-  //   // HELPER GRID FOR LIGHTS/CAMERA
-  //   lightHelper1 = new THREE.SpotLightHelper(spotLight1);
-  //   scene.add(lightHelper1);
+    //   lightHelper2 = new THREE.SpotLightHelper(spotLight2);
+    //   scene.add(lightHelper2);
 
-  //   lightHelper2 = new THREE.SpotLightHelper(spotLight2);
-  //   scene.add(lightHelper2);
+    //   lightHelper3 = new THREE.SpotLightHelper(spotLight3);
+    //   scene.add(lightHelper3);
 
-  //   lightHelper3 = new THREE.SpotLightHelper(spotLight3);
-  //   scene.add(lightHelper3);
+    //   var spotLight1 = createSpotlight(0xff7f00);
+    //   var spotLight2 = createSpotlight(0x00ff7f);
+    //   var spotLight3 = createSpotlight(0x7f00ff);
+    //   spotLight1.position.set(200, -100, 100);
+    //   spotLight2.position.set(-200, 100, 0);
+    //   spotLight3.position.set(100, 100, 200);
+    //     scene.add(spotLight1, spotLight2, spotLight3);
+
+    //   function createSpotlight(color) {
+    //     var newObj = new THREE.SpotLight(color, 2);
+    //     newObj.castShadow = true;
+    //     newObj.angle = 0.3;
+    //     newObj.penumbra = 0.5;
+    //     newObj.decay = 2;
+    //     newObj.distance = 400;
+    //     return newObj;
+    //   }
+  }
 
   // INTERACTION
   renderer.render(scene, camera);
@@ -468,12 +486,18 @@ d3.csv("testCSV.csv", function(data) {
     // if (!paused) {
     // last = t;
     renderer.clear();
+    // scene.children.forEach(el => {
+    //   el.scale.y += 0.0005;
+    //   el.scale.y += 0.0005;
+    //   el.scale.z += 0.0005;
+    // });
     camera.lookAt(scene.position);
     cube1.rotation.y -= clock.getDelta();
     // lightHelper1.update();
     // lightHelper2.update();
     // lightHelper3.update();
 
+    update();
     renderer.render(scene, camera);
     // }
     stats.end();
@@ -497,7 +521,7 @@ d3.csv("testCSV.csv", function(data) {
 
     gui.open();
   }
-
+  lighting();
   buildGui();
 
   //   onmessage = function(ev) {
