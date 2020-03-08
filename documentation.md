@@ -15,8 +15,9 @@
 - added gui and stats to working file
 - more light testing
 - possible data from apple watch sensorLog
-<img src="https://i.imgur.com/9IVeb38.png" width="30%"><img src="https://i.imgur.com/aTlE9dS.png" width="70%">
-<img src="https://i.imgur.com/SZ4fDO9.png" width="45%"><img src="https://i.imgur.com/SU9FhNU.png" width="45%">
+
+ <img src="https://i.imgur.com/9IVeb38.png" width="30%"><img src="https://i.imgur.com/aTlE9dS.png" width="65%">
+<img src="https://i.imgur.com/SZ4fDO9.png" width="48%"><img src="https://i.imgur.com/SU9FhNU.png" width="43%">
 - perfomance tests
 - [Improve your Threejs performances with BufferGeometryUtils](https://codeburst.io/improve-your-threejs-performances-with-buffergeometryutils-8f97c072c14b)
 - animation tests
