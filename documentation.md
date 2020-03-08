@@ -18,15 +18,10 @@
 - more light testing
  <img src="https://i.imgur.com/aTlE9dS.png" width="70%">
 <img src="https://i.imgur.com/SZ4fDO9.png" width="48%"><img src="https://i.imgur.com/SU9FhNU.png" width="45%">
-- perfomance tests
-
-- [Improve your Threejs performances with BufferGeometryUtils](https://codeburst.io/improve-your-threejs-performances-with-buffergeometryutils-8f97c072c14b)
-
+- perfomance tests  [Improve your Threejs performances with BufferGeometryUtils](https://codeburst.io/improve-your-threejs-performances-with-buffergeometryutils-8f97c072c14b)
 - animation tests
-
 - [animate sphere normals with noise](https://busy.org/@clayjohn/learning-3d-graphics-with-three-js-or-dynamic-geometry) 
 <img src="https://i.imgur.com/816nluR.png" width="50%">
-
 
 ### 07.03.20 (5,5h)
 - csv integrated (back to d3 version 3)
