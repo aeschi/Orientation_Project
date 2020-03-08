@@ -1,21 +1,42 @@
 #### Next Steps
 
-- [ ]  functionality before further style (several data files, animation, zooming into data)
+- [x]  functionality before further style (several data files, animation, zooming into data)
 - [ ]  add animation (influenced by sound?)
 - [x]  look further into plotter file (d3, [scatterplot](https://rdrr.io/cran/threejs/man/scatterplot3js.html),..)
 - [x]  try out different inputs/interpretations of data 
-- [ ]  try out more 3D-ish style
+- [x]  try out more 3D-ish style
 - [ ]  how to switch between sports (via GUI?)
 - [ ]  still images/ porttraits and viz
 - [x]  website
 - [ ]  create narrative/connection for sports to viz
 
 ------
+### 08.03.20 (5,5h)
+Next steps:
+- try out noise distortion with all points for animation
+- add slight rotation of all elements
+- switch between data sets with gui
+
+- added gui and stats to working file
+- possible data from apple watch sensorLog
+ <img src="https://i.imgur.com/9IVeb38.png" width="40%">
+ 
+- more light testing:
+<img src="https://i.imgur.com/aTlE9dS.png" width="70%">
+<img src="https://i.imgur.com/SZ4fDO9.png" width="48%"><img src="https://i.imgur.com/SU9FhNU.png" width="45%">
+
+- perfomance tests:
+  - [Improve your Threejs performances with BufferGeometryUtils](https://codeburst.io/improve-your-threejs-performances-with-buffergeometryutils-8f97c072c14b)
+ 
+- animation tests:
+  - [animate sphere normals with noise](https://busy.org/@clayjohn/learning-3d-graphics-with-three-js-or-dynamic-geometry)
+<img src="https://i.imgur.com/816nluR.png" width="50%">
+
 ### 07.03.20 (5,5h)
 - csv integrated (back to d3 version 3)
 - access to rows fixed :)
 - added animated cube
-- mouse orientation with zoom (could be more)
+- mouse orientation with zoom 
 
 ### 06.03.20 (3h)
 - creating new basic three js scene 
