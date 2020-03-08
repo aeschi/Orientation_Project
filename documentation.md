@@ -11,11 +11,24 @@
 - [ ]  create narrative/connection for sports to viz
 
 ------
+### 08.03.20 (5,5h)
+- added gui and stats to working file
+- more light testing
+- perfomance tests
+- [Improve your Threejs performances with BufferGeometryUtils](https://codeburst.io/improve-your-threejs-performances-with-buffergeometryutils-8f97c072c14b)
+- animation tests
+- animate sphere normals with noise 
+<img src="https://i.imgur.com/816nluR.png" width="50%">
+- possible data from apple watch sensorLog
+<img src="https://i.imgur.com/9IVeb38.png" width="50%">
+<img src="https://i.imgur.com/aTlE9dS.png" width="90%">
+<img src="https://i.imgur.com/SZ4fDO9.png" width="50%"><img src="https://i.imgur.com/SU9FhNU.png" width="50%">
+
 ### 07.03.20 (5,5h)
 - csv integrated (back to d3 version 3)
 - access to rows fixed :)
 - added animated cube
-- mouse orientation with zoom (could be more)
+- mouse orientation with zoom 
 
 ### 06.03.20 (3h)
 - creating new basic three js scene 
