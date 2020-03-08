@@ -39,37 +39,12 @@ function mapValues(num, in_min, in_max, out_min, out_max) {
   return ((num - in_min) * (out_max - out_min)) / (in_max - in_min) + out_min;
 }
 
-// function getRandomFloat(min, max) {
-//   return Math.random() * (max - min) + min;
-// }
-
-// // UPLOAD DATA FILE
-// let uploader = document.getElementById("uploader");
-// let reader = new FileReader();
-// let data;
-// let dataTest = d3.csv("defaultData.csv");
-
-// console.log("dataTest: ", dataTest);
-
-// reader.onload = function(e) {
-//   let contents = e.target.result;
-//   let rawData = contents.split(/\n/);
-//   let tempData = rawData.slice(2, rawData.length);
-
-//   data = getPts(dataTest);
-//   scatter(data);
-//   // remove button after loading file
-//   uploader.parentNode.removeChild(uploader);
-// };
-
-// uploader.addEventListener("change", handleFiles, false);
-
-// function handleFiles() {
-//   let file = this.files[0];
-//   reader.readAsText(file);
-// }
-
 // THREE SETUP
+
+let stats;
+
+let gui;
+
 let renderer = new THREE.WebGLRenderer({
   antialias: true
 });
@@ -77,16 +52,20 @@ let renderer = new THREE.WebGLRenderer({
 renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap; // default THREE.PCFShadowMap
 
-let w = window.innerWidth * 0.9;
-let h = window.innerHeight * 0.9;
+let w = window.innerWidth * 0.8;
+let h = window.innerHeight * 0.8;
 
 renderer.setSize(w, h);
 document.body.appendChild(renderer.domElement);
 
-let camera = new THREE.PerspectiveCamera(45, w / h, 1, 10000);
+let camera = new THREE.PerspectiveCamera(35, w / h, 1, 10000);
 camera.position.z = 200;
 camera.position.x = -100;
 camera.position.y = 100;
+
+stats = new Stats();
+stats.showPanel(0); // 0: fps, 1: ms, 2: mb, 3+: custom
+document.body.appendChild(stats.dom);
 
 let scene = new THREE.Scene();
 scene.background = new THREE.Color("#131313");
@@ -101,52 +80,16 @@ function vec(x, y, z) {
   return new THREE.Vector3(x, y, z);
 }
 
-// get data from csv file
-// function getPts(x) {
-//   let unfiltered = [],
-//     lowPass = [],
-//     highPass = [];
-
-//   x.forEach(function(d, i) {
-//     // nochmal js function anschauen (d, i)
-//     let line = d.split(","); //trennugn durch , in csv
-
-//     // spalte 2,3,4
-//     unfiltered[i] = {
-//       x: +line[2],
-//       y: +line[3],
-//       z: +line[4]
-//     };
-//     lowPass[i] = {
-//       x: +line[6],
-//       y: +line[7],
-//       z: +line[8]
-//     };
-//     highPass[i] = {
-//       x: +line[7],
-//       y: +line[8],
-//       z: +line[9]
-//     };
-//   });
-//   let xyzData = {
-//     unfiltered: unfiltered,
-//     lowPass: lowPass,
-//     highPass: highPass
-//   };
-//   return xyzData;
-// }
-
 var unfiltered = [],
   lowPass = [],
   highPass = [];
 
 var format = d3.format("+.3f");
 
-let dataTest = d3.csv("defaultData.csv");
-
 d3.csv("testCSV.csv", function(data) {
   var dataValues = d3.values(data)[0]; // top row of columns = names
   var columnNum = Object.keys(dataValues); // putting names into array
+  //   console.log(Object.keys(dataValues));
 
   data.forEach(function(mydata, i) {
     unfiltered[i] = {
@@ -155,20 +98,17 @@ d3.csv("testCSV.csv", function(data) {
       z: +mydata[columnNum[4]]
     };
     lowPass[i] = {
-      x: +mydata[columnNum[5]],
-      y: +mydata[columnNum[6]],
-      z: +mydata[columnNum[7]]
+      x: +mydata[columnNum[6]],
+      y: +mydata[columnNum[7]],
+      z: +mydata[columnNum[8]]
     };
     highPass[i] = {
-      x: +mydata[columnNum[0]],
-      y: +mydata[columnNum[1]],
-      z: +mydata[columnNum[2]]
+      x: +mydata[columnNum[20]],
+      y: +mydata[columnNum[21]],
+      z: +mydata[columnNum[22]]
     };
   });
 
-  // let format = d3.format("+.3f");
-
-  // function scatter(data) {
   let temp = unfiltered;
 
   // find extent (min & max values) of either x, y or z to use for scaling
@@ -294,8 +234,9 @@ d3.csv("testCSV.csv", function(data) {
     titleZ.position.z = zScale(orientPoint.zMax) + 2;
     scatterPlot.add(titleZ);
   }
-  labelOrientation();
+  //   labelOrientation();
 
+  // rotating cube
   var cube1Geometry = new THREE.CubeGeometry(10, 10, 20);
   var cube1Material = new THREE.MeshLambertMaterial({ color: 0xffffff });
   var cube1 = new THREE.Mesh(cube1Geometry, cube1Material);
@@ -309,19 +250,19 @@ d3.csv("testCSV.csv", function(data) {
     size: 0.5 //size of particle
   });
 
-  let pointCount = unfiltered.length; //amount of all data points
+  let pointCount = lowPass.length; //amount of all data points
   let pointGeo = new THREE.Geometry();
 
   // CUBE
-  let cubeGeometry = new THREE.CubeGeometry(2, 8, 3);
+  let cubeGeometry = new THREE.CubeGeometry(2, 4, 2);
   let cube;
 
   let sphereGroup = new THREE.Object3D();
-  let sphereGeometry = new THREE.SphereGeometry(3, 20, 20);
+  let sphereGeometry = new THREE.SphereBufferGeometry(1, 10, 10);
   let sphere;
 
   // going through all data points - draw point, with color
-  for (let i = 1; i < pointCount; i++) {
+  for (let i = 1; i < lowPass.length; i++) {
     let timeFactor = 0; //.00003; // stretching data over time
     let x = xScale(lowPass[i].x + i * timeFactor);
     let y = yScale(lowPass[i].y + i * timeFactor);
@@ -333,8 +274,9 @@ d3.csv("testCSV.csv", function(data) {
 
     let colorMap = mapValues(i, 1, pointCount, 0, 150);
 
-    let cubeMaterial = new THREE.MeshLambertMaterial();
+    let cubeMaterial = new THREE.MeshLambertMaterial({ color: 0xd5d5d5 });
     cubeMaterial.color.setRGB((180 - colorMap) / 255, 100 / 255, 150 / 255);
+    // cubeMaterial.color.setRGB(50, 50, 50);
     cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
     cube.position.x = x;
     cube.position.y = y;
@@ -343,14 +285,14 @@ d3.csv("testCSV.csv", function(data) {
     cube.rotation.x = (Math.PI / 2) * (i % 2);
     // scene.add(cube);
 
-    let sphereMaterial = new THREE.MeshBasicMaterial();
+    let sphereMaterial = new THREE.MeshLambertMaterial();
     sphereMaterial.color.setRGB((180 - colorMap) / 255, 100 / 255, 150 / 255);
     let sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
     sphere.position.x = x;
     sphere.position.y = y;
     sphere.position.z = z;
-
-    // sphereGroup.add(cube);
+    scene.add(sphere);
+    sphereGroup.add(sphere);
 
     // pointGeo.vertices.push(new THREE.Vector3(x, y, z), new THREE.Vector3(u, y, z)); // connecting lines
     pointGeo.vertices.push(new THREE.Vector3(x, y, z));
@@ -380,10 +322,11 @@ d3.csv("testCSV.csv", function(data) {
   });
   // let pointCount = data.unfiltered.length; //number of all data points
   let secondPointGeo = new THREE.Geometry();
-  for (let i = 0; i < pointCount; i++) {
-    let x = xScale(unfiltered[i].x);
-    let y = yScale(unfiltered[i].y);
-    let z = zScale(unfiltered[i].z);
+  for (let i = 0; i < unfiltered.length; i++) {
+    let timeFactor = 0.0003; // stretching data over time
+    let x = xScale(unfiltered[i].x + i * timeFactor);
+    let y = yScale(unfiltered[i].y + i * timeFactor);
+    let z = zScale(unfiltered[i].z + i * timeFactor);
 
     secondPointGeo.vertices.push(new THREE.Vector3(x, z, y));
     let colorMap = mapValues(i, 1, pointCount, 0, 70);
@@ -395,37 +338,96 @@ d3.csv("testCSV.csv", function(data) {
   let secondPoints = new THREE.ParticleSystem(secondPointGeo, secondMat);
   scatterPlot.add(secondPoints);
 
-  let ambientLight = new THREE.AmbientLight(0x414141);
-  scene.add(ambientLight);
+  //   let ambientLight = new THREE.AmbientLight(0x414141);
+  //   scene.add(ambientLight);
 
-  let pointLight1 = new THREE.PointLight(0xff7f00, 0.6);
+  //   var spotLight1 = createSpotlight(0xff7f00);
+  //   var spotLight2 = createSpotlight(0x00ff7f);
+  //   var spotLight3 = createSpotlight(0x7f00ff);
+  //   spotLight1.position.set(200, -100, 100);
+  //   spotLight2.position.set(-200, 100, 0);
+  //   spotLight3.position.set(100, 100, 200);
+  //     scene.add(spotLight1, spotLight2, spotLight3);
+
+  //   function createSpotlight(color) {
+  //     var newObj = new THREE.SpotLight(color, 2);
+
+  //     newObj.castShadow = true;
+  //     newObj.angle = 0.3;
+  //     newObj.penumbra = 0.5;
+  //     newObj.decay = 2;
+  //     newObj.distance = 400;
+
+  //     return newObj;
+  //   }
+
+  // LIGHT
+
+  let ambient = new THREE.AmbientLight(0x9d9d9d, 0.4);
+  scene.add(ambient);
+
+  let pointLight1 = new THREE.PointLight(0xff7f00, 0.8);
   pointLight1.position.set(0, 0, 0);
+  pointLight1.castShadow = true;
+  pointLight1.shadow.mapSize.width = 1024;
+  pointLight1.shadow.mapSize.height = 1024;
+  pointLight1.shadow.camera.near = 1;
+  pointLight1.shadow.camera.far = 400;
   scene.add(pointLight1);
 
-  var spotLight1 = createSpotlight(0xff7f00);
-  var spotLight2 = createSpotlight(0x00ff7f);
-  var spotLight3 = createSpotlight(0x7f00ff);
-  spotLight1.position.set(200, -100, 100);
-  spotLight2.position.set(-200, 100, 0);
-  spotLight3.position.set(100, 100, 200);
-  scene.add(spotLight1, spotLight2, spotLight3);
+  spotLight1 = new THREE.SpotLight(0xffffff, 1);
+  spotLight1.position.set(-70, -100, 100);
+  spotLight1.angle = Math.PI / 8;
+  spotLight1.penumbra = 0.2;
+  spotLight1.decay = 1.5;
+  spotLight1.distance = 300;
+  spotLight1.castShadow = true;
+  spotLight1.shadow.mapSize.width = 1024;
+  spotLight1.shadow.mapSize.height = 1024;
+  spotLight1.shadow.camera.near = 10;
+  spotLight1.shadow.camera.far = 200;
+  scene.add(spotLight1);
 
-  function createSpotlight(color) {
-    var newObj = new THREE.SpotLight(color, 2);
+  spotLight2 = new THREE.SpotLight(0xf4148d, 1);
+  spotLight2.position.set(100, 100, 50);
+  spotLight2.angle = Math.PI / 6;
+  spotLight2.penumbra = 0.05;
+  spotLight2.decay = 1.5;
+  spotLight2.distance = 300;
+  spotLight2.castShadow = true;
+  spotLight2.shadow.mapSize.width = 1024;
+  spotLight2.shadow.mapSize.height = 1024;
+  spotLight2.shadow.camera.near = 10;
+  spotLight2.shadow.camera.far = 200;
+  scene.add(spotLight2);
 
-    newObj.castShadow = true;
-    newObj.angle = 0.3;
-    newObj.penumbra = 0.5;
-    newObj.decay = 2;
-    newObj.distance = 400;
+  spotLight3 = new THREE.SpotLight(0x5dd1fb, 2);
+  spotLight3.position.set(-100, 20, -80);
+  spotLight3.angle = Math.PI / 6;
+  spotLight3.penumbra = 0.05;
+  spotLight3.decay = 1.5;
+  spotLight3.distance = 300;
+  spotLight3.castShadow = true;
+  spotLight3.shadow.mapSize.width = 1024;
+  spotLight3.shadow.mapSize.height = 1024;
+  spotLight3.shadow.camera.near = 10;
+  spotLight3.shadow.camera.far = 200;
+  scene.add(spotLight3);
 
-    return newObj;
-  }
+  //   // HELPER GRID FOR LIGHTS/CAMERA
+  //   lightHelper1 = new THREE.SpotLightHelper(spotLight1);
+  //   scene.add(lightHelper1);
+
+  //   lightHelper2 = new THREE.SpotLightHelper(spotLight2);
+  //   scene.add(lightHelper2);
+
+  //   lightHelper3 = new THREE.SpotLightHelper(spotLight3);
+  //   scene.add(lightHelper3);
 
   // INTERACTION
   renderer.render(scene, camera);
-  let paused = false;
-  let last = new Date().getTime();
+  //   let paused = false;
+  //   let last = new Date().getTime();
   let down = false;
   let sx = 0,
     sy = 0;
@@ -442,15 +444,16 @@ d3.csv("testCSV.csv", function(data) {
     if (down) {
       let dx = ev.clientX - sx;
       let dy = ev.clientY - sy;
-      let dist = Math.sqrt(sq(camera.position.x) + sq(camera.position.y) + sq(camera.position.z));
+      //   let dist = Math.sqrt(sq(camera.position.x) + sq(camera.position.y) + sq(camera.position.z));
 
       scatterPlot.rotation.y += dx * 0.01;
       scatterPlot.rotation.x += dy * 0.01;
-      sphereGroup.rotation.y += dx * 0.01;
-      sphereGroup.rotation.x += dy * 0.01;
       cube1.rotation.y += dx * 0.01;
       cube1.rotation.x += dy * 0.01;
-      camera.position.y += dy; // zoom in out with mouse y change
+      //   sphereGroup.scale.y += dy * 0.01;
+      sphereGroup.rotation.y += dx * 0.01;
+      sphereGroup.rotation.x += dy * 0.01;
+      camera.position.y += dy * 1.5; // zoom in out with mouse y change
 
       sx += dx;
       sy += dy;
@@ -460,20 +463,44 @@ d3.csv("testCSV.csv", function(data) {
   // for cube rotation
   let clock = new THREE.Clock();
 
-  function animate(t) {
-    if (!paused) {
-      last = t;
-      renderer.clear();
-      camera.lookAt(scene.position);
-      cube1.rotation.y -= clock.getDelta();
-      renderer.render(scene, camera);
-    }
+  function animate() {
+    stats.begin();
+    // if (!paused) {
+    // last = t;
+    renderer.clear();
+    camera.lookAt(scene.position);
+    cube1.rotation.y -= clock.getDelta();
+    // lightHelper1.update();
+    // lightHelper2.update();
+    // lightHelper3.update();
 
+    renderer.render(scene, camera);
+    // }
+    stats.end();
     window.requestAnimationFrame(animate, renderer.domElement);
   }
-  animate(new Date().getTime());
+  //   animate(new Date().getTime());
+  animate();
 
-  onmessage = function(ev) {
-    paused = ev.data == "pause";
-  };
+  function buildGui() {
+    gui = new dat.GUI();
+    gui.domElement.id = "gui";
+
+    var params = {
+      "light color": ambientLight.color.getHex()
+    };
+
+    gui.addColor(params, "light color").onChange(function(val) {
+      ambientLight.color.setHex(val);
+      render();
+    });
+
+    gui.open();
+  }
+
+  buildGui();
+
+  //   onmessage = function(ev) {
+  //     paused = ev.data == "pause";
+  //   };
 });
