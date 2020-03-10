@@ -11,6 +11,26 @@
 - [ ]  create narrative/connection for sports to viz
 
 ------
+### 10.03.20 (2,5h)
+- mores research on animation with KeyFrames & Quaternion & AnimationClip
+  - [](https://threejs.org/examples/?q=misc#misc_animation_keys)
+  - [](https://stackoverflow.com/questions/40434314/threejs-animationclip-example-needed)
+  - [](https://stackoverflow.com/questions/45723324/parsing-and-updating-object-position-for-animation-in-three-js)
+  - [](https://threejs.org/docs/index.html#api/en/math/Quaternion)
+  - [](https://threejs.org/docs/index.html#api/en/animation/AnimationClip)
+  - [](https://threejs.org/examples/jsm/animation/AnimationClipCreator.js)
+  - [Line Animations](http://jsfiddle.net/fqLvsdnu/)
+  - [](https://discourse.threejs.org/t/line-animations/6279)
+  - [](https://discourse.threejs.org/t/drawing-with-three-linedashedmaterial/3473?u=prisoner849)
+  - [](https://threejs.org/docs/#manual/en/introduction/How-to-update-things)
+
+
+
+### 09.03.20 (3,5h)
+- recording boulder session
+- saving data and takign a first look
+- more research about animation
+
 ### 08.03.20 (5,5h)
 Next steps:
 - try out noise distortion with all points for animation
