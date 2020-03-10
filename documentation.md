@@ -29,8 +29,8 @@
 - saving data and takign a first look
 - more research about animation
 
-<img src="https://i.imgur.com/L7GtWjj.png" width="40%"> <img src="https://i.imgur.com/mirvcZr.png" width="40%">
 <img src="https://i.imgur.com/SA3yL4u.png" width="40%"> <img src="https://i.imgur.com/eGkLBUt.png" width="40%">
+<img src="https://i.imgur.com/L7GtWjj.png" width="40%"> <img src="https://i.imgur.com/mirvcZr.png" width="40%">
 
 ### 08.03.20 (5,5h)
 Next steps:
