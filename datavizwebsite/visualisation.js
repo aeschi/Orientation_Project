@@ -47,35 +47,48 @@ let gui;
 
 let ambientLight;
 
+// info
+let info = document.createElement("div");
+info.setAttribute("style", "white-space: pre;");
+info.style.position = "absolute";
+info.style.bottom = "60px";
+info.style.width = "100%";
+info.style.textAlign = "center";
+info.style.color = "#fff";
+info.style.fontWeight = "bold";
+info.style.backgroundColor = "transparent";
+info.style.zIndex = "1";
+info.style.fontFamily = "Arial";
+info.innerHTML = "Drag mouse to rotate camera  \r\n move vertically to zoom";
+document.body.appendChild(info);
+
+// renderer
 let renderer = new THREE.WebGLRenderer({
   antialias: true
 });
-
+let w = window.innerWidth * 0.8;
+let h = window.innerHeight * 0.8;
+renderer.setSize(w, h);
+document.body.appendChild(renderer.domElement);
 renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap; // default THREE.PCFShadowMap
 
-let w = window.innerWidth * 0.8;
-let h = window.innerHeight * 0.8;
-
-renderer.setSize(w, h);
-document.body.appendChild(renderer.domElement);
-
+// camera
 let camera = new THREE.PerspectiveCamera(35, w / h, 1, 10000);
-camera.position.z = 100; //50;
-camera.position.x = -100; //-50;
-camera.position.y = 100; //50;
+camera.position.set(0, 0, 250);
 
+// stats (fps)
 stats = new Stats();
 stats.showPanel(0); // 0: fps, 1: ms, 2: mb, 3+: custom
 document.body.appendChild(stats.dom);
 
+// scene
 let scene = new THREE.Scene();
 scene.background = new THREE.Color("#131313");
 
-// SCATTERPLOT
+// dataviz
 let scatterPlot = new THREE.Object3D();
 scene.add(scatterPlot);
-
 scatterPlot.rotation.y = 0; // start orientation of dataviz
 
 function vec(x, y, z) {
@@ -88,30 +101,39 @@ var unfiltered = [],
 
 var format = d3.format("+.3f");
 
-d3.csv("data/watch_50hz_gerade_topout_13_28_13.csv", function(data) {
+d3.csv("data/bouldern/VIVI_06_AppleWatch200309_10_59_38.csv", function(data) {
   var dataValues = d3.values(data)[0]; // top row of columns = names
   var columnNum = Object.keys(dataValues); // putting names into array
   //   console.log(Object.keys(dataValues));
 
   data.forEach(function(mydata, i) {
     unfiltered[i] = {
+      //   x: +mydata[columnNum[11]],
+      //   y: +mydata[columnNum[12]],
+      //   z: +mydata[columnNum[13]]
       x: +mydata[columnNum[2]],
       y: +mydata[columnNum[3]],
       z: +mydata[columnNum[4]]
     };
     lowPass[i] = {
+      //   x: +mydata[columnNum[15]],
+      //   y: +mydata[columnNum[16]],
+      //   z: +mydata[columnNum[17]]
       x: +mydata[columnNum[6]],
       y: +mydata[columnNum[7]],
       z: +mydata[columnNum[8]]
     };
     highPass[i] = {
+      //   x: +mydata[columnNum[29]],
+      //   y: +mydata[columnNum[30]],
+      //   z: +mydata[columnNum[31]]
       x: +mydata[columnNum[20]],
       y: +mydata[columnNum[21]],
       z: +mydata[columnNum[22]]
     };
   });
 
-  let temp = lowPass;
+  let temp = unfiltered;
 
   // find extent (min & max values) of either x, y or z to use for scaling
   // d3.extent returns a two element array of the minimum and maximum values from the array.
@@ -236,28 +258,67 @@ d3.csv("data/watch_50hz_gerade_topout_13_28_13.csv", function(data) {
     titleZ.position.z = zScale(orientPoint.zMax) + 2;
     scatterPlot.add(titleZ);
   }
-  //   labelOrientation();
+  labelOrientation();
+
+  //
+  //  ---- ADDING VIZ ELEMENTS ----
+  //
 
   // rotating cube
-  var cube1Geometry = new THREE.CubeGeometry(10, 10, 20);
-  var cube1Material = new THREE.MeshLambertMaterial({ color: 0xffffff });
-  var cube1 = new THREE.Mesh(cube1Geometry, cube1Material);
-  cube1.position.z = 0;
-  cube1.rotation.y = (Math.PI * 45) / 180;
-  // scene.add(cube1);
+  let cube1Geometry = new THREE.BoxBufferGeometry(2, 4, 6);
+  let cube1Material = new THREE.MeshLambertMaterial({ color: 0xffffff });
+  let cube1 = new THREE.Mesh(cube1Geometry, cube1Material);
+  scene.add(cube1);
 
-  var sphere_geometry = new THREE.SphereGeometry(5, 30, 30);
+  // create a keyframe track (i.e. a timed sequence of keyframes) for each animated property
+  // Note: the keyframe track type should correspond to the type of the property being animated
+
+  // POSITION - VectorKeyframeTrack( name : String, times : Array, values : Array )
+  let positionKF = new THREE.VectorKeyframeTrack(
+    ".position",
+    [0, 1, 2, 3, 4],
+    [-50, 0, 0, 0, 50, 0, 50, -0, 50, 0, -50, 0, -50, 0, 0]
+  );
+
+  // create an animation sequence with the tracks
+  // If a negative time value is passed, the duration will be calculated from the times of the passed tracks array
+  // AnimationClip( name : String, duration : Number, tracks : Array )
+  let clip = new THREE.AnimationClip("Action", 3, [positionKF]);
+
+  // setup the THREE.AnimationMixer
+  mixer = new THREE.AnimationMixer(cube1);
+
+  // create a ClipAction and set it to play
+  let clipAction = mixer.clipAction(clip);
+  clipAction.play();
+
+  //   let cubeGroup = new THREE.Object3D();
+
+  //   for (let i = 0; i < unfiltered.length; i++) {
+  //     let x = xScale(unfiltered[i].x);
+  //     let y = yScale(unfiltered[i].y);
+  //     let z = zScale(unfiltered[i].z);
+
+  //     var cube1 = new THREE.Mesh(cube1Geometry, cube1Material);
+  //     cube1.position.x = x;
+  //     cube1.position.y = y;
+  //     cube1.position.z = z;
+  //     cubeGroup.add(cube1);
+  //   }
+
+  // sphere noise
+  var sphere_geometry = new THREE.SphereGeometry(2, 20, 20);
   var material = new THREE.MeshLambertMaterial();
 
-  var update = function() {
-    var time = performance.now() * 0.0003;
+  var updateNoise = function() {
+    var time = 0; //performance.now() * 0.0003;
     var k = 2;
     for (var i = 0; i < sphereNoise.geometry.faces.length; i++) {
       var uv = sphereNoise.geometry.faceVertexUvs[0][i]; //faceVertexUvs is a huge arrayed stored inside of another array
       var f = sphereNoise.geometry.faces[i];
       var p = sphereNoise.geometry.vertices[f.a]; //take the first vertex from each face
       //   p.normalize().multiplyScalar(10 + 2.3 * noise.perlin3(uv[0].x * k, uv[0].y * k, time));
-      p.normalize().multiplyScalar(5 + 1 * noise.perlin3(p.x * k + time, p.y * k, p.z * k + time));
+      p.normalize().multiplyScalar(2 + 1 * noise.perlin3(p.x * k + time, p.y * k, p.z * k + time));
     }
     sphereNoise.geometry.verticesNeedUpdate = true; //must be set or vertices will not update
     sphereNoise.geometry.computeVertexNormals();
@@ -320,8 +381,8 @@ d3.csv("data/watch_50hz_gerade_topout_13_28_13.csv", function(data) {
     sphereNoise.position.y = y;
     sphereNoise.position.z = z;
     sphereNoise.rotation.x = (Math.PI / 4) * (i % 4);
-    scene.add(sphereNoise);
-    sphereGroup.add(sphereNoise);
+    // scene.add(sphereNoise);
+    // sphereGroup.add(sphereNoise);
 
     // pointGeo.vertices.push(new THREE.Vector3(x, y, z), new THREE.Vector3(u, v, w)); // connecting lines
     pointGeo.vertices.push(new THREE.Vector3(x, y, z));
@@ -331,18 +392,9 @@ d3.csv("data/watch_50hz_gerade_topout_13_28_13.csv", function(data) {
     );
   }
 
-  scene.add(sphereGroup);
+  //   scene.add(sphereGroup);
   let points = new THREE.Points(pointGeo, mat);
   //   scatterPlot.add(points);
-
-  // LINE VERSION
-  let lineMaterial = new THREE.LineBasicMaterial({
-    color: 0x820000,
-    linewidth: 1
-  });
-  let lineData = new THREE.Line(pointGeo, lineMaterial);
-  lineData.type = THREE.Lines;
-  //   scatterPlot.add(lineData);
 
   // PARTICLE SIZE & COLOR II
   let secondMat = new THREE.PointsMaterial({
@@ -365,7 +417,16 @@ d3.csv("data/watch_50hz_gerade_topout_13_28_13.csv", function(data) {
   }
 
   let secondPoints = new THREE.Points(secondPointGeo, secondMat);
-  scatterPlot.add(secondPoints);
+  //   scatterPlot.add(secondPoints);
+
+  // LINE VERSION
+  let lineMaterial = new THREE.LineBasicMaterial({
+    color: 0x820000,
+    linewidth: 1
+  });
+  let lineData = new THREE.Line(secondPointGeo, lineMaterial);
+  lineData.type = THREE.Lines;
+  //   scatterPlot.add(lineData);
 
   // LIGHT
   function lighting() {
@@ -489,27 +550,38 @@ d3.csv("data/watch_50hz_gerade_topout_13_28_13.csv", function(data) {
   let clock = new THREE.Clock();
 
   function animate() {
-    stats.begin();
     // if (!paused) {
     // last = t;
-    renderer.clear();
-    scene.children.forEach(el => {
-      el.rotation.y += 0.001;
-      el.rotation.z += 0.0005;
-    });
-    camera.lookAt(scene.position);
-    // cube1.rotation.y -= clock.getDelta();
+    // renderer.clear();
+    // scene.children.forEach(el => {
+    //   el.rotation.y += 0.001;
+    //   el.rotation.z += 0.0005;
+    // });
+
+    // cubeGroup.rotation.y -= clock.getDelta() * 0.3;
     // lightHelper1.update();
     // lightHelper2.update();
     // lightHelper3.update();
-
-    update();
-    renderer.render(scene, camera);
-    // }
-    stats.end();
     window.requestAnimationFrame(animate, renderer.domElement);
+    render();
+    // renderer.render(scene, camera);
+    // }
+  }
+
+  function render() {
+    var delta = clock.getDelta();
+
+    if (mixer) {
+      mixer.update(delta);
+    }
+
+    camera.lookAt(scene.position);
+    renderer.render(scene, camera);
+    // updateNoise();
+    stats.update();
   }
   //   animate(new Date().getTime());
+
   animate();
 
   function buildGui() {
@@ -522,7 +594,7 @@ d3.csv("data/watch_50hz_gerade_topout_13_28_13.csv", function(data) {
 
     gui.addColor(params, "light color").onChange(function(val) {
       ambientLight.color.setHex(val);
-      render();
+      //   animate();
     });
 
     gui.open();
