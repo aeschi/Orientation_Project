@@ -15,7 +15,7 @@
 - mores research on animation with KeyFrames & Quaternion & AnimationClip
   - https://threejs.org/examples/?q=misc#misc_animation_keys
   - https://stackoverflow.com/questions/40434314/threejs-animationclip-example-needed
-  - https://stackoverflow.com/questions/45723324/parsing-and-updating-object-position-for-animation-in-three-js
+  - [parsing-and-updating-object-position-for-animation-in-three-js](https://stackoverflow.com/questions/45723324/parsing-and-updating-object-position-for-animation-in-three-js)
   - https://threejs.org/docs/index.html#api/en/math/Quaternion
   - https://threejs.org/docs/index.html#api/en/animation/AnimationClip
   - https://threejs.org/examples/jsm/animation/AnimationClipCreator.js
@@ -26,7 +26,7 @@
 
 ### 09.03.20 (3,5h)
 - recording boulder session
-- saving data and takign a first look
+- saving data and taking a first look
 - more research about animation
 
 <img src="https://i.imgur.com/SA3yL4u.png" width="40%"> <img src="https://i.imgur.com/eGkLBUt.png" width="40%">
