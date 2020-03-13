@@ -108,10 +108,10 @@ var acceleration = [],
 
 var format = d3.format("+.3f");
 
-d3.csv("data/bouldern/VIVI_07_AppleWatch200309_11_19_05.csv", function(data) {
+d3.csv("data/testCSV.csv", function(data) {
   var dataValues = d3.values(data)[0]; // top row of columns = names
   var columnNum = Object.keys(dataValues); // putting names into array
-  console.log(Object.keys(dataValues));
+  //   console.log(Object.keys(dataValues));
 
   data.forEach(function(mydata, i) {
     acceleration[i] = {
@@ -295,7 +295,7 @@ d3.csv("data/bouldern/VIVI_07_AppleWatch200309_11_19_05.csv", function(data) {
     sphereNoise.geometry.normalsNeedUpdate = true;
   };
 
-  scene.add(sphereNoise);
+  //   scene.add(sphereNoise);
 
   // rotating cube
   let cube1Geometry = new THREE.BoxBufferGeometry(2, 4, 6);
@@ -761,17 +761,17 @@ d3.csv("data/bouldern/VIVI_07_AppleWatch200309_11_19_05.csv", function(data) {
     }
   };
 
-  let animateVisibility = false;
+  let animateVisibility = true;
   // for cube rotation
   let clock = new THREE.Clock();
 
   function animate(time) {
     // last = t;
     // renderer.clear();
-    // scene.children.forEach(el => {
-    //   el.rotation.y += 0.001;
-    //   el.rotation.z += 0.0005;
-    // });
+    scene.children.forEach(el => {
+      el.rotation.y += 0.001;
+      el.rotation.z += 0.0005;
+    });
 
     // cubeGroup.rotation.y -= clock.getDelta() * 0.3;
     // lightHelper1.update();
