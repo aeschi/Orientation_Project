@@ -47,6 +47,12 @@ let gui;
 
 let ambientLight;
 
+var loader = new THREE.TextureLoader();
+loader.load("assets/stroke.png", function(texture) {
+  strokeTexture = texture;
+  //   init();
+});
+
 // info
 let info = document.createElement("div");
 info.setAttribute("style", "white-space: pre;");
@@ -75,7 +81,7 @@ renderer.shadowMap.type = THREE.PCFSoftShadowMap; // default THREE.PCFShadowMap
 
 // camera
 let camera = new THREE.PerspectiveCamera(35, w / h, 1, 10000);
-camera.position.set(0, 0, 250);
+camera.position.set(0, 0, 200);
 
 // stats (fps)
 stats = new Stats();
@@ -95,19 +101,20 @@ function vec(x, y, z) {
   return new THREE.Vector3(x, y, z);
 }
 
-var unfiltered = [],
-  lowPass = [],
-  highPass = [];
+var acceleration = [],
+  motionYawRollPitch = [],
+  gravity = [],
+  quaternationData = [];
 
 var format = d3.format("+.3f");
 
-d3.csv("data/bouldern/VIVI_06_AppleWatch200309_10_59_38.csv", function(data) {
+d3.csv("data/bouldern/VIVI_07_AppleWatch200309_11_19_05.csv", function(data) {
   var dataValues = d3.values(data)[0]; // top row of columns = names
   var columnNum = Object.keys(dataValues); // putting names into array
-  //   console.log(Object.keys(dataValues));
+  console.log(Object.keys(dataValues));
 
   data.forEach(function(mydata, i) {
-    unfiltered[i] = {
+    acceleration[i] = {
       //   x: +mydata[columnNum[11]],
       //   y: +mydata[columnNum[12]],
       //   z: +mydata[columnNum[13]]
@@ -115,7 +122,7 @@ d3.csv("data/bouldern/VIVI_06_AppleWatch200309_10_59_38.csv", function(data) {
       y: +mydata[columnNum[3]],
       z: +mydata[columnNum[4]]
     };
-    lowPass[i] = {
+    motionYawRollPitch[i] = {
       //   x: +mydata[columnNum[15]],
       //   y: +mydata[columnNum[16]],
       //   z: +mydata[columnNum[17]]
@@ -123,7 +130,7 @@ d3.csv("data/bouldern/VIVI_06_AppleWatch200309_10_59_38.csv", function(data) {
       y: +mydata[columnNum[7]],
       z: +mydata[columnNum[8]]
     };
-    highPass[i] = {
+    gravity[i] = {
       //   x: +mydata[columnNum[29]],
       //   y: +mydata[columnNum[30]],
       //   z: +mydata[columnNum[31]]
@@ -131,9 +138,15 @@ d3.csv("data/bouldern/VIVI_06_AppleWatch200309_10_59_38.csv", function(data) {
       y: +mydata[columnNum[21]],
       z: +mydata[columnNum[22]]
     };
+    quaternationData[i] = {
+      x: +mydata[columnNum[16]],
+      y: +mydata[columnNum[17]],
+      z: +mydata[columnNum[18]],
+      w: +mydata[columnNum[19]]
+    };
   });
 
-  let temp = unfiltered;
+  let temp = motionYawRollPitch;
 
   // find extent (min & max values) of either x, y or z to use for scaling
   // d3.extent returns a two element array of the minimum and maximum values from the array.
@@ -263,6 +276,26 @@ d3.csv("data/bouldern/VIVI_06_AppleWatch200309_10_59_38.csv", function(data) {
   //
   //  ---- ADDING VIZ ELEMENTS ----
   //
+  // sphere noise
+  var sphere_geometry = new THREE.SphereGeometry(15, 20, 20);
+  var material = new THREE.MeshLambertMaterial();
+  var sphereNoise = new THREE.Mesh(sphere_geometry, material);
+  var updateNoise = function() {
+    var time = performance.now() * 0.0005;
+    var k = 5;
+    for (var i = 0; i < sphereNoise.geometry.faces.length; i++) {
+      var uv = sphereNoise.geometry.faceVertexUvs[0][i]; //faceVertexUvs is a huge arrayed stored inside of another array
+      var f = sphereNoise.geometry.faces[i];
+      var p = sphereNoise.geometry.vertices[f.a]; //take the first vertex from each face
+      //   p.normalize().multiplyScalar(10 + 2.3 * noise.perlin3(uv[0].x * k, uv[0].y * k, time));
+      p.normalize().multiplyScalar(15 + 10 * noise.perlin3(p.x * k + time, p.y * k, p.z * k + time));
+    }
+    sphereNoise.geometry.verticesNeedUpdate = true; //must be set or vertices will not update
+    sphereNoise.geometry.computeVertexNormals();
+    sphereNoise.geometry.normalsNeedUpdate = true;
+  };
+
+  scene.add(sphereNoise);
 
   // rotating cube
   let cube1Geometry = new THREE.BoxBufferGeometry(2, 4, 6);
@@ -273,31 +306,230 @@ d3.csv("data/bouldern/VIVI_06_AppleWatch200309_10_59_38.csv", function(data) {
   // create a keyframe track (i.e. a timed sequence of keyframes) for each animated property
   // Note: the keyframe track type should correspond to the type of the property being animated
 
+  let stepSize = Math.floor(quaternationData.length / 15);
+  //   console.log("quaternationData length", Math.floor(quaternationData.length));
+  //   console.log("quaternationData length /11", stepSize);
   // POSITION - VectorKeyframeTrack( name : String, times : Array, values : Array )
-  let positionKF = new THREE.VectorKeyframeTrack(
-    ".position",
-    [0, 1, 2, 3, 4],
-    [-50, 0, 0, 0, 50, 0, 50, -0, 50, 0, -50, 0, -50, 0, 0]
-  );
+  let positionKF = new THREE.VectorKeyframeTrack(".position", [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]);
+  positionKF.values = [
+    xScale(gravity[0 * stepSize].x),
+    yScale(gravity[0 * stepSize].y),
+    zScale(gravity[0 * stepSize].z),
+    xScale(gravity[1 * stepSize].x),
+    yScale(gravity[1 * stepSize].y),
+    zScale(gravity[1 * stepSize].z),
+    xScale(gravity[2 * stepSize].x),
+    yScale(gravity[2 * stepSize].y),
+    zScale(gravity[2 * stepSize].z),
+    xScale(gravity[3 * stepSize].x),
+    yScale(gravity[3 * stepSize].y),
+    zScale(gravity[3 * stepSize].z),
+    xScale(gravity[4 * stepSize].x),
+    yScale(gravity[4 * stepSize].y),
+    zScale(gravity[4 * stepSize].z),
+    xScale(gravity[5 * stepSize].x),
+    yScale(gravity[5 * stepSize].y),
+    zScale(gravity[5 * stepSize].z),
+    xScale(gravity[6 * stepSize].x),
+    yScale(gravity[6 * stepSize].y),
+    zScale(gravity[6 * stepSize].z),
+    xScale(gravity[7 * stepSize].x),
+    yScale(gravity[7 * stepSize].y),
+    zScale(gravity[7 * stepSize].z),
+    xScale(gravity[8 * stepSize].x),
+    yScale(gravity[8 * stepSize].y),
+    zScale(gravity[8 * stepSize].z),
+    xScale(gravity[9 * stepSize].x),
+    yScale(gravity[9 * stepSize].y),
+    zScale(gravity[9 * stepSize].z),
+    xScale(gravity[10 * stepSize].x),
+    yScale(gravity[10 * stepSize].y),
+    zScale(gravity[10 * stepSize].z),
+    xScale(gravity[11 * stepSize].x),
+    yScale(gravity[11 * stepSize].y),
+    zScale(gravity[11 * stepSize].z),
+    xScale(gravity[12 * stepSize].x),
+    yScale(gravity[12 * stepSize].y),
+    zScale(gravity[12 * stepSize].z),
+    xScale(gravity[13 * stepSize].x),
+    yScale(gravity[13 * stepSize].y),
+    zScale(gravity[13 * stepSize].z),
+    xScale(gravity[14 * stepSize].x),
+    yScale(gravity[14 * stepSize].y),
+    zScale(gravity[14 * stepSize].z),
+    xScale(gravity[15 * stepSize].x),
+    yScale(gravity[15 * stepSize].y),
+    zScale(gravity[15 * stepSize].z)
+  ];
+  //   console.log("motionYawRollPitch array: ", positionKF.values);
+
+  // ROTATION
+  // Rotation should be performed using quaternions, using a THREE.QuaternionKeyframeTrack
+  // Interpolating Euler angles (.rotation property) can be problematic and is currently not supported
+  // set up rotation about x axis
+  var xAxis = new THREE.Vector3(1, 0, 0);
+
+  var qInitial = new THREE.Quaternion().setFromAxisAngle(xAxis, 0);
+  var qFinal = new THREE.Quaternion().setFromAxisAngle(xAxis, Math.PI);
+  var quaternionKF = new THREE.QuaternionKeyframeTrack(".quaternion", [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15
+  ]);
+  quaternionKF.values = [
+    quaternationData[0 * stepSize].x,
+    quaternationData[0 * stepSize].y,
+    quaternationData[0 * stepSize].z,
+    quaternationData[0 * stepSize].w,
+    quaternationData[1 * stepSize].x,
+    quaternationData[1 * stepSize].y,
+    quaternationData[1 * stepSize].z,
+    quaternationData[1 * stepSize].w,
+    quaternationData[2 * stepSize].x,
+    quaternationData[2 * stepSize].y,
+    quaternationData[2 * stepSize].z,
+    quaternationData[2 * stepSize].w,
+    quaternationData[3 * stepSize].x,
+    quaternationData[3 * stepSize].y,
+    quaternationData[3 * stepSize].z,
+    quaternationData[3 * stepSize].w,
+    quaternationData[4 * stepSize].x,
+    quaternationData[4 * stepSize].y,
+    quaternationData[4 * stepSize].z,
+    quaternationData[4 * stepSize].w,
+    quaternationData[5 * stepSize].x,
+    quaternationData[5 * stepSize].y,
+    quaternationData[5 * stepSize].z,
+    quaternationData[5 * stepSize].w,
+    quaternationData[6 * stepSize].x,
+    quaternationData[6 * stepSize].y,
+    quaternationData[6 * stepSize].z,
+    quaternationData[6 * stepSize].w,
+    quaternationData[7 * stepSize].x,
+    quaternationData[7 * stepSize].y,
+    quaternationData[7 * stepSize].z,
+    quaternationData[7 * stepSize].w,
+    quaternationData[8 * stepSize].x,
+    quaternationData[8 * stepSize].y,
+    quaternationData[8 * stepSize].z,
+    quaternationData[8 * stepSize].w,
+    quaternationData[9 * stepSize].x,
+    quaternationData[9 * stepSize].y,
+    quaternationData[9 * stepSize].z,
+    quaternationData[9 * stepSize].w,
+    quaternationData[10 * stepSize].x,
+    quaternationData[10 * stepSize].y,
+    quaternationData[10 * stepSize].z,
+    quaternationData[10 * stepSize].w,
+    quaternationData[11 * stepSize].x,
+    quaternationData[11 * stepSize].y,
+    quaternationData[11 * stepSize].z,
+    quaternationData[11 * stepSize].w,
+    quaternationData[12 * stepSize].x,
+    quaternationData[12 * stepSize].y,
+    quaternationData[12 * stepSize].z,
+    quaternationData[12 * stepSize].w,
+    quaternationData[13 * stepSize].x,
+    quaternationData[13 * stepSize].y,
+    quaternationData[13 * stepSize].z,
+    quaternationData[13 * stepSize].w,
+    quaternationData[14 * stepSize].x,
+    quaternationData[14 * stepSize].y,
+    quaternationData[14 * stepSize].z,
+    quaternationData[14 * stepSize].w,
+    quaternationData[15 * stepSize].x,
+    quaternationData[15 * stepSize].y,
+    quaternationData[15 * stepSize].z,
+    quaternationData[15 * stepSize].w
+  ];
 
   // create an animation sequence with the tracks
   // If a negative time value is passed, the duration will be calculated from the times of the passed tracks array
   // AnimationClip( name : String, duration : Number, tracks : Array )
-  let clip = new THREE.AnimationClip("Action", 3, [positionKF]);
+  let clip = new THREE.AnimationClip("Action", 11, [quaternionKF]);
 
   // setup the THREE.AnimationMixer
-  mixer = new THREE.AnimationMixer(cube1);
+  mixer = new THREE.AnimationMixer(sphereNoise);
 
   // create a ClipAction and set it to play
   let clipAction = mixer.clipAction(clip);
   clipAction.play();
 
+  // MESH LINE
+
+  var lineGeometry = new THREE.Geometry();
+
+  for (let i = 1; i < gravity.length; i++) {
+    let x = xScale(gravity[i].x);
+    let y = yScale(gravity[i].y);
+    let z = zScale(gravity[i].z);
+
+    var v = vec(x, y, z);
+    lineGeometry.vertices.push(v);
+  }
+
+  let colors = [
+    0xed6a5a,
+    0xf4f1bb,
+    0x9bc1bc,
+    0x5ca4a9,
+    0xe6ebe0,
+    0xf0b67f,
+    0xfe5f55,
+    0xd6d1b1,
+    0xc7efcf,
+    0xeef5db,
+    0x50514f,
+    0xf25f5c,
+    0xffe066,
+    0x247ba0,
+    0x70c1b3
+  ];
+
+  let line = new MeshLine();
+  line.setGeometry(lineGeometry, function(p) {
+    return 2 + Math.sin(50 * p);
+  });
+
+  let lineMat = new MeshLineMaterial({
+    map: strokeTexture,
+    useMap: 0,
+    color: new THREE.Color("#E5AD24"),
+    // color: new THREE.Color(colors[~~Maf.randomInRange(0, colors.length)]),
+    lineWidth: 0.3,
+    near: 1,
+    far: 100000,
+    opacity: 1,
+    // dashArray: new THREE.Vector2(10, 5),
+    blending: THREE.AdditiveBlending,
+    transparent: true
+  });
+
+  let lineMesh = new THREE.Mesh(line.geometry, lineMat);
+  scene.add(lineMesh);
+
+  //
+  // old stuff/ /
+
   //   let cubeGroup = new THREE.Object3D();
 
-  //   for (let i = 0; i < unfiltered.length; i++) {
-  //     let x = xScale(unfiltered[i].x);
-  //     let y = yScale(unfiltered[i].y);
-  //     let z = zScale(unfiltered[i].z);
+  //   for (let i = 0; i < acceleration.length; i++) {
+  //     let x = xScale(acceleration[i].x);
+  //     let y = yScale(acceleration[i].y);
+  //     let z = zScale(acceleration[i].z);
 
   //     var cube1 = new THREE.Mesh(cube1Geometry, cube1Material);
   //     cube1.position.x = x;
@@ -306,34 +538,13 @@ d3.csv("data/bouldern/VIVI_06_AppleWatch200309_10_59_38.csv", function(data) {
   //     cubeGroup.add(cube1);
   //   }
 
-  // sphere noise
-  var sphere_geometry = new THREE.SphereGeometry(2, 20, 20);
-  var material = new THREE.MeshLambertMaterial();
-
-  var updateNoise = function() {
-    var time = 0; //performance.now() * 0.0003;
-    var k = 2;
-    for (var i = 0; i < sphereNoise.geometry.faces.length; i++) {
-      var uv = sphereNoise.geometry.faceVertexUvs[0][i]; //faceVertexUvs is a huge arrayed stored inside of another array
-      var f = sphereNoise.geometry.faces[i];
-      var p = sphereNoise.geometry.vertices[f.a]; //take the first vertex from each face
-      //   p.normalize().multiplyScalar(10 + 2.3 * noise.perlin3(uv[0].x * k, uv[0].y * k, time));
-      p.normalize().multiplyScalar(2 + 1 * noise.perlin3(p.x * k + time, p.y * k, p.z * k + time));
-    }
-    sphereNoise.geometry.verticesNeedUpdate = true; //must be set or vertices will not update
-    sphereNoise.geometry.computeVertexNormals();
-    sphereNoise.geometry.normalsNeedUpdate = true;
-  };
-
-  //   scene.add(sphereNoise);
-
   // PARTICLE SIZE & COLOR
   let mat = new THREE.PointsMaterial({
     vertexColors: true, // ?
-    size: 0.5 //size of particle
+    size: 1 //size of particle
   });
 
-  let pointCount = lowPass.length; //amount of all data points
+  let pointCount = motionYawRollPitch.length; //amount of all data points
   let pointGeo = new THREE.Geometry();
 
   // CUBE
@@ -344,15 +555,15 @@ d3.csv("data/bouldern/VIVI_06_AppleWatch200309_10_59_38.csv", function(data) {
   let sphereGeometry = new THREE.SphereBufferGeometry(1, 10, 10);
 
   // going through all data points - draw point, with color
-  for (let i = 1; i < lowPass.length; i++) {
+  for (let i = 1; i < motionYawRollPitch.length; i++) {
     let timeFactor = 0; //.00003; // stretching data over time
-    let x = xScale(lowPass[i].x + i * timeFactor);
-    let y = yScale(lowPass[i].y + i * timeFactor);
-    let z = zScale(lowPass[i].z + i * timeFactor);
+    let x = xScale(motionYawRollPitch[i].x + i * timeFactor);
+    let y = yScale(motionYawRollPitch[i].y + i * timeFactor);
+    let z = zScale(motionYawRollPitch[i].z + i * timeFactor);
 
-    // let u = xScale(lowPass[i - 1].x);
-    // let v = yScale(lowPass[i - 1].y);
-    // let w = zScale(lowPass[i - 1].z);
+    // let u = xScale(motionYawRollPitch[i - 1].x);
+    // let v = yScale(motionYawRollPitch[i - 1].y);
+    // let w = zScale(motionYawRollPitch[i - 1].z);
 
     let colorMap = mapValues(i, 1, pointCount, 0, 150);
 
@@ -376,17 +587,17 @@ d3.csv("data/bouldern/VIVI_06_AppleWatch200309_10_59_38.csv", function(data) {
     // scene.add(sphere);
     // sphereGroup.add(sphere);
 
-    var sphereNoise = new THREE.Mesh(sphere_geometry, material);
-    sphereNoise.position.x = x;
-    sphereNoise.position.y = y;
-    sphereNoise.position.z = z;
-    sphereNoise.rotation.x = (Math.PI / 4) * (i % 4);
+    // var sphereNoise = new THREE.Mesh(sphere_geometry, material);
+    // sphereNoise.position.x = x;
+    // sphereNoise.position.y = y;
+    // sphereNoise.position.z = z;
+    // sphereNoise.rotation.x = (Math.PI / 4) * (i % 4);
     // scene.add(sphereNoise);
     // sphereGroup.add(sphereNoise);
 
     // pointGeo.vertices.push(new THREE.Vector3(x, y, z), new THREE.Vector3(u, v, w)); // connecting lines
     pointGeo.vertices.push(new THREE.Vector3(x, y, z));
-    console.log(pointCount);
+    // console.log(pointCount);
     pointGeo.colors.push(
       new THREE.Color().setRGB((170 - colorMap) / 255, 50 / 255, 67 / 255) //Gradient from red to blue
     );
@@ -394,35 +605,35 @@ d3.csv("data/bouldern/VIVI_06_AppleWatch200309_10_59_38.csv", function(data) {
 
   //   scene.add(sphereGroup);
   let points = new THREE.Points(pointGeo, mat);
-  //   scatterPlot.add(points);
+  scatterPlot.add(points);
 
   // PARTICLE SIZE & COLOR II
   let secondMat = new THREE.PointsMaterial({
     vertexColors: true, // ?
     size: 0.5
   });
-  // let pointCount = data.unfiltered.length; //number of all data points
+  // let pointCount = data.acceleration.length; //number of all data points
   let secondPointGeo = new THREE.Geometry();
-  for (let i = 0; i < unfiltered.length; i++) {
+  for (let i = 0; i < acceleration.length; i++) {
     let timeFactor = 0.0003; // stretching data over time
-    let x = xScale(unfiltered[i].x + i * timeFactor);
-    let y = yScale(unfiltered[i].y + i * timeFactor);
-    let z = zScale(unfiltered[i].z + i * timeFactor);
+    let x = xScale(acceleration[i].x + i * timeFactor);
+    let y = yScale(acceleration[i].y + i * timeFactor);
+    let z = zScale(acceleration[i].z + i * timeFactor);
 
     secondPointGeo.vertices.push(new THREE.Vector3(x, z, y));
     let colorMap = mapValues(i, 1, pointCount, 0, 70);
     secondPointGeo.colors.push(
-      new THREE.Color().setRGB(215 / 255, (150 - colorMap) / 255, 22 / 255) //Gradient from yellow to orange
+      new THREE.Color().setRGB((255 - colorMap) / 255, (255 - colorMap) / 255, (255 - colorMap) / 255) //Gradient from yellow to orange
     );
   }
 
   let secondPoints = new THREE.Points(secondPointGeo, secondMat);
-  //   scatterPlot.add(secondPoints);
+  scatterPlot.add(secondPoints);
 
   // LINE VERSION
   let lineMaterial = new THREE.LineBasicMaterial({
     color: 0x820000,
-    linewidth: 1
+    lineWidth: 0.1
   });
   let lineData = new THREE.Line(secondPointGeo, lineMaterial);
   lineData.type = THREE.Lines;
@@ -532,13 +743,17 @@ d3.csv("data/bouldern/VIVI_06_AppleWatch200309_10_59_38.csv", function(data) {
       let dy = ev.clientY - sy;
       //   let dist = Math.sqrt(sq(camera.position.x) + sq(camera.position.y) + sq(camera.position.z));
 
-      scatterPlot.rotation.y += dx * 0.01;
-      scatterPlot.rotation.x += dy * 0.01;
-      cube1.rotation.y += dx * 0.01;
-      cube1.rotation.x += dy * 0.01;
+      scene.children.forEach(el => {
+        el.rotation.y += dx * 0.01;
+        el.rotation.z += dy * 0.01;
+      });
+      //   scatterPlot.rotation.y += dx * 0.01;
+      //   scatterPlot.rotation.x += dy * 0.01;
+      //   cube1.rotation.y += dx * 0.01;
+      //   cube1.rotation.x += dy * 0.01;
       //   sphereGroup.scale.y += dy * 0.01;
-      sphereGroup.rotation.y += dx * 0.01;
-      sphereGroup.rotation.x += dy * 0.01;
+      //   sphereGroup.rotation.y += dx * 0.01;
+      //   sphereGroup.rotation.x += dy * 0.01;
       camera.position.y += dy * 1.5; // zoom in out with mouse y change
 
       sx += dx;
@@ -546,11 +761,11 @@ d3.csv("data/bouldern/VIVI_06_AppleWatch200309_10_59_38.csv", function(data) {
     }
   };
 
+  let animateVisibility = false;
   // for cube rotation
   let clock = new THREE.Clock();
 
-  function animate() {
-    // if (!paused) {
+  function animate(time) {
     // last = t;
     // renderer.clear();
     // scene.children.forEach(el => {
@@ -563,9 +778,8 @@ d3.csv("data/bouldern/VIVI_06_AppleWatch200309_10_59_38.csv", function(data) {
     // lightHelper2.update();
     // lightHelper3.update();
     window.requestAnimationFrame(animate, renderer.domElement);
+    lineMesh.material.uniforms.visibility.value = animateVisibility ? (time / 100000) % 1.0 : 1.0;
     render();
-    // renderer.render(scene, camera);
-    // }
   }
 
   function render() {
@@ -577,7 +791,7 @@ d3.csv("data/bouldern/VIVI_06_AppleWatch200309_10_59_38.csv", function(data) {
 
     camera.lookAt(scene.position);
     renderer.render(scene, camera);
-    // updateNoise();
+    updateNoise();
     stats.update();
   }
   //   animate(new Date().getTime());
