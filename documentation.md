@@ -16,12 +16,13 @@
 - point cloud explosion (animation)
 - general animation testing
 
+<img src="https://i.imgur.com/sqITMF7.png" width="80%">
+
 - should add:
     - sound design (bouldering: hands smearing & clap, swimming: splash, cycling: kette, bremsen, skating: street pop sound, ice skating: ice)
     - spherenoise 3d object back into scene for more 3dish style
     - color code (bouldering: white chalk point cloud, swimming: blue water splash particles)
     
-<img src="https://i.imgur.com/sqITMF7.png" width="40%">
 <img src="https://instagram.ftxl3-2.fna.fbcdn.net/v/t51.2885-15/sh0.08/e35/s750x750/88339074_591465014916255_6941607677378271626_n.jpg?_nc_ht=instagram.ftxl3-2.fna.fbcdn.net&_nc_cat=103&_nc_ohc=tm1lL5uCuLIAX_g0-T1&oh=f7e1af615086548eb7814317f6343b2b&oe=5EA5AC8B" width="40%">
 
 ### 10.03.20 (2,5h)
