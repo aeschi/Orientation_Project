@@ -297,11 +297,35 @@ d3.csv("data/testCSV.csv", function(data) {
 
   //   scene.add(sphereNoise);
 
+  // PARTICLE SIZE & COLOR II
+  let secondMat = new THREE.PointsMaterial({
+    vertexColors: true, // ?
+    size: 0.5
+  });
+
+  let pointCount2 = acceleration.length; //number of all data points
+  let secondPointGeo = new THREE.Geometry();
+  for (let i = 0; i < acceleration.length; i++) {
+    let timeFactor = 0.0003; // stretching data over time
+    let x = xScale(acceleration[i].x + i * timeFactor);
+    let y = yScale(acceleration[i].y + i * timeFactor);
+    let z = zScale(acceleration[i].z + i * timeFactor);
+
+    secondPointGeo.vertices.push(new THREE.Vector3(x, z, y));
+    let colorMap = mapValues(i, 1, pointCount2, 0, 70);
+    secondPointGeo.colors.push(
+      new THREE.Color().setRGB((255 - colorMap) / 255, (255 - colorMap) / 255, (255 - colorMap) / 255) //Gradient from yellow to orange
+    );
+  }
+
+  let secondPoints = new THREE.Points(secondPointGeo, secondMat);
+  scatterPlot.add(secondPoints);
+
   // rotating cube
   let cube1Geometry = new THREE.BoxBufferGeometry(2, 4, 6);
   let cube1Material = new THREE.MeshLambertMaterial({ color: 0xffffff });
   let cube1 = new THREE.Mesh(cube1Geometry, cube1Material);
-  scene.add(cube1);
+  //   scene.add(cube1);
 
   // create a keyframe track (i.e. a timed sequence of keyframes) for each animated property
   // Note: the keyframe track type should correspond to the type of the property being animated
@@ -309,6 +333,7 @@ d3.csv("data/testCSV.csv", function(data) {
   let stepSize = Math.floor(quaternationData.length / 15);
   //   console.log("quaternationData length", Math.floor(quaternationData.length));
   //   console.log("quaternationData length /11", stepSize);
+
   // POSITION - VectorKeyframeTrack( name : String, times : Array, values : Array )
   let positionKF = new THREE.VectorKeyframeTrack(".position", [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]);
   positionKF.values = [
@@ -363,6 +388,14 @@ d3.csv("data/testCSV.csv", function(data) {
   ];
   //   console.log("motionYawRollPitch array: ", positionKF.values);
 
+  // SCALE
+  var scaleKF = new THREE.VectorKeyframeTrack(
+    ".scale",
+    [0, 1, 2, 3],
+    [0, 0, 0, 0.6, 0.6, 0.6, 0.85, 0.85, 0.85, 1, 1, 1],
+    THREE.InterpolateSmooth
+  );
+  scaleKF.scale(5);
   // ROTATION
   // Rotation should be performed using quaternions, using a THREE.QuaternionKeyframeTrack
   // Interpolating Euler angles (.rotation property) can be problematic and is currently not supported
@@ -459,10 +492,10 @@ d3.csv("data/testCSV.csv", function(data) {
   // create an animation sequence with the tracks
   // If a negative time value is passed, the duration will be calculated from the times of the passed tracks array
   // AnimationClip( name : String, duration : Number, tracks : Array )
-  let clip = new THREE.AnimationClip("Action", 11, [quaternionKF]);
+  let clip = new THREE.AnimationClip("Action", 11, [scaleKF]);
 
   // setup the THREE.AnimationMixer
-  mixer = new THREE.AnimationMixer(sphereNoise);
+  mixer = new THREE.AnimationMixer(secondPoints);
 
   // create a ClipAction and set it to play
   let clipAction = mixer.clipAction(clip);
@@ -607,29 +640,6 @@ d3.csv("data/testCSV.csv", function(data) {
   let points = new THREE.Points(pointGeo, mat);
   scatterPlot.add(points);
 
-  // PARTICLE SIZE & COLOR II
-  let secondMat = new THREE.PointsMaterial({
-    vertexColors: true, // ?
-    size: 0.5
-  });
-  // let pointCount = data.acceleration.length; //number of all data points
-  let secondPointGeo = new THREE.Geometry();
-  for (let i = 0; i < acceleration.length; i++) {
-    let timeFactor = 0.0003; // stretching data over time
-    let x = xScale(acceleration[i].x + i * timeFactor);
-    let y = yScale(acceleration[i].y + i * timeFactor);
-    let z = zScale(acceleration[i].z + i * timeFactor);
-
-    secondPointGeo.vertices.push(new THREE.Vector3(x, z, y));
-    let colorMap = mapValues(i, 1, pointCount, 0, 70);
-    secondPointGeo.colors.push(
-      new THREE.Color().setRGB((255 - colorMap) / 255, (255 - colorMap) / 255, (255 - colorMap) / 255) //Gradient from yellow to orange
-    );
-  }
-
-  let secondPoints = new THREE.Points(secondPointGeo, secondMat);
-  scatterPlot.add(secondPoints);
-
   // LINE VERSION
   let lineMaterial = new THREE.LineBasicMaterial({
     color: 0x820000,
@@ -749,6 +759,7 @@ d3.csv("data/testCSV.csv", function(data) {
       });
       //   scatterPlot.rotation.y += dx * 0.01;
       //   scatterPlot.rotation.x += dy * 0.01;
+      //   scatterPlot.scale.y += dx * 0.01;
       //   cube1.rotation.y += dx * 0.01;
       //   cube1.rotation.x += dy * 0.01;
       //   sphereGroup.scale.y += dy * 0.01;
@@ -769,8 +780,8 @@ d3.csv("data/testCSV.csv", function(data) {
     // last = t;
     // renderer.clear();
     scene.children.forEach(el => {
-      el.rotation.y += 0.001;
-      el.rotation.z += 0.0005;
+      //   el.rotation.y += 0.0005;
+      //   el.rotation.z += 0.0005;
     });
 
     // cubeGroup.rotation.y -= clock.getDelta() * 0.3;
@@ -778,6 +789,7 @@ d3.csv("data/testCSV.csv", function(data) {
     // lightHelper2.update();
     // lightHelper3.update();
     window.requestAnimationFrame(animate, renderer.domElement);
+
     lineMesh.material.uniforms.visibility.value = animateVisibility ? (time / 100000) % 1.0 : 1.0;
     render();
   }
@@ -788,7 +800,7 @@ d3.csv("data/testCSV.csv", function(data) {
     if (mixer) {
       mixer.update(delta);
     }
-
+    // scatterPlot.scale *= 0.001;
     camera.lookAt(scene.position);
     renderer.render(scene, camera);
     updateNoise();
