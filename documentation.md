@@ -22,6 +22,8 @@
 - recorded skating with roman
 - editing some photos
 
+<img src="https://i.imgur.com/sAaMZpf.jpg" width="40%"> <img src="https://i.imgur.com/Vw0WciG.jpg" width="40%">
+
 ### 12/13/14.03.20 (4h)
 - added line animation
 - point cloud explosion (animation)
@@ -51,6 +53,8 @@
 
 ### 09.03.20 (3,5h)
 - recording boulder session
+<img src="https://i.imgur.com/LNMBX3q.jpg" width="40%"> <img src="https://i.imgur.com/TSPJArQ.jpg" width="40%">
+
 - saving data and taking a first look
 - more research about animation
 
