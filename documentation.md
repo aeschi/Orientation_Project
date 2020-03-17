@@ -12,7 +12,13 @@
 
 ------
 ### 17.03.20 (2h)
+- should try out: use MeshLambertMaterial, set envMaps to reflective 
+- can I use buffer geometry?
+- half bals with [phiStart](https://threejs.org/docs/#api/en/geometries/SphereGeometry) etc.. 
+- some shape tests with material, noise, color, amount of points:
 
+<img src="https://i.imgur.com/cQQcUhc.png" width="40%"> <img src="https://i.imgur.com/Z2CHjpf.png" width="40%">
+<img src="https://i.imgur.com/otghlky.png" width="40%"> <img src="https://i.imgur.com/6gFzqIL.png" width="40%">
 
 ### 16.03.20 (2h)
 - editing some photos
