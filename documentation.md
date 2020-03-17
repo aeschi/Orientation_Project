@@ -11,8 +11,8 @@
 - [ ]  create narrative/connection for sports to viz
 
 ------
-### 17.03.20 (1,5h)
-- use MeshLambertMaterial, set envMaps to reflective 
+### 17.03.20 (2h)
+- should try out: use MeshLambertMaterial, set envMaps to reflective 
 - can I use buffer geometry?
 - half bals with [phiStart](https://threejs.org/docs/#api/en/geometries/SphereGeometry) etc.. 
 - some shape tests with material, noise, color, amount of points:
