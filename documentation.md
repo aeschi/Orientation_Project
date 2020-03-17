@@ -11,6 +11,17 @@
 - [ ]  create narrative/connection for sports to viz
 
 ------
+### 17.03.20 (2h)
+
+
+### 16.03.20 (2h)
+- editing some photos
+- transfering and sorting recorded data 
+
+### 15.03.20 (2h)
+- recorded skating with roman
+- editing some photos
+
 ### 12/13/14.03.20 (4h)
 - added line animation
 - point cloud explosion (animation)
