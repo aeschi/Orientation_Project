@@ -53,6 +53,7 @@
 
 ### 09.03.20 (3,5h)
 - recording boulder session
+
 <img src="https://i.imgur.com/LNMBX3q.jpg" width="40%"> <img src="https://i.imgur.com/TSPJArQ.jpg" width="40%">
 
 - saving data and taking a first look
