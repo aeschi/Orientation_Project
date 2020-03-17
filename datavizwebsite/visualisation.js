@@ -108,7 +108,7 @@ var acceleration = [],
 
 var format = d3.format("+.3f");
 
-d3.csv("data/testCSV.csv", function(data) {
+d3.csv("data/bouldern/VIVI_06_AppleWatch200309_10_59_38.csv", function(data) {
   var dataValues = d3.values(data)[0]; // top row of columns = names
   var columnNum = Object.keys(dataValues); // putting names into array
   //   console.log(Object.keys(dataValues));
@@ -277,20 +277,20 @@ d3.csv("data/testCSV.csv", function(data) {
   //  ---- ADDING VIZ ELEMENTS ----
   //
   // sphere noise
-  var sphere_geometry = new THREE.SphereGeometry(1, 20, 20);
-  var material = new THREE.MeshLambertMaterial({ color: 0x8bdfff });
+  var sphere_geometry = new THREE.SphereGeometry(3, 15, 20);
+  var material = new THREE.MeshLambertMaterial({ color: 0x7ac5cd });
   //   material.transparent = true;
   //   material.opacity = 0.6;
   var sphereNoise = new THREE.Mesh(sphere_geometry, material);
   var updateNoise = function() {
     var time = 0; //performance.now() * 0.0005;
-    var k = 4;
+    var k = 2;
     for (var i = 0; i < sphereNoise.geometry.faces.length; i++) {
       var uv = sphereNoise.geometry.faceVertexUvs[0][i]; //faceVertexUvs is a huge arrayed stored inside of another array
       var f = sphereNoise.geometry.faces[i];
       var p = sphereNoise.geometry.vertices[f.a]; //take the first vertex from each face
       //   p.normalize().multiplyScalar(10 + 2.3 * noise.perlin3(uv[0].x * k, uv[0].y * k, time));
-      p.normalize().multiplyScalar(3 + 2 * noise.perlin3(p.x * k + time, p.y * k, p.z * k + time));
+      p.normalize().multiplyScalar(3 + 3 * noise.perlin3(p.x * k + time, p.y * k, p.z * k + time));
     }
     sphereNoise.geometry.verticesNeedUpdate = true; //must be set or vertices will not update
     sphereNoise.geometry.computeVertexNormals();
@@ -383,10 +383,7 @@ d3.csv("data/testCSV.csv", function(data) {
     zScale(gravity[13 * stepSize].z),
     xScale(gravity[14 * stepSize].x),
     yScale(gravity[14 * stepSize].y),
-    zScale(gravity[14 * stepSize].z),
-    xScale(gravity[15 * stepSize].x),
-    yScale(gravity[15 * stepSize].y),
-    zScale(gravity[15 * stepSize].z)
+    zScale(gravity[14 * stepSize].z)
   ];
   //   console.log("motionYawRollPitch array: ", positionKF.values);
 
@@ -484,11 +481,7 @@ d3.csv("data/testCSV.csv", function(data) {
     quaternationData[14 * stepSize].x,
     quaternationData[14 * stepSize].y,
     quaternationData[14 * stepSize].z,
-    quaternationData[14 * stepSize].w,
-    quaternationData[15 * stepSize].x,
-    quaternationData[15 * stepSize].y,
-    quaternationData[15 * stepSize].z,
-    quaternationData[15 * stepSize].w
+    quaternationData[14 * stepSize].w
   ];
 
   // create an animation sequence with the tracks
@@ -590,7 +583,7 @@ d3.csv("data/testCSV.csv", function(data) {
   let sphereGeometry = new THREE.SphereBufferGeometry(1, 10, 10);
 
   // going through all data points - draw point, with color
-  for (let i = 1; i < motionYawRollPitch.length; i += 3) {
+  for (let i = 1; i < motionYawRollPitch.length; i += 2) {
     let timeFactor = 0; //.00003; // stretching data over time
     let x = xScale(motionYawRollPitch[i].x + i * timeFactor);
     let y = yScale(motionYawRollPitch[i].y + i * timeFactor);
@@ -626,7 +619,7 @@ d3.csv("data/testCSV.csv", function(data) {
     sphereNoise.position.x = x;
     sphereNoise.position.y = y;
     sphereNoise.position.z = z;
-    sphereNoise.rotation.x = (Math.PI / 4) * (i % 4);
+    sphereNoise.rotation.x = (Math.PI / 6) * (i % 4);
     scene.add(sphereNoise);
     sphereGroup.add(sphereNoise);
 
