@@ -277,18 +277,20 @@ d3.csv("data/testCSV.csv", function(data) {
   //  ---- ADDING VIZ ELEMENTS ----
   //
   // sphere noise
-  var sphere_geometry = new THREE.SphereGeometry(15, 20, 20);
-  var material = new THREE.MeshLambertMaterial();
+  var sphere_geometry = new THREE.SphereGeometry(1, 20, 20);
+  var material = new THREE.MeshLambertMaterial({ color: 0x8bdfff });
+  //   material.transparent = true;
+  //   material.opacity = 0.6;
   var sphereNoise = new THREE.Mesh(sphere_geometry, material);
   var updateNoise = function() {
-    var time = performance.now() * 0.0005;
-    var k = 5;
+    var time = 0; //performance.now() * 0.0005;
+    var k = 4;
     for (var i = 0; i < sphereNoise.geometry.faces.length; i++) {
       var uv = sphereNoise.geometry.faceVertexUvs[0][i]; //faceVertexUvs is a huge arrayed stored inside of another array
       var f = sphereNoise.geometry.faces[i];
       var p = sphereNoise.geometry.vertices[f.a]; //take the first vertex from each face
       //   p.normalize().multiplyScalar(10 + 2.3 * noise.perlin3(uv[0].x * k, uv[0].y * k, time));
-      p.normalize().multiplyScalar(15 + 10 * noise.perlin3(p.x * k + time, p.y * k, p.z * k + time));
+      p.normalize().multiplyScalar(3 + 2 * noise.perlin3(p.x * k + time, p.y * k, p.z * k + time));
     }
     sphereNoise.geometry.verticesNeedUpdate = true; //must be set or vertices will not update
     sphereNoise.geometry.computeVertexNormals();
@@ -498,8 +500,8 @@ d3.csv("data/testCSV.csv", function(data) {
   mixer = new THREE.AnimationMixer(secondPoints);
 
   // create a ClipAction and set it to play
-  let clipAction = mixer.clipAction(clip);
-  clipAction.play();
+  //   let clipAction = mixer.clipAction(clip);
+  //   clipAction.play();
 
   // MESH LINE
 
@@ -588,7 +590,7 @@ d3.csv("data/testCSV.csv", function(data) {
   let sphereGeometry = new THREE.SphereBufferGeometry(1, 10, 10);
 
   // going through all data points - draw point, with color
-  for (let i = 1; i < motionYawRollPitch.length; i++) {
+  for (let i = 1; i < motionYawRollPitch.length; i += 3) {
     let timeFactor = 0; //.00003; // stretching data over time
     let x = xScale(motionYawRollPitch[i].x + i * timeFactor);
     let y = yScale(motionYawRollPitch[i].y + i * timeFactor);
@@ -620,13 +622,13 @@ d3.csv("data/testCSV.csv", function(data) {
     // scene.add(sphere);
     // sphereGroup.add(sphere);
 
-    // var sphereNoise = new THREE.Mesh(sphere_geometry, material);
-    // sphereNoise.position.x = x;
-    // sphereNoise.position.y = y;
-    // sphereNoise.position.z = z;
-    // sphereNoise.rotation.x = (Math.PI / 4) * (i % 4);
-    // scene.add(sphereNoise);
-    // sphereGroup.add(sphereNoise);
+    var sphereNoise = new THREE.Mesh(sphere_geometry, material);
+    sphereNoise.position.x = x;
+    sphereNoise.position.y = y;
+    sphereNoise.position.z = z;
+    sphereNoise.rotation.x = (Math.PI / 4) * (i % 4);
+    scene.add(sphereNoise);
+    sphereGroup.add(sphereNoise);
 
     // pointGeo.vertices.push(new THREE.Vector3(x, y, z), new THREE.Vector3(u, v, w)); // connecting lines
     pointGeo.vertices.push(new THREE.Vector3(x, y, z));
@@ -636,7 +638,7 @@ d3.csv("data/testCSV.csv", function(data) {
     );
   }
 
-  //   scene.add(sphereGroup);
+  scene.add(sphereGroup);
   let points = new THREE.Points(pointGeo, mat);
   scatterPlot.add(points);
 
