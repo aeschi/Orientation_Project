@@ -284,7 +284,7 @@ d3.csv('data/bouldern/VIVI_06_AppleWatch200309_10_59_38.csv', function(data) {
     // PLANE
     var mesh = new THREE.Mesh(
         new THREE.PlaneBufferGeometry(2000, 2000),
-        new THREE.MeshPhongMaterial({ color: '#60447b', depthWrite: false })
+        new THREE.MeshPhongMaterial({ color: '#60447b', depthWrite: true })
     );
     mesh.rotation.x = -Math.PI / 2;
     mesh.position.y = -30;
