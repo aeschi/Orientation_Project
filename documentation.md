@@ -13,7 +13,7 @@
 ------
 ### 25.03.20 (1h)
 - more visual testing
-<img src="https://i.imgur.com/9ept5jk.png" width="40%"> 
+<img src="https://i.imgur.com/9ept5jk.png" width="80%"> 
 
 
 ### 17.03.20 (2h)
