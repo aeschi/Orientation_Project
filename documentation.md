@@ -19,7 +19,7 @@
 - exchanged orbit controls (zoom function)
 - bit of clean up
 
-<img src="https://i.imgur.com/eqQurYU.png" width="45%"><img src="https://i.imgur.com/XB7NCUD.png" width="45%">
+<img src="https://i.imgur.com/eqQurYU.png" width="48%"><img src="https://i.imgur.com/XB7NCUD.png" width="42%">
 
 ### 26.03.20 (2h)
 - star shaped meshline
