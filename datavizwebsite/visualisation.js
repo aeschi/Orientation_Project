@@ -53,7 +53,6 @@ loader.load('assets/stroke.png', function(texture) {
     strokeTexture = texture;
 });
 
-//
 // info
 let info = document.createElement('div');
 info.setAttribute('style', 'white-space: pre;');
@@ -66,7 +65,7 @@ info.style.fontWeight = 'bold';
 info.style.backgroundColor = 'transparent';
 info.style.zIndex = '1';
 info.style.fontFamily = 'Arial';
-info.innerHTML = 'Drag mouse to rotate camera  \r\n move vertically to zoom';
+info.innerHTML = 'Drag mouse to rotate camera';
 document.body.appendChild(info);
 
 // renderer
@@ -82,17 +81,17 @@ renderer.shadowMap.type = THREE.PCFSoftShadowMap; // default THREE.PCFShadowMap
 
 // camera
 let camera = new THREE.PerspectiveCamera(35, w / h, 1, 10000);
-camera.position.set(0, 50, 200);
+camera.position.set(0, 50, 250);
 
 // orbit controls
 const controls = new THREE.OrbitControls(camera, renderer.domElement);
 controls.minDistance = 100;
 controls.maxDistance = 450;
-controls.autoRotate = true;
+// controls.autoRotate = true;
 controls.autoRotateSpeed = 0.5;
 controls.enableDamping = true;
 controls.dampingFactor = 0.15;
-controls.maxPolarAngle = Math.PI / 2;
+controls.maxPolarAngle = (2 * Math.PI) / 3.5;
 controls.zoomSpeed = 0.5;
 
 // stats (fps)
@@ -111,7 +110,6 @@ scene.fog = new THREE.FogExp2(scene.background, 0.002);
 // dataviz
 let scatterPlot = new THREE.Object3D();
 scene.add(scatterPlot);
-scatterPlot.rotation.y = 0; // start orientation of dataviz
 
 function vec(x, y, z) {
     return new THREE.Vector3(x, y, z);
@@ -124,7 +122,7 @@ var acceleration = [],
 
 var format = d3.format('+.3f');
 
-d3.csv('data/bouldern/VIVI_06_AppleWatch200309_10_59_38.csv', function(data) {
+d3.csv('data/bouldern/VIVI_05_AppleWatch200309_10_46_15.csv', function(data) {
     var dataValues = d3.values(data)[0]; // top row of columns = names
     var columnNum = Object.keys(dataValues); // putting names into array
     //   console.log(Object.keys(dataValues));
@@ -305,11 +303,11 @@ d3.csv('data/bouldern/VIVI_06_AppleWatch200309_10_59_38.csv', function(data) {
     // sphere noise
     // let sphere_geometry = new THREE.SphereBufferGeometry(5, 20, 20);
     // let material = new THREE.MeshBasicMaterial({ color: 0xffff00 });
-    let sphere_geometry = new THREE.SphereGeometry(10, 20, 20);
+    let sphere_geometry = new THREE.SphereGeometry(1, 20, 20);
     var material = new THREE.MeshLambertMaterial({ color: 0xd4a926 });
     // material.transparent = true;
     // material.opacity = 0.6;
-    let sphereNoise = new THREE.Mesh(sphere_geometry, material);
+    // let sphereNoise = new THREE.Mesh(sphere_geometry, material);
     var updateNoise = function() {
         var time = 0; //performance.now() * 0.0005;
         var k = 2;
@@ -318,15 +316,15 @@ d3.csv('data/bouldern/VIVI_06_AppleWatch200309_10_59_38.csv', function(data) {
             var f = sphereNoise.geometry.faces[i];
             var p = sphereNoise.geometry.vertices[f.a]; //take the first vertex from each face
             //   p.normalize().multiplyScalar(10 + 2.3 * noise.perlin3(uv[0].x * k, uv[0].y * k, time));
-            p.normalize().multiplyScalar(10 + 10 * noise.perlin3(p.x * k + time, p.y * k, p.z * k + time));
+            p.normalize().multiplyScalar(1 + 1.5 * noise.perlin3(p.x * k + time, p.y * k, p.z * k + time));
         }
         sphereNoise.geometry.verticesNeedUpdate = true; //must be set or vertices will not update
         sphereNoise.geometry.computeVertexNormals();
         sphereNoise.geometry.normalsNeedUpdate = true;
     };
-    sphereNoise.castShadow = true;
-    scene.add(sphereNoise);
-    updateNoise();
+    // sphereNoise.castShadow = true;
+    // scene.add(sphereNoise);
+
     // PARTICLE SIZE & COLOR II
     let secondMat = new THREE.PointsMaterial({
         color: 0xffffff,
@@ -589,9 +587,9 @@ d3.csv('data/bouldern/VIVI_06_AppleWatch200309_10_59_38.csv', function(data) {
     // going through all data points - draw point, with color
     for (let i = 1; i < motionYawRollPitch.length; i += 3) {
         let timeFactor = 0; //.00003; // stretching data over time
-        let x = xScale(motionYawRollPitch[i].x + i * timeFactor) / 3;
-        let y = yScale(motionYawRollPitch[i].y + i * timeFactor) / 3;
-        let z = zScale(motionYawRollPitch[i].z + i * timeFactor) / 3;
+        let x = xScale(motionYawRollPitch[i].x + i * timeFactor) / 10;
+        let y = yScale(motionYawRollPitch[i].y + i * timeFactor) / 10;
+        let z = zScale(motionYawRollPitch[i].z + i * timeFactor) / 10;
 
         // let u = xScale(motionYawRollPitch[i - 1].x);
         // let v = yScale(motionYawRollPitch[i - 1].y);
@@ -619,13 +617,13 @@ d3.csv('data/bouldern/VIVI_06_AppleWatch200309_10_59_38.csv', function(data) {
         // scene.add(sphere);
         // sphereGroup.add(sphere);
 
-        // var sphereNoise = new THREE.Mesh(sphere_geometry, material);
-        // sphereNoise.position.x = x;
-        // sphereNoise.position.y = y;
-        // sphereNoise.position.z = z;
-        // sphereNoise.rotation.x = (Math.PI / 6) * (i % 4);
-        // scene.add(sphereNoise);
-        // sphereGroup.add(sphereNoise);
+        var sphereNoise = new THREE.Mesh(sphere_geometry, material);
+        sphereNoise.position.x = x;
+        sphereNoise.position.y = y;
+        sphereNoise.position.z = z;
+        sphereNoise.rotation.x = (Math.PI / 6) * (i % 4);
+        scene.add(sphereNoise);
+        sphereGroup.add(sphereNoise);
 
         // pointGeo.vertices.push(new THREE.Vector3(x, y, z), new THREE.Vector3(u, v, w)); // connecting lines
         pointGeo.vertices.push(new THREE.Vector3(x, y, z));
@@ -635,7 +633,8 @@ d3.csv('data/bouldern/VIVI_06_AppleWatch200309_10_59_38.csv', function(data) {
         );
     }
 
-    // scene.add(sphereGroup);
+    updateNoise();
+    scene.add(sphereGroup);
     let points = new THREE.Points(pointGeo, mat);
     // scatterPlot.add(points);
 
