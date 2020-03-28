@@ -91,7 +91,7 @@ document.body.appendChild(stats.dom);
 
 // scene
 let scene = new THREE.Scene();
-scene.background = new THREE.Color('#60447b');
+scene.background = new THREE.Color('#131313');
 
 // scene.background = new THREE.Color( 0xe0e0e0 );
 
@@ -282,12 +282,13 @@ d3.csv('data/bouldern/VIVI_06_AppleWatch200309_10_59_38.csv', function(data) {
     //  ---- ADDING VIZ ELEMENTS ----
     //
     // PLANE
-    var mesh = new THREE.Mesh(
+    let mesh = new THREE.Mesh(
         new THREE.PlaneBufferGeometry(2000, 2000),
-        new THREE.MeshPhongMaterial({ color: '#60447b', depthWrite: false })
+        new THREE.MeshPhongMaterial({ color: '#656565', depthWrite: false })
     );
     mesh.rotation.x = -Math.PI / 2;
     mesh.position.y = -30;
+    mesh.receiveShadow = true;
     scene.add(mesh);
 
     // sphere noise
@@ -310,7 +311,7 @@ d3.csv('data/bouldern/VIVI_06_AppleWatch200309_10_59_38.csv', function(data) {
         sphereNoise.geometry.computeVertexNormals();
         sphereNoise.geometry.normalsNeedUpdate = true;
     };
-
+    sphereNoise.castShadow = true;
     scene.add(sphereNoise);
 
     // PARTICLE SIZE & COLOR II
@@ -538,7 +539,7 @@ d3.csv('data/bouldern/VIVI_06_AppleWatch200309_10_59_38.csv', function(data) {
 
     let lineMat = new MeshLineMaterial({
         map: strokeTexture,
-        useMap: 0,
+        useMap: 1,
         color: new THREE.Color('#D4A926'), //
         // color: new THREE.Color(colors[~~Maf.randomInRange(0, colors.length)]),
         lineWidth: 0.3,
@@ -546,11 +547,13 @@ d3.csv('data/bouldern/VIVI_06_AppleWatch200309_10_59_38.csv', function(data) {
         far: 100000,
         opacity: 1,
         // dashArray: new THREE.Vector2(10, 5),
-        blending: THREE.MultiplyBlending,
+        blending: THREE.NormalBlending,
         transparent: true
     });
 
     let lineMesh = new THREE.Mesh(line.geometry, lineMat);
+
+    lineMesh.castShadow = true;
     scene.add(lineMesh);
 
     //
@@ -650,7 +653,7 @@ d3.csv('data/bouldern/VIVI_06_AppleWatch200309_10_59_38.csv', function(data) {
 
     // LIGHT
     function lighting() {
-        ambientLight = new THREE.AmbientLight(0x9d9d9d, 0.4);
+        ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
         scene.add(ambientLight);
 
         let pointLight1 = new THREE.PointLight(0xff7f00, 0.8);
@@ -660,14 +663,14 @@ d3.csv('data/bouldern/VIVI_06_AppleWatch200309_10_59_38.csv', function(data) {
         pointLight1.shadow.mapSize.height = 1024;
         pointLight1.shadow.camera.near = 1;
         pointLight1.shadow.camera.far = 400;
-        scene.add(pointLight1);
+        // scene.add(pointLight1);
 
-        spotLight1 = new THREE.SpotLight(0xffffff, 1);
-        spotLight1.position.set(-70, -100, 100);
+        spotLight1 = new THREE.SpotLight(0xffffff, 3);
+        spotLight1.position.set(0, 100, 0);
         spotLight1.angle = Math.PI / 8;
         spotLight1.penumbra = 0.2;
         spotLight1.decay = 1.5;
-        spotLight1.distance = 300;
+        spotLight1.distance = 500;
         spotLight1.castShadow = true;
         spotLight1.shadow.mapSize.width = 1024;
         spotLight1.shadow.mapSize.height = 1024;
@@ -686,7 +689,7 @@ d3.csv('data/bouldern/VIVI_06_AppleWatch200309_10_59_38.csv', function(data) {
         spotLight2.shadow.mapSize.height = 1024;
         spotLight2.shadow.camera.near = 10;
         spotLight2.shadow.camera.far = 200;
-        scene.add(spotLight2);
+        // scene.add(spotLight2);
 
         spotLight3 = new THREE.SpotLight(0x5dd1fb, 2);
         spotLight3.position.set(-100, 20, -80);
@@ -699,7 +702,7 @@ d3.csv('data/bouldern/VIVI_06_AppleWatch200309_10_59_38.csv', function(data) {
         spotLight3.shadow.mapSize.height = 1024;
         spotLight3.shadow.camera.near = 10;
         spotLight3.shadow.camera.far = 200;
-        scene.add(spotLight3);
+        // scene.add(spotLight3);
 
         //   // HELPER GRID FOR LIGHTS/CAMERA
         //   lightHelper1 = new THREE.SpotLightHelper(spotLight1);
