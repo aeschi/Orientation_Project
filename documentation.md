@@ -15,7 +15,7 @@
 - light/environment adjustments
 - add shadow to plane
 - points color (defaut white for all points)
-- idea: morphing 3d sports objects to acceleration data [tutorial](https://dev.to/maniflames/pointcloud-effect-in-three-js-3eic)
+- idea: morphing 3d sports objects to acceleration data [tutorial](https://dev.to/maniflames/pointcloud-effect-in-three-js-3eic), and this[morphing shoe](https://wamaitha.netlify.com/) [code](https://wamaitha.netlify.com/index.js)
 - exchanged orbit controls (zoom function)
 - bit of clean up
 
