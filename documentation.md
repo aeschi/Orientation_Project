@@ -11,7 +11,7 @@
 - [ ]  create narrative/connection for sports to viz
 
 ------
-### 28.03.20 (2,5h)
+### 28.03.20 (3h)
 - light/environment adjustments
 - add shadow to plane
 - points color (defaut white for all points)
