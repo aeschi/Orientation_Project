@@ -298,15 +298,15 @@ d3.csv('data/bouldern/VIVI_06_AppleWatch200309_10_59_38.csv', function(data) {
         new THREE.MeshPhongMaterial({ color: '#656565', depthWrite: false })
     );
     mesh.rotation.x = -Math.PI / 2;
-    mesh.position.y = -30;
+    mesh.position.y = -100;
     mesh.receiveShadow = true;
     scene.add(mesh);
 
     // sphere noise
     // let sphere_geometry = new THREE.SphereBufferGeometry(5, 20, 20);
     // let material = new THREE.MeshBasicMaterial({ color: 0xffff00 });
-    let sphere_geometry = new THREE.SphereGeometry(15, 20, 20);
-    var material = new THREE.MeshLambertMaterial({ color: 0x7ac5cd });
+    let sphere_geometry = new THREE.SphereGeometry(10, 20, 20);
+    var material = new THREE.MeshLambertMaterial({ color: 0xd4a926 });
     // material.transparent = true;
     // material.opacity = 0.6;
     let sphereNoise = new THREE.Mesh(sphere_geometry, material);
@@ -318,7 +318,7 @@ d3.csv('data/bouldern/VIVI_06_AppleWatch200309_10_59_38.csv', function(data) {
             var f = sphereNoise.geometry.faces[i];
             var p = sphereNoise.geometry.vertices[f.a]; //take the first vertex from each face
             //   p.normalize().multiplyScalar(10 + 2.3 * noise.perlin3(uv[0].x * k, uv[0].y * k, time));
-            p.normalize().multiplyScalar(15 + 10 * noise.perlin3(p.x * k + time, p.y * k, p.z * k + time));
+            p.normalize().multiplyScalar(10 + 10 * noise.perlin3(p.x * k + time, p.y * k, p.z * k + time));
         }
         sphereNoise.geometry.verticesNeedUpdate = true; //must be set or vertices will not update
         sphereNoise.geometry.computeVertexNormals();
@@ -566,7 +566,8 @@ d3.csv('data/bouldern/VIVI_06_AppleWatch200309_10_59_38.csv', function(data) {
 
     let lineMesh = new THREE.Mesh(line.geometry, lineMat);
 
-    lineMesh.castShadow = true;
+    // lineMesh.castShadow = true;
+    // lineMesh.customDepthMaterial = lineMat;
     scene.add(lineMesh);
 
     // PARTICLE SIZE & COLOR
