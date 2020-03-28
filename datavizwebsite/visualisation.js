@@ -84,6 +84,17 @@ renderer.shadowMap.type = THREE.PCFSoftShadowMap; // default THREE.PCFShadowMap
 let camera = new THREE.PerspectiveCamera(35, w / h, 1, 10000);
 camera.position.set(0, 50, 200);
 
+// orbit controls
+const controls = new THREE.OrbitControls(camera, renderer.domElement);
+controls.minDistance = 100;
+controls.maxDistance = 450;
+controls.autoRotate = true;
+controls.autoRotateSpeed = 0.5;
+controls.enableDamping = true;
+controls.dampingFactor = 0.15;
+controls.maxPolarAngle = Math.PI / 2;
+controls.zoomSpeed = 0.5;
+
 // stats (fps)
 stats = new Stats();
 stats.showPanel(0); // 0: fps, 1: ms, 2: mb, 3+: custom
@@ -95,7 +106,7 @@ scene.background = new THREE.Color('#131313');
 
 // scene.background = new THREE.Color( 0xe0e0e0 );
 
-scene.fog = new THREE.FogExp2(scene.background, 0.004);
+scene.fog = new THREE.FogExp2(scene.background, 0.002);
 
 // dataviz
 let scatterPlot = new THREE.Object3D();
@@ -292,11 +303,13 @@ d3.csv('data/bouldern/VIVI_06_AppleWatch200309_10_59_38.csv', function(data) {
     scene.add(mesh);
 
     // sphere noise
-    var sphere_geometry = new THREE.SphereGeometry(18, 20, 20);
+    // let sphere_geometry = new THREE.SphereBufferGeometry(5, 20, 20);
+    // let material = new THREE.MeshBasicMaterial({ color: 0xffff00 });
+    let sphere_geometry = new THREE.SphereGeometry(15, 20, 20);
     var material = new THREE.MeshLambertMaterial({ color: 0x7ac5cd });
-    //   material.transparent = true;
-    //   material.opacity = 0.6;
-    var sphereNoise = new THREE.Mesh(sphere_geometry, material);
+    // material.transparent = true;
+    // material.opacity = 0.6;
+    let sphereNoise = new THREE.Mesh(sphere_geometry, material);
     var updateNoise = function() {
         var time = 0; //performance.now() * 0.0005;
         var k = 2;
@@ -305,7 +318,7 @@ d3.csv('data/bouldern/VIVI_06_AppleWatch200309_10_59_38.csv', function(data) {
             var f = sphereNoise.geometry.faces[i];
             var p = sphereNoise.geometry.vertices[f.a]; //take the first vertex from each face
             //   p.normalize().multiplyScalar(10 + 2.3 * noise.perlin3(uv[0].x * k, uv[0].y * k, time));
-            p.normalize().multiplyScalar(15 + 15 * noise.perlin3(p.x * k + time, p.y * k, p.z * k + time));
+            p.normalize().multiplyScalar(15 + 10 * noise.perlin3(p.x * k + time, p.y * k, p.z * k + time));
         }
         sphereNoise.geometry.verticesNeedUpdate = true; //must be set or vertices will not update
         sphereNoise.geometry.computeVertexNormals();
@@ -313,10 +326,11 @@ d3.csv('data/bouldern/VIVI_06_AppleWatch200309_10_59_38.csv', function(data) {
     };
     sphereNoise.castShadow = true;
     scene.add(sphereNoise);
-
+    updateNoise();
     // PARTICLE SIZE & COLOR II
     let secondMat = new THREE.PointsMaterial({
-        vertexColors: true, // ?
+        color: 0xffffff,
+        // vertexColors: true,
         size: 0.5
     });
 
@@ -330,9 +344,9 @@ d3.csv('data/bouldern/VIVI_06_AppleWatch200309_10_59_38.csv', function(data) {
 
         secondPointGeo.vertices.push(new THREE.Vector3(x, z, y));
         let colorMap = mapValues(i, 1, pointCount2, 0, 70);
-        secondPointGeo.colors.push(
-            new THREE.Color().setRGB((255 - colorMap) / 255, (255 - colorMap) / 255, (255 - colorMap) / 255) //Gradient from yellow to orange
-        );
+        // secondPointGeo.colors.push(
+        //     new THREE.Color().setRGB((255 - colorMap) / 255, (255 - colorMap) / 255, (255 - colorMap) / 255) //Gradient from yellow to orange
+        // );
     }
 
     let secondPoints = new THREE.Points(secondPointGeo, secondMat);
@@ -498,8 +512,8 @@ d3.csv('data/bouldern/VIVI_06_AppleWatch200309_10_59_38.csv', function(data) {
 
     var lineGeometry = new THREE.Geometry();
 
-    for (let i = 1; i < acceleration.length; i += 1) {
-        if (i % 2 == 0) {
+    for (let i = 1; i < acceleration.length; i += 2) {
+        if (i % 3 == 0) {
             let x = 0;
             let y = 0;
             let z = 0;
@@ -510,7 +524,6 @@ d3.csv('data/bouldern/VIVI_06_AppleWatch200309_10_59_38.csv', function(data) {
             let z = zScale(acceleration[i].z) / 2.5;
             var v = vec(x, y, z);
         }
-
         lineGeometry.vertices.push(v);
     }
 
@@ -555,23 +568,6 @@ d3.csv('data/bouldern/VIVI_06_AppleWatch200309_10_59_38.csv', function(data) {
 
     lineMesh.castShadow = true;
     scene.add(lineMesh);
-
-    //
-    // old stuff/ /
-
-    //   let cubeGroup = new THREE.Object3D();
-
-    //   for (let i = 0; i < acceleration.length; i++) {
-    //     let x = xScale(acceleration[i].x);
-    //     let y = yScale(acceleration[i].y);
-    //     let z = zScale(acceleration[i].z);
-
-    //     var cube1 = new THREE.Mesh(cube1Geometry, cube1Material);
-    //     cube1.position.x = x;
-    //     cube1.position.y = y;
-    //     cube1.position.z = z;
-    //     cubeGroup.add(cube1);
-    //   }
 
     // PARTICLE SIZE & COLOR
     let mat = new THREE.PointsMaterial({
@@ -638,7 +634,7 @@ d3.csv('data/bouldern/VIVI_06_AppleWatch200309_10_59_38.csv', function(data) {
         );
     }
 
-    scene.add(sphereGroup);
+    // scene.add(sphereGroup);
     let points = new THREE.Points(pointGeo, mat);
     // scatterPlot.add(points);
 
@@ -665,8 +661,8 @@ d3.csv('data/bouldern/VIVI_06_AppleWatch200309_10_59_38.csv', function(data) {
         pointLight1.shadow.camera.far = 400;
         // scene.add(pointLight1);
 
-        spotLight1 = new THREE.SpotLight(0xffffff, 3);
-        spotLight1.position.set(0, 100, 0);
+        spotLight1 = new THREE.SpotLight(0xffffff, 1.3);
+        spotLight1.position.set(50, 100, 80);
         spotLight1.angle = Math.PI / 8;
         spotLight1.penumbra = 0.2;
         spotLight1.decay = 1.5;
@@ -705,112 +701,41 @@ d3.csv('data/bouldern/VIVI_06_AppleWatch200309_10_59_38.csv', function(data) {
         // scene.add(spotLight3);
 
         //   // HELPER GRID FOR LIGHTS/CAMERA
-        //   lightHelper1 = new THREE.SpotLightHelper(spotLight1);
-        //   scene.add(lightHelper1);
+        // lightHelper1 = new THREE.SpotLightHelper(spotLight1);
+        // scene.add(lightHelper1);
 
         //   lightHelper2 = new THREE.SpotLightHelper(spotLight2);
         //   scene.add(lightHelper2);
 
         //   lightHelper3 = new THREE.SpotLightHelper(spotLight3);
         //   scene.add(lightHelper3);
-
-        //   var spotLight1 = createSpotlight(0xff7f00);
-        //   var spotLight2 = createSpotlight(0x00ff7f);
-        //   var spotLight3 = createSpotlight(0x7f00ff);
-        //   spotLight1.position.set(200, -100, 100);
-        //   spotLight2.position.set(-200, 100, 0);
-        //   spotLight3.position.set(100, 100, 200);
-        //     scene.add(spotLight1, spotLight2, spotLight3);
-
-        //   function createSpotlight(color) {
-        //     var newObj = new THREE.SpotLight(color, 2);
-        //     newObj.castShadow = true;
-        //     newObj.angle = 0.3;
-        //     newObj.penumbra = 0.5;
-        //     newObj.decay = 2;
-        //     newObj.distance = 400;
-        //     return newObj;
-        //   }
     }
 
-    // INTERACTION
-    renderer.render(scene, camera);
-    //   let paused = false;
-    //   let last = new Date().getTime();
-    let down = false;
-    let sx = 0,
-        sy = 0;
-
-    window.onmousedown = function(ev) {
-        down = true;
-        sx = ev.clientX;
-        sy = ev.clientY;
-    };
-    window.onmouseup = function() {
-        down = false;
-    };
-    window.onmousemove = function(ev) {
-        if (down) {
-            let dx = ev.clientX - sx;
-            let dy = ev.clientY - sy;
-            //   let dist = Math.sqrt(sq(camera.position.x) + sq(camera.position.y) + sq(camera.position.z));
-
-            scene.children.forEach(el => {
-                el.rotation.y += dx * 0.01;
-                el.rotation.z += dy * 0.01;
-            });
-            //   scatterPlot.rotation.y += dx * 0.01;
-            //   scatterPlot.rotation.x += dy * 0.01;
-            //   scatterPlot.scale.y += dx * 0.01;
-            //   cube1.rotation.y += dx * 0.01;
-            //   cube1.rotation.x += dy * 0.01;
-            //   sphereGroup.scale.y += dy * 0.01;
-            //   sphereGroup.rotation.y += dx * 0.01;
-            //   sphereGroup.rotation.x += dy * 0.01;
-            camera.position.y += dy * 1.5; // zoom in out with mouse y change
-
-            sx += dx;
-            sy += dy;
-        }
-    };
-
     let animateVisibility = true;
-    // for cube rotation
-    let clock = new THREE.Clock();
 
     function animate(time) {
-        // last = t;
         // renderer.clear();
-        scene.children.forEach(el => {
-            //   el.rotation.y += 0.0005;
-            //   el.rotation.z += 0.0005;
-        });
-
-        // cubeGroup.rotation.y -= clock.getDelta() * 0.3;
         // lightHelper1.update();
-        // lightHelper2.update();
-        // lightHelper3.update();
         window.requestAnimationFrame(animate, renderer.domElement);
-
+        controls.update();
         // lineMesh.material.uniforms.visibility.value = animateVisibility ? (time / 10000) % 1.0 : 1.0;
         render();
     }
 
-    function render() {
-        var delta = clock.getDelta();
+    // for cube rotation
+    let clock = new THREE.Clock();
 
+    function render() {
+        // scatterplot animation
+        let delta = clock.getDelta();
         if (mixer) {
             mixer.update(delta);
         }
-        // scatterPlot.scale *= 0.001;
-        camera.lookAt(scene.position);
+
+        // camera.lookAt(scene.position);
         renderer.render(scene, camera);
-        updateNoise();
         stats.update();
     }
-    //   animate(new Date().getTime());
-
-    animate();
 
     function buildGui() {
         gui = new dat.GUI();
@@ -827,10 +752,8 @@ d3.csv('data/bouldern/VIVI_06_AppleWatch200309_10_59_38.csv', function(data) {
 
         gui.open();
     }
+
     lighting();
     buildGui();
-
-    //   onmessage = function(ev) {
-    //     paused = ev.data == "pause";
-    //   };
+    animate();
 });
