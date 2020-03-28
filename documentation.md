@@ -11,6 +11,11 @@
 - [ ]  create narrative/connection for sports to viz
 
 ------
+### 25.03.20 (1h)
+- more visual testing
+<img src="https://i.imgur.com/9ept5jk.png" width="80%"> 
+
+
 ### 17.03.20 (2h)
 - should try out: use MeshLambertMaterial, set envMaps to reflective 
 - can I use buffer geometry?
