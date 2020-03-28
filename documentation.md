@@ -18,7 +18,8 @@
 - idea: morphing 3d sports objects to acceleration data [tutorial](https://dev.to/maniflames/pointcloud-effect-in-three-js-3eic)
 - exchanged orbit controls (zoom function)
 - bit of clean up
-<img src="https://i.imgur.com/eqQurYU.png" width="40%"><img src="https://i.imgur.com/XB7NCUD.png" width="80%">
+
+<img src="https://i.imgur.com/eqQurYU.png" width="45%"><img src="https://i.imgur.com/XB7NCUD.png" width="45%">
 
 ### 26.03.20 (2h)
 - star shaped meshline
