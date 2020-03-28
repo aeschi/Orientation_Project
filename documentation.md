@@ -11,6 +11,17 @@
 - [ ]  create narrative/connection for sports to viz
 
 ------
+### 28.03.20 (11:30 -)
+- light/environment adjustments
+- add shadow
+- points color (defaut white for all points)
+- idea: morphing 3d sports objects to acceleration data [tutorial](https://dev.to/maniflames/pointcloud-effect-in-three-js-3eic)
+
+### 26.03.20 (2h)
+- star shaped meshline
+<img src="https://i.imgur.com/JpH8x6m.png" width="80%"> 
+
+
 ### 25.03.20 (1h)
 - more visual testing
 <img src="https://i.imgur.com/9ept5jk.png" width="80%"> 
