@@ -11,11 +11,14 @@
 - [ ]  create narrative/connection for sports to viz
 
 ------
-### 28.03.20 (11:30 -)
+### 28.03.20 (2h)
 - light/environment adjustments
-- add shadow
+- add shadow to plane
 - points color (defaut white for all points)
 - idea: morphing 3d sports objects to acceleration data [tutorial](https://dev.to/maniflames/pointcloud-effect-in-three-js-3eic)
+- exchanged orbit controls (zoom function)
+- bit of clean up
+<img src="https://i.imgur.com/eqQurYU.png" width="40%"><img src="https://i.imgur.com/XB7NCUD.png" width="80%">
 
 ### 26.03.20 (2h)
 - star shaped meshline
