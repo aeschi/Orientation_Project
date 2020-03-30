@@ -40,6 +40,29 @@ function mapValues(num, in_min, in_max, out_min, out_max) {
     return ((num - in_min) * (out_max - out_min)) / (in_max - in_min) + out_min;
 }
 
+function fractionate(val, minVal, maxVal) {
+    return (val - minVal) / (maxVal - minVal);
+}
+
+function modulate(val, minVal, maxVal, outMin, outMax) {
+    var fr = fractionate(val, minVal, maxVal);
+    var delta = outMax - outMin;
+    return outMin + fr * delta;
+}
+
+function avg(arr) {
+    var total = arr.reduce(function(sum, b) {
+        return sum + b;
+    }, 0);
+    return total / arr.length;
+}
+
+function max(arr) {
+    return arr.reduce(function(a, b) {
+        return Math.max(a, b);
+    }, 0);
+}
+
 // THREE SETUP
 
 let stats;
@@ -50,11 +73,6 @@ let ambientLight;
 
 // Meshline
 let strokeTexture;
-
-// Audio
-let analyser, dataArray;
-let audioData = [];
-let stream = 'https://cdn.rawgit.com/ellenprobst/web-audio-api-with-Threejs/57582104/lib/TheWarOnDrugs.m4a';
 
 var loader = new THREE.TextureLoader();
 loader.load('assets/stroke.png', function(texture) {
@@ -113,8 +131,26 @@ scene.background = new THREE.Color('#131313');
 // scene.background = new THREE.Color( 0xe0e0e0 );
 scene.fog = new THREE.FogExp2(scene.background, 0.002);
 
-// AUDIO
-var fftSize = 2048;
+// AUDIO file
+window.onload = function() {
+    var context = new AudioContext();
+};
+// One-liner to resume playback when user interacted with the page.
+document.querySelector('button').addEventListener('click', function() {
+    context.resume().then(() => {
+        console.log('Playback resumed successfully');
+    });
+});
+
+let analyser;
+let dataArrayOld;
+let audioData = [];
+// let stream = 'https://cdn.rawgit.com/ellenprobst/web-audio-api-with-Threejs/57582104/lib/TheWarOnDrugs.m4a';
+let stream =
+    'https://rawcdn.githack.com/aeschi/Orientation_Project/953e7f16e8ace297c48f87c4f551c385d82ff66a/datavizwebsite/data/skaten/ROMAN_03.m4a';
+//https://codepen.io/EllenProbst/pen/RQQmJK?editors=0010
+
+var fftSize = 512;
 var audioLoader = new THREE.AudioLoader();
 var listener = new THREE.AudioListener();
 var audio = new THREE.Audio(listener);
@@ -129,10 +165,10 @@ analyser = new THREE.AudioAnalyser(audio, fftSize);
 
 analyser.analyser.maxDecibels = -3;
 analyser.analyser.minDecibels = -100;
-dataArray = analyser.data;
-getAudioData(dataArray);
+dataArrayOld = analyser.data;
+var bufferLength = analyser.frequencyBinCount;
+var dataArray = new Uint8Array(bufferLength);
 
-// AUDIO
 function getAudioData(data) {
     // Split array into 3
     var frequencyArray = splitFrenquencyArray(data, 3);
@@ -359,6 +395,36 @@ d3.csv('data/bouldern/VIVI_05_AppleWatch200309_10_46_15.csv', function(data) {
     mesh.receiveShadow = true;
     scene.add(mesh);
 
+    // AUDIO VIZ
+    var noise = new SimplexNoise();
+    function makeRoughBall(mesh, bassFr, treFr) {
+        mesh.geometry.vertices.forEach(function(vertex, i) {
+            var offset = mesh.geometry.parameters.radius;
+            var amp = 7;
+            var time = window.performance.now();
+            vertex.normalize();
+            var distance =
+                offset +
+                bassFr +
+                noise.noise3D(vertex.x + time * 0.00007, vertex.y + time * 0.00008, vertex.z + time * 0.00009) * amp * treFr;
+            vertex.multiplyScalar(distance);
+        });
+        mesh.geometry.verticesNeedUpdate = true;
+        mesh.geometry.normalsNeedUpdate = true;
+        mesh.geometry.computeVertexNormals();
+        mesh.geometry.computeFaceNormals();
+    }
+
+    var icosahedronGeometry = new THREE.IcosahedronGeometry(10, 4);
+    var lambertMaterial = new THREE.MeshLambertMaterial({
+        color: 0xffffff,
+        wireframe: true
+    });
+
+    var ball = new THREE.Mesh(icosahedronGeometry, lambertMaterial);
+    ball.position.set(0, 0, 0);
+    scene.add(ball);
+
     // sphere noise
     // let sphere_geometry = new THREE.SphereBufferGeometry(5, 20, 20);
     // let material = new THREE.MeshBasicMaterial({ color: 0xffff00 });
@@ -382,7 +448,7 @@ d3.csv('data/bouldern/VIVI_05_AppleWatch200309_10_46_15.csv', function(data) {
         sphereNoise.geometry.normalsNeedUpdate = true;
     };
     sphereNoise.castShadow = true;
-    scene.add(sphereNoise);
+    // scene.add(sphereNoise);
 
     // PARTICLE SIZE & COLOR II
     let secondMat = new THREE.PointsMaterial({
@@ -793,13 +859,38 @@ d3.csv('data/bouldern/VIVI_05_AppleWatch200309_10_46_15.csv', function(data) {
 
     function animate(time) {
         // get audio data
-        getAudioData(dataArray);
+        // analyser.getFrequencyData(dataArrayOld);
+        // analyser.getFrequencyData(dataArray);
+        getAudioData(dataArrayOld);
 
-        sphereNoise.scale.y = sphereNoise.scale.x = sphereNoise.scale.z = 5 + audioData[0] / 10;
+        if (audioData[0] >= 1) {
+            //     planetBig.rotation.z += 0.005;
+            //     planetSmall.scale.y = planetSmall.scale.x = planetSmall.scale.z = 5 + audioData[0] / 20;
+            //     planetMedium.scale.y = planetMedium.scale.x = planetMedium.scale.z = 5 + audioData[0] / 20;
+            makeRoughBall(ball, (0.5 * audioData[0]) / 40, (0.7 * audioData[0]) / 40);
+            // ball.scale.y = ball.scale.x = ball.scale.z = audioData[0] / 40;
+        }
+
+        // var lowerHalfArray = dataArray.slice(0, dataArray.length / 2 - 1);
+        // var upperHalfArray = dataArray.slice(dataArray.length / 2 - 1, dataArray.length - 1);
+
+        // var overallAvg = avg(dataArray);
+        // var lowerMax = max(lowerHalfArray);
+        // var lowerAvg = avg(lowerHalfArray);
+        // var upperMax = max(upperHalfArray);
+        // var upperAvg = avg(upperHalfArray);
+
+        // var lowerMaxFr = lowerMax / lowerHalfArray.length;
+        // var lowerAvgFr = lowerAvg / lowerHalfArray.length;
+        // var upperMaxFr = upperMax / upperHalfArray.length;
+        // var upperAvgFr = upperAvg / upperHalfArray.length;
+
+        // makeRoughBall(ball, modulate(Math.pow(lowerMaxFr, 0.8), 0, 1, 0, 8), modulate(upperAvgFr, 0, 1, 0, 4));
+
         // renderer.clear();
         // lightHelper1.update();
         window.requestAnimationFrame(animate, renderer.domElement);
-        controls.update();
+        // controls.update();
         // lineMesh.material.uniforms.visibility.value = animateVisibility ? (time / 10000) % 1.0 : 1.0;
         render();
     }
@@ -808,6 +899,7 @@ d3.csv('data/bouldern/VIVI_05_AppleWatch200309_10_46_15.csv', function(data) {
     let clock = new THREE.Clock();
 
     function render() {
+        analyser.getFrequencyData();
         // scatterplot animation
         let delta = clock.getDelta();
         if (mixer) {
