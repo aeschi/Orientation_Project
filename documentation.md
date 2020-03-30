@@ -1,18 +1,17 @@
 #### Next Steps
 
-- [x]  functionality before further style (several data files, animation, zooming into data)
-- [ ]  add animation (influenced by sound?)
-- [x]  look further into plotter file (d3, [scatterplot](https://rdrr.io/cran/threejs/man/scatterplot3js.html),..)
 - [x]  try out different inputs/interpretations of data 
-- [x]  try out more 3D-ish style
+- [ ]  improve sound animation
+- [ ]  clean up code!
+- [ ]  gradient/climbing grip texture for noiseSpheres
+- [ ]  sound edit
 - [ ]  how to switch between sports (via GUI?)
 - [ ]  still images/ porttraits and viz
-- [x]  website
 - [ ]  create narrative/connection for sports to viz
 
 ------
 ### 30.03.20 
-- audio implementation
+- audio implementation (animation influenced by sound?)
 
 ### 29.03.20 (3h)
 - window resize
