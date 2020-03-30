@@ -1,3 +1,4 @@
+// HELPER
 function createTextCanvas(text, color, font, size) {
     size = size || 30;
     let canvas = document.createElement('canvas');
@@ -46,7 +47,14 @@ let stats;
 let gui;
 
 let ambientLight;
+
+// Meshline
 let strokeTexture;
+
+// Audio
+let analyser, dataArray;
+let audioData = [];
+let stream = 'https://cdn.rawgit.com/ellenprobst/web-audio-api-with-Threejs/57582104/lib/TheWarOnDrugs.m4a';
 
 var loader = new THREE.TextureLoader();
 loader.load('assets/stroke.png', function(texture) {
@@ -72,8 +80,8 @@ document.body.appendChild(info);
 let renderer = new THREE.WebGLRenderer({
     antialias: true
 });
-let w = window.innerWidth * 0.8;
-let h = window.innerHeight * 0.8;
+let w = window.innerWidth;
+let h = window.innerHeight;
 renderer.setSize(w, h);
 document.body.appendChild(renderer.domElement);
 renderer.shadowMap.enabled = true;
@@ -87,7 +95,7 @@ camera.position.set(0, 50, 250);
 const controls = new THREE.OrbitControls(camera, renderer.domElement);
 controls.minDistance = 100;
 controls.maxDistance = 450;
-// controls.autoRotate = true;
+controls.autoRotate = true;
 controls.autoRotateSpeed = 0.5;
 controls.enableDamping = true;
 controls.dampingFactor = 0.15;
@@ -102,10 +110,61 @@ document.body.appendChild(stats.dom);
 // scene
 let scene = new THREE.Scene();
 scene.background = new THREE.Color('#131313');
-
 // scene.background = new THREE.Color( 0xe0e0e0 );
-
 scene.fog = new THREE.FogExp2(scene.background, 0.002);
+
+// AUDIO
+var fftSize = 2048;
+var audioLoader = new THREE.AudioLoader();
+var listener = new THREE.AudioListener();
+var audio = new THREE.Audio(listener);
+audio.crossOrigin = 'anonymous';
+audioLoader.load(stream, function(buffer) {
+    audio.setBuffer(buffer);
+    audio.setLoop(true);
+    audio.play();
+});
+
+analyser = new THREE.AudioAnalyser(audio, fftSize);
+
+analyser.analyser.maxDecibels = -3;
+analyser.analyser.minDecibels = -100;
+dataArray = analyser.data;
+getAudioData(dataArray);
+
+// AUDIO
+function getAudioData(data) {
+    // Split array into 3
+    var frequencyArray = splitFrenquencyArray(data, 3);
+
+    // Make average of frenquency array entries
+    for (var i = 0; i < frequencyArray.length; i++) {
+        var average = 0;
+
+        for (var j = 0; j < frequencyArray[i].length; j++) {
+            average += frequencyArray[i][j];
+        }
+        audioData[i] = average / frequencyArray[i].length;
+    }
+    return audioData;
+}
+
+function splitFrenquencyArray(arr, n) {
+    var tab = Object.keys(arr).map(function(key) {
+        return arr[key];
+    });
+    var len = tab.length,
+        result = [],
+        i = 0;
+
+    while (i < len) {
+        var size = Math.ceil((len - i) / n--);
+        result.push(tab.slice(i, i + size));
+        i += size;
+    }
+
+    return result;
+}
 
 // dataviz
 let scatterPlot = new THREE.Object3D();
@@ -304,10 +363,10 @@ d3.csv('data/bouldern/VIVI_05_AppleWatch200309_10_46_15.csv', function(data) {
     // let sphere_geometry = new THREE.SphereBufferGeometry(5, 20, 20);
     // let material = new THREE.MeshBasicMaterial({ color: 0xffff00 });
     let sphere_geometry = new THREE.SphereGeometry(1, 20, 20);
-    var material = new THREE.MeshLambertMaterial({ color: 0xd4a926 });
+    var material = new THREE.MeshLambertMaterial({ color: '#FFB742' });
     // material.transparent = true;
     // material.opacity = 0.6;
-    // let sphereNoise = new THREE.Mesh(sphere_geometry, material);
+    let sphereNoise = new THREE.Mesh(sphere_geometry, material);
     var updateNoise = function() {
         var time = 0; //performance.now() * 0.0005;
         var k = 2;
@@ -322,8 +381,8 @@ d3.csv('data/bouldern/VIVI_05_AppleWatch200309_10_46_15.csv', function(data) {
         sphereNoise.geometry.computeVertexNormals();
         sphereNoise.geometry.normalsNeedUpdate = true;
     };
-    // sphereNoise.castShadow = true;
-    // scene.add(sphereNoise);
+    sphereNoise.castShadow = true;
+    scene.add(sphereNoise);
 
     // PARTICLE SIZE & COLOR II
     let secondMat = new THREE.PointsMaterial({
@@ -418,7 +477,7 @@ d3.csv('data/bouldern/VIVI_05_AppleWatch200309_10_46_15.csv', function(data) {
     var scaleKF = new THREE.VectorKeyframeTrack(
         '.scale',
         [0, 1, 2, 3],
-        [0, 0, 0, 0.6, 0.6, 0.6, 0.85, 0.85, 0.85, 1, 1, 1],
+        [0, 0, 0, 0.7, 0.7, 0.7, 1, 1, 1, 0, 0, 0],
         THREE.InterpolateSmooth
     );
     scaleKF.scale(5);
@@ -497,21 +556,21 @@ d3.csv('data/bouldern/VIVI_05_AppleWatch200309_10_46_15.csv', function(data) {
     // create an animation sequence with the tracks
     // If a negative time value is passed, the duration will be calculated from the times of the passed tracks array
     // AnimationClip( name : String, duration : Number, tracks : Array )
-    let clip = new THREE.AnimationClip('Action', 11, [scaleKF]);
+    let clip = new THREE.AnimationClip('Action', 17, [scaleKF]);
 
     // setup the THREE.AnimationMixer
     mixer = new THREE.AnimationMixer(secondPoints);
 
     // create a ClipAction and set it to play
     let clipAction = mixer.clipAction(clip);
-    // clipAction.play();
+    clipAction.play();
 
     // MESH LINE
 
     var lineGeometry = new THREE.Geometry();
 
-    for (let i = 1; i < acceleration.length; i += 2) {
-        if (i % 3 == 0) {
+    for (let i = 1; i < acceleration.length; i += 10) {
+        if (i % 10 == 0) {
             let x = 0;
             let y = 0;
             let z = 0;
@@ -551,7 +610,7 @@ d3.csv('data/bouldern/VIVI_05_AppleWatch200309_10_46_15.csv', function(data) {
     let lineMat = new MeshLineMaterial({
         map: strokeTexture,
         useMap: 1,
-        color: new THREE.Color('#D4A926'), //
+        color: new THREE.Color('#FF8336'), //
         // color: new THREE.Color(colors[~~Maf.randomInRange(0, colors.length)]),
         lineWidth: 0.3,
         near: 1,
@@ -578,11 +637,10 @@ d3.csv('data/bouldern/VIVI_05_AppleWatch200309_10_46_15.csv', function(data) {
     let pointGeo = new THREE.Geometry();
 
     // CUBE
-    let cubeGeometry = new THREE.CubeGeometry(2, 4, 2);
+    let cubeGeometry = new THREE.CubeGeometry(0.5, 1, 0.5);
     let cube;
 
     let sphereGroup = new THREE.Object3D();
-    let sphereGeometry = new THREE.SphereBufferGeometry(1, 10, 10);
 
     // going through all data points - draw point, with color
     for (let i = 1; i < motionYawRollPitch.length; i += 3) {
@@ -597,33 +655,13 @@ d3.csv('data/bouldern/VIVI_05_AppleWatch200309_10_46_15.csv', function(data) {
 
         let colorMap = mapValues(i, 1, pointCount, 0, 150);
 
-        // let cubeMaterial = new THREE.MeshLambertMaterial({ color: 0xd5d5d5 });
-        // cubeMaterial.color.setRGB((180 - colorMap) / 255, 100 / 255, 150 / 255);
-        // // cubeMaterial.color.setRGB(50, 50, 50);
-        // cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
-        // cube.position.x = x;
-        // cube.position.y = y;
-        // cube.position.z = z;
-
-        // cube.rotation.x = (Math.PI / 2) * (i % 2);
-        // // scene.add(cube);
-
-        // let sphereMaterial = new THREE.MeshLambertMaterial();
-        // sphereMaterial.color.setRGB((180 - colorMap) / 255, 100 / 255, 150 / 255);
-        // let sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
-        // sphere.position.x = x;
-        // sphere.position.y = y;
-        // sphere.position.z = z;
-        // scene.add(sphere);
-        // sphereGroup.add(sphere);
-
-        var sphereNoise = new THREE.Mesh(sphere_geometry, material);
-        sphereNoise.position.x = x;
-        sphereNoise.position.y = y;
-        sphereNoise.position.z = z;
-        sphereNoise.rotation.x = (Math.PI / 6) * (i % 4);
-        scene.add(sphereNoise);
-        sphereGroup.add(sphereNoise);
+        // var sphereNoise = new THREE.Mesh(sphere_geometry, material);
+        // sphereNoise.position.x = x; // UNTERSCHIEDLICHE SPHERE GRÖßen!!!
+        // sphereNoise.position.y = y;
+        // sphereNoise.position.z = z;
+        // sphereNoise.rotation.x = (Math.PI / 6) * (i % 4);
+        // scene.add(sphereNoise);
+        // sphereGroup.add(sphereNoise);
 
         // pointGeo.vertices.push(new THREE.Vector3(x, y, z), new THREE.Vector3(u, v, w)); // connecting lines
         pointGeo.vertices.push(new THREE.Vector3(x, y, z));
@@ -633,11 +671,42 @@ d3.csv('data/bouldern/VIVI_05_AppleWatch200309_10_46_15.csv', function(data) {
         );
     }
 
-    updateNoise();
-    scene.add(sphereGroup);
+    // updateNoise();
     let points = new THREE.Points(pointGeo, mat);
     // scatterPlot.add(points);
 
+    // cube
+    for (let i = 1; i < gravity.length; i += 2) {
+        let timeFactor = 0; //.00003; // stretching data over time
+        let x = xScale(gravity[i].x + i * timeFactor) / 2;
+        let y = yScale(gravity[i].y + i * timeFactor) / 2;
+        let z = zScale(gravity[i].z + i * timeFactor) / 2;
+
+        let colorMap = mapValues(i, 1, pointCount, 0, 150);
+
+        // let cubeMaterial = new THREE.MeshLambertMaterial({ color: 0xd5d5d5 });
+        // // cubeMaterial.color.setRGB((180 - colorMap) / 255, 100 / 255, 150 / 255);
+        // cubeMaterial.color.setRGB(102 / 255, 255 / 255, 185 / 255);
+        // cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
+        // cube.position.x = x;
+        // cube.position.y = y;
+        // cube.position.z = z;
+        // cube.rotation.x = (Math.PI / 2) * (i % 2);
+        // scene.add(cube);
+        // sphereGroup.add(cube);
+
+        let radius = (i % 3) + 1;
+        let sphereGeometry = new THREE.SphereBufferGeometry(radius / 4, 10, 10);
+        let sphereMaterial = new THREE.MeshLambertMaterial({ color: '#529AB3' });
+        let sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
+        sphere.position.x = x;
+        sphere.position.y = y;
+        sphere.position.z = z;
+        // scene.add(sphere);
+        // sphereGroup.add(sphere);
+    }
+
+    scene.add(sphereGroup);
     // LINE VERSION
     let lineMaterial = new THREE.LineBasicMaterial({
         color: 0x820000,
@@ -711,9 +780,22 @@ d3.csv('data/bouldern/VIVI_05_AppleWatch200309_10_46_15.csv', function(data) {
         //   scene.add(lightHelper3);
     }
 
+    function onWindowResize() {
+        let newWidth = window.innerWidth;
+        let newHeight = window.innerHeight;
+        camera.aspect = newWidth / newHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(newWidth, newHeight);
+    }
+    window.addEventListener('resize', onWindowResize, false);
+
     let animateVisibility = true;
 
     function animate(time) {
+        // get audio data
+        getAudioData(dataArray);
+
+        sphereNoise.scale.y = sphereNoise.scale.x = sphereNoise.scale.z = 5 + audioData[0] / 10;
         // renderer.clear();
         // lightHelper1.update();
         window.requestAnimationFrame(animate, renderer.domElement);
