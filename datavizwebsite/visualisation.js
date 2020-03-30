@@ -80,19 +80,19 @@ loader.load('assets/stroke.png', function(texture) {
 });
 
 // info
-let info = document.createElement('div');
-info.setAttribute('style', 'white-space: pre;');
-info.style.position = 'absolute';
-info.style.bottom = '60px';
-info.style.width = '100%';
-info.style.textAlign = 'center';
-info.style.color = '#fff';
-info.style.fontWeight = 'bold';
-info.style.backgroundColor = 'transparent';
-info.style.zIndex = '1';
-info.style.fontFamily = 'Arial';
-info.innerHTML = 'Drag mouse to rotate camera';
-document.body.appendChild(info);
+// let info = document.createElement('div');
+// info.setAttribute('style', 'white-space: pre;');
+// info.style.position = 'absolute';
+// info.style.bottom = '60px';
+// info.style.width = '100%';
+// info.style.textAlign = 'center';
+// info.style.color = '#fff';
+// info.style.fontWeight = 'bold';
+// info.style.backgroundColor = 'transparent';
+// info.style.zIndex = '1';
+// info.style.fontFamily = 'Arial';
+// info.innerHTML = 'Drag mouse to rotate camera';
+// document.body.appendChild(info);
 
 // renderer
 let renderer = new THREE.WebGLRenderer({
@@ -131,77 +131,6 @@ scene.background = new THREE.Color('#131313');
 // scene.background = new THREE.Color( 0xe0e0e0 );
 scene.fog = new THREE.FogExp2(scene.background, 0.002);
 
-// AUDIO file
-window.onload = function() {
-    var context = new AudioContext();
-};
-// One-liner to resume playback when user interacted with the page.
-document.querySelector('button').addEventListener('click', function() {
-    context.resume().then(() => {
-        console.log('Playback resumed successfully');
-    });
-});
-
-let analyser;
-let dataArrayOld;
-let audioData = [];
-// let stream = 'https://cdn.rawgit.com/ellenprobst/web-audio-api-with-Threejs/57582104/lib/TheWarOnDrugs.m4a';
-let stream =
-    'https://rawcdn.githack.com/aeschi/Orientation_Project/953e7f16e8ace297c48f87c4f551c385d82ff66a/datavizwebsite/data/skaten/ROMAN_03.m4a';
-//https://codepen.io/EllenProbst/pen/RQQmJK?editors=0010
-
-var fftSize = 512;
-var audioLoader = new THREE.AudioLoader();
-var listener = new THREE.AudioListener();
-var audio = new THREE.Audio(listener);
-audio.crossOrigin = 'anonymous';
-audioLoader.load(stream, function(buffer) {
-    audio.setBuffer(buffer);
-    audio.setLoop(true);
-    audio.play();
-});
-
-analyser = new THREE.AudioAnalyser(audio, fftSize);
-
-analyser.analyser.maxDecibels = -3;
-analyser.analyser.minDecibels = -100;
-dataArrayOld = analyser.data;
-var bufferLength = analyser.frequencyBinCount;
-var dataArray = new Uint8Array(bufferLength);
-
-function getAudioData(data) {
-    // Split array into 3
-    var frequencyArray = splitFrenquencyArray(data, 3);
-
-    // Make average of frenquency array entries
-    for (var i = 0; i < frequencyArray.length; i++) {
-        var average = 0;
-
-        for (var j = 0; j < frequencyArray[i].length; j++) {
-            average += frequencyArray[i][j];
-        }
-        audioData[i] = average / frequencyArray[i].length;
-    }
-    return audioData;
-}
-
-function splitFrenquencyArray(arr, n) {
-    var tab = Object.keys(arr).map(function(key) {
-        return arr[key];
-    });
-    var len = tab.length,
-        result = [],
-        i = 0;
-
-    while (i < len) {
-        var size = Math.ceil((len - i) / n--);
-        result.push(tab.slice(i, i + size));
-        i += size;
-    }
-
-    return result;
-}
-
 // dataviz
 let scatterPlot = new THREE.Object3D();
 scene.add(scatterPlot);
@@ -217,7 +146,7 @@ var acceleration = [],
 
 var format = d3.format('+.3f');
 
-d3.csv('data/bouldern/VIVI_05_AppleWatch200309_10_46_15.csv', function(data) {
+d3.csv('data/skaten/ROMAN_03_AppleWatch_200315_14_36_12.csv', function(data) {
     var dataValues = d3.values(data)[0]; // top row of columns = names
     var columnNum = Object.keys(dataValues); // putting names into array
     //   console.log(Object.keys(dataValues));
@@ -395,8 +324,78 @@ d3.csv('data/bouldern/VIVI_05_AppleWatch200309_10_46_15.csv', function(data) {
     mesh.receiveShadow = true;
     scene.add(mesh);
 
+    // AUDIO VARIABLES
+    let analyser;
+    let dataArrayOld;
+    let audioData = [];
+    let stream = 'data/skaten/ROMAN_03_edit.m4a';
+    //https://codepen.io/EllenProbst/pen/RQQmJK?editors=0010 //code source
+
+    // AUDIO file
+    window.onload = function() {
+        let context = listener.context;
+    };
+    // One-liner to resume playback when user interacted with the page.
+    document.querySelector('button').addEventListener('click', function() {
+        context.resume().then(() => {
+            console.log('Playback resumed successfully');
+        });
+    });
+
+    var fftSize = 512;
+    var audioLoader = new THREE.AudioLoader();
+    var listener = new THREE.AudioListener();
+    var audio = new THREE.Audio(listener);
+    // audio.crossOrigin = 'anonymous';
+    audioLoader.load(stream, function(buffer) {
+        audio.setBuffer(buffer);
+        audio.setLoop(true);
+        audio.play();
+    });
+
+    analyser = new THREE.AudioAnalyser(audio, fftSize);
+
+    analyser.analyser.maxDecibels = -3;
+    analyser.analyser.minDecibels = -100;
+    dataArrayOld = analyser.data;
+    var bufferLength = analyser.frequencyBinCount;
+    var dataArray = new Uint8Array(bufferLength);
+
+    function getAudioData(data) {
+        // Split array into 3
+        var frequencyArray = splitFrenquencyArray(data, 3);
+
+        // Make average of frenquency array entries
+        for (var i = 0; i < frequencyArray.length; i++) {
+            var average = 0;
+
+            for (var j = 0; j < frequencyArray[i].length; j++) {
+                average += frequencyArray[i][j];
+            }
+            audioData[i] = average / frequencyArray[i].length;
+        }
+        return audioData;
+    }
+
+    function splitFrenquencyArray(arr, n) {
+        var tab = Object.keys(arr).map(function(key) {
+            return arr[key];
+        });
+        var len = tab.length,
+            result = [],
+            i = 0;
+
+        while (i < len) {
+            var size = Math.ceil((len - i) / n--);
+            result.push(tab.slice(i, i + size));
+            i += size;
+        }
+
+        return result;
+    }
+
     // AUDIO VIZ
-    var noise = new SimplexNoise();
+    var simplexNoise = new SimplexNoise();
     function makeRoughBall(mesh, bassFr, treFr) {
         mesh.geometry.vertices.forEach(function(vertex, i) {
             var offset = mesh.geometry.parameters.radius;
@@ -406,7 +405,7 @@ d3.csv('data/bouldern/VIVI_05_AppleWatch200309_10_46_15.csv', function(data) {
             var distance =
                 offset +
                 bassFr +
-                noise.noise3D(vertex.x + time * 0.00007, vertex.y + time * 0.00008, vertex.z + time * 0.00009) * amp * treFr;
+                simplexNoise.noise3D(vertex.x + time * 0.00007, vertex.y + time * 0.00008, vertex.z + time * 0.00009) * amp * treFr;
             vertex.multiplyScalar(distance);
         });
         mesh.geometry.verticesNeedUpdate = true;
@@ -432,7 +431,7 @@ d3.csv('data/bouldern/VIVI_05_AppleWatch200309_10_46_15.csv', function(data) {
     var material = new THREE.MeshLambertMaterial({ color: '#FFB742' });
     // material.transparent = true;
     // material.opacity = 0.6;
-    let sphereNoise = new THREE.Mesh(sphere_geometry, material);
+    // let sphereNoise = new THREE.Mesh(sphere_geometry, material);
     var updateNoise = function() {
         var time = 0; //performance.now() * 0.0005;
         var k = 2;
@@ -447,7 +446,7 @@ d3.csv('data/bouldern/VIVI_05_AppleWatch200309_10_46_15.csv', function(data) {
         sphereNoise.geometry.computeVertexNormals();
         sphereNoise.geometry.normalsNeedUpdate = true;
     };
-    sphereNoise.castShadow = true;
+    // sphereNoise.castShadow = true;
     // scene.add(sphereNoise);
 
     // PARTICLE SIZE & COLOR II
@@ -710,10 +709,11 @@ d3.csv('data/bouldern/VIVI_05_AppleWatch200309_10_46_15.csv', function(data) {
 
     // going through all data points - draw point, with color
     for (let i = 1; i < motionYawRollPitch.length; i += 3) {
+        let scaling = 7;
         let timeFactor = 0; //.00003; // stretching data over time
-        let x = xScale(motionYawRollPitch[i].x + i * timeFactor) / 10;
-        let y = yScale(motionYawRollPitch[i].y + i * timeFactor) / 10;
-        let z = zScale(motionYawRollPitch[i].z + i * timeFactor) / 10;
+        let x = xScale(motionYawRollPitch[i].x + i * timeFactor) / scaling;
+        let y = yScale(motionYawRollPitch[i].y + i * timeFactor) / scaling;
+        let z = zScale(motionYawRollPitch[i].z + i * timeFactor) / scaling;
 
         // let u = xScale(motionYawRollPitch[i - 1].x);
         // let v = yScale(motionYawRollPitch[i - 1].y);
@@ -721,13 +721,13 @@ d3.csv('data/bouldern/VIVI_05_AppleWatch200309_10_46_15.csv', function(data) {
 
         let colorMap = mapValues(i, 1, pointCount, 0, 150);
 
-        // var sphereNoise = new THREE.Mesh(sphere_geometry, material);
-        // sphereNoise.position.x = x; // UNTERSCHIEDLICHE SPHERE GRÖßen!!!
-        // sphereNoise.position.y = y;
-        // sphereNoise.position.z = z;
-        // sphereNoise.rotation.x = (Math.PI / 6) * (i % 4);
-        // scene.add(sphereNoise);
-        // sphereGroup.add(sphereNoise);
+        var sphereNoise = new THREE.Mesh(sphere_geometry, material);
+        sphereNoise.position.x = x; // UNTERSCHIEDLICHE SPHERE GRÖßen!!!
+        sphereNoise.position.y = y;
+        sphereNoise.position.z = z;
+        sphereNoise.rotation.x = (Math.PI / 6) * (i % 4);
+        scene.add(sphereNoise);
+        sphereGroup.add(sphereNoise);
 
         // pointGeo.vertices.push(new THREE.Vector3(x, y, z), new THREE.Vector3(u, v, w)); // connecting lines
         pointGeo.vertices.push(new THREE.Vector3(x, y, z));
@@ -737,7 +737,7 @@ d3.csv('data/bouldern/VIVI_05_AppleWatch200309_10_46_15.csv', function(data) {
         );
     }
 
-    // updateNoise();
+    updateNoise();
     let points = new THREE.Points(pointGeo, mat);
     // scatterPlot.add(points);
 
@@ -775,8 +775,8 @@ d3.csv('data/bouldern/VIVI_05_AppleWatch200309_10_46_15.csv', function(data) {
     scene.add(sphereGroup);
     // LINE VERSION
     let lineMaterial = new THREE.LineBasicMaterial({
-        color: 0x820000,
-        lineWidth: 0.1
+        color: 0x820000
+        // lineWidth: 0.1
     });
     let lineData = new THREE.Line(secondPointGeo, lineMaterial);
     lineData.type = THREE.Lines;
