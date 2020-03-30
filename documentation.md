@@ -11,6 +11,15 @@
 - [ ]  create narrative/connection for sports to viz
 
 ------
+### 30.03.20 
+- audio implementation
+
+### 29.03.20 (3h)
+- window resize
+- audio implementation (doesnt work yet)
+- animation & composition
+- color palette
+
 ### 28.03.20 (3h)
 - light/environment adjustments
 - add shadow to plane
