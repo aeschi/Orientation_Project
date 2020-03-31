@@ -111,7 +111,7 @@ camera.position.set(0, 50, 250);
 
 // orbit controls
 const controls = new THREE.OrbitControls(camera, renderer.domElement);
-controls.minDistance = 100;
+controls.minDistance = 10;
 controls.maxDistance = 450;
 controls.autoRotate = true;
 controls.autoRotateSpeed = 0.5;
@@ -328,7 +328,7 @@ d3.csv('data/skaten/ROMAN_03_AppleWatch_200315_14_36_12.csv', function(data) {
     let analyser;
     let dataArrayOld;
     let audioData = [];
-    let stream = 'data/skaten/ROMAN_03_edit.m4a';
+    let stream = 'data/skaten/ROMAN_03_edit_garage.mp3';
     //https://codepen.io/EllenProbst/pen/RQQmJK?editors=0010 //code source
 
     // AUDIO file
@@ -346,7 +346,7 @@ d3.csv('data/skaten/ROMAN_03_AppleWatch_200315_14_36_12.csv', function(data) {
     var audioLoader = new THREE.AudioLoader();
     var listener = new THREE.AudioListener();
     var audio = new THREE.Audio(listener);
-    // audio.crossOrigin = 'anonymous';
+    audio.crossOrigin = 'anonymous';
     audioLoader.load(stream, function(buffer) {
         audio.setBuffer(buffer);
         audio.setLoop(true);
@@ -422,25 +422,30 @@ d3.csv('data/skaten/ROMAN_03_AppleWatch_200315_14_36_12.csv', function(data) {
 
     var ball = new THREE.Mesh(icosahedronGeometry, lambertMaterial);
     ball.position.set(0, 0, 0);
+    ball.castShadow = true;
     scene.add(ball);
 
     // sphere noise
     // let sphere_geometry = new THREE.SphereBufferGeometry(5, 20, 20);
     // let material = new THREE.MeshBasicMaterial({ color: 0xffff00 });
     let sphere_geometry = new THREE.SphereGeometry(1, 20, 20);
-    var material = new THREE.MeshLambertMaterial({ color: '#FFB742' });
+    // let material = new THREE.MeshLambertMaterial({ color: '#FFB742' });
+    let material = new THREE.MeshPhongMaterial({
+        map: THREE.ImageUtils.loadTexture('assets/boulder_red_small_sat.png')
+        // color: 0xff8336
+    });
     // material.transparent = true;
     // material.opacity = 0.6;
     // let sphereNoise = new THREE.Mesh(sphere_geometry, material);
     var updateNoise = function() {
         var time = 0; //performance.now() * 0.0005;
-        var k = 2;
+        var k = 5;
         for (var i = 0; i < sphereNoise.geometry.faces.length; i++) {
             var uv = sphereNoise.geometry.faceVertexUvs[0][i]; //faceVertexUvs is a huge arrayed stored inside of another array
             var f = sphereNoise.geometry.faces[i];
             var p = sphereNoise.geometry.vertices[f.a]; //take the first vertex from each face
             //   p.normalize().multiplyScalar(10 + 2.3 * noise.perlin3(uv[0].x * k, uv[0].y * k, time));
-            p.normalize().multiplyScalar(1 + 1.5 * noise.perlin3(p.x * k + time, p.y * k, p.z * k + time));
+            p.normalize().multiplyScalar(1 + 0.1 * noise.perlin3(p.x * k + time, p.y * k, p.z * k + time));
         }
         sphereNoise.geometry.verticesNeedUpdate = true; //must be set or vertices will not update
         sphereNoise.geometry.computeVertexNormals();
@@ -709,7 +714,7 @@ d3.csv('data/skaten/ROMAN_03_AppleWatch_200315_14_36_12.csv', function(data) {
 
     // going through all data points - draw point, with color
     for (let i = 1; i < motionYawRollPitch.length; i += 3) {
-        let scaling = 7;
+        let scaling = 5;
         let timeFactor = 0; //.00003; // stretching data over time
         let x = xScale(motionYawRollPitch[i].x + i * timeFactor) / scaling;
         let y = yScale(motionYawRollPitch[i].y + i * timeFactor) / scaling;
@@ -726,6 +731,7 @@ d3.csv('data/skaten/ROMAN_03_AppleWatch_200315_14_36_12.csv', function(data) {
         sphereNoise.position.y = y;
         sphereNoise.position.z = z;
         sphereNoise.rotation.x = (Math.PI / 6) * (i % 4);
+        sphereNoise.castShadow = true;
         scene.add(sphereNoise);
         sphereGroup.add(sphereNoise);
 
@@ -784,7 +790,7 @@ d3.csv('data/skaten/ROMAN_03_AppleWatch_200315_14_36_12.csv', function(data) {
 
     // LIGHT
     function lighting() {
-        ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
+        ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
         scene.add(ambientLight);
 
         let pointLight1 = new THREE.PointLight(0xff7f00, 0.8);
