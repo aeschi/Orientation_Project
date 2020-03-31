@@ -9,10 +9,11 @@
 - [ ]  create narrative/connection for sports to viz
 
 ------
-### 32.03.20 
+### 31.03.20 
 - [x]  gradient/climbing grip texture for noiseSpheres (possible adjust color with .color, but not the opacity)
+
 <img src="https://i.imgur.com/ofL368O.png" width="70%">
-<img src="https://i.imgur.com/WlWTa9O.png" width="47%"><img src="https://i.imgur.com/afBbCrw.png" width="43%">
+<img src="https://i.imgur.com/WlWTa9O.png" width="45%"><img src="https://i.imgur.com/afBbCrw.png" width="41%">
 
 
 ### 30.03.20 
