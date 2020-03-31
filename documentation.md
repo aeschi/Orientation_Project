@@ -1,13 +1,19 @@
 #### Next Steps
 
 - [x]  try out different inputs/interpretations of data 
-- [ ]  improve sound animation
+- [ ]  improve sound animation Links: 
+[medium article](https://medium.com/@mag_ops/music-visualiser-with-three-js-web-audio-api-b30175e7b5ba),
+[codepen](https://codepen.io/Zebrathy/pen/dyoaoPQ?editors=0010),
+[webaudio sandbox](https://github.com/mrdoob/three.js/blob/master/examples/webaudio_sandbox.html),
+[other example](https://codepen.io/EllenProbst/pen/RQQmJK?editors=0010)
 - [ ]  clean up code!
-- [ ]  sound edit
+- [ ]  sound edit 
 - [ ]  how to switch between sports (via GUI?)
 - [ ]  still images/ porttraits and viz
 - [ ]  create narrative/connection for sports to viz
-
+- [ ]  need for keyframe animation? [link](https://threejs.org/examples/?q=misc#misc_animation_keys), [git](https://github.com/mrdoob/three.js/blob/master/examples/misc_animation_keys.html)
+- [ ]  Meshline links: [git](https://github.com/spite/THREE.MeshLine), [demo](https://www.clicktorelease.com/code/THREE.MeshLine/demo/index.html), [splinecurve](https://threejs.org/docs/#api/en/extras/curves/SplineCurve), [three constan.spline](https://github.com/spite/THREE.ConstantSpline)
+- [ ] no rotation.. maybe with [for each](https://www.mediaevent.de/javascript/for-in-foreach.html) / et all
 ------
 ### 31.03.20 
 - [x]  gradient/climbing grip texture for noiseSpheres (possible adjust color with .color, but not the opacity)
