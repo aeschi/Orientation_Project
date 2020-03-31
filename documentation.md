@@ -3,13 +3,18 @@
 - [x]  try out different inputs/interpretations of data 
 - [ ]  improve sound animation
 - [ ]  clean up code!
-- [ ]  gradient/climbing grip texture for noiseSpheres
 - [ ]  sound edit
 - [ ]  how to switch between sports (via GUI?)
 - [ ]  still images/ porttraits and viz
 - [ ]  create narrative/connection for sports to viz
 
 ------
+### 32.03.20 
+- [x]  gradient/climbing grip texture for noiseSpheres (possible adjust color with .color, but not the opacity)
+<img src="https://i.imgur.com/ofL368O.png" width="70%">
+<img src="https://i.imgur.com/WlWTa9O.png" width="47%"><img src="https://i.imgur.com/afBbCrw.png" width="43%">
+
+
 ### 30.03.20 
 - audio implementation (animation influenced by sound?)
 
