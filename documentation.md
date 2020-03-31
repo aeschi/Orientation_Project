@@ -13,7 +13,7 @@
 - [x]  gradient/climbing grip texture for noiseSpheres (possible adjust color with .color, but not the opacity)
 
 <img src="https://i.imgur.com/ofL368O.png" width="70%">
-<img src="https://i.imgur.com/WlWTa9O.png" width="44%"> <img src="https://i.imgur.com/afBbCrw.png" width="40%">
+<img src="https://i.imgur.com/WlWTa9O.png" width="39%"><img src="https://i.imgur.com/afBbCrw.png" width="35%">
 
 ### 30.03.20 
 - audio implementation (animation influenced by sound?)
