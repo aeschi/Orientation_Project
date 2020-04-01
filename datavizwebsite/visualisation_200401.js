@@ -113,8 +113,8 @@ camera.position.set(0, 50, 250);
 const controls = new THREE.OrbitControls(camera, renderer.domElement);
 controls.minDistance = 10;
 controls.maxDistance = 450;
-// controls.autoRotate = true;
-// controls.autoRotateSpeed = 0.5;
+controls.autoRotate = true;
+controls.autoRotateSpeed = 0.8;
 controls.enableDamping = true;
 controls.dampingFactor = 0.15;
 controls.maxPolarAngle = (2 * Math.PI) / 3.5;
@@ -146,9 +146,9 @@ var acceleration = [],
 
 var format = d3.format('+.3f');
 
-d3.csv('data/rollerskating/FLO_01_AppleWatch_200319_17_59_20.csv', function(data) {
-    // d3.csv('data/bouldern/VIVI_06_AppleWatch200309_10_59_38.csv', function(data) {
-    // d3.csv('data/skaten/ROMAN_03_AppleWatch_200315_14_36_12.csv', function(data) {
+// d3.csv('data/cycling/Anna_02_AppleWatch_200319 17_52_20.csv', function(data) {
+// d3.csv('data/bouldern/VIVI_06_AppleWatch200309_10_59_38.csv', function(data) {
+d3.csv('data/skaten/ROMAN_03_AppleWatch_200315_14_36_12.csv', function(data) {
     // d3.csv('data/swimming/ALU_01_AppleWatch200311_14_13_46.csv', function(data) {
     var dataValues = d3.values(data)[0]; // top row of columns = names
     var columnNum = Object.keys(dataValues); // putting names into array
@@ -721,7 +721,7 @@ d3.csv('data/rollerskating/FLO_01_AppleWatch_200319_17_59_20.csv', function(data
 
     // going through all data points - draw point, with color
     for (let i = 1; i < gravity.length; i += 1) {
-        let scaling = 1.5;
+        let scaling = 2;
         let timeFactor = 0; //.00003; // stretching data over time
         let x = xScale(gravity[i].x + i * timeFactor) / scaling;
         let y = yScale(gravity[i].y + i * timeFactor) / scaling;
@@ -903,7 +903,7 @@ d3.csv('data/rollerskating/FLO_01_AppleWatch_200319_17_59_20.csv', function(data
         // renderer.clear();
         // lightHelper3.update();
         window.requestAnimationFrame(animate, renderer.domElement);
-        // controls.update();
+        controls.update();
         // lineMesh.material.uniforms.visibility.value = animateVisibility ? (time / 10000) % 1.0 : 1.0;
         render();
     }

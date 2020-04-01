@@ -66,15 +66,11 @@ function max(arr) {
 // THREE SETUP
 
 let stats;
-
 let gui;
 
-let ambientLight;
-
+// gui variables
 let bouldering, skating, swimming;
-
 let dataSport = 'skating';
-
 let show_acceleration = true;
 
 // Meshline
@@ -150,6 +146,8 @@ var acceleration = [],
     gravity = [],
     quaternationData = [];
 
+var xExent, yExent, zExent;
+
 var format = d3.format('+.3f');
 
 // if(params.dataSource == 'skating'){
@@ -159,36 +157,26 @@ var format = d3.format('+.3f');
 // }else if(params.dataSource == 'swimming'){
 //     dataSport = 'data/swimming/ALU_01_AppleWatch200311_14_13_46.csv'
 // }
-
-d3.csv('data/rollerskating/FLO_01_AppleWatch_200319_17_59_20.csv', function(data) {
-    // d3.csv('data/bouldern/VIVI_06_AppleWatch200309_10_59_38.csv', function(data) {
-    // d3.csv('data/skaten/ROMAN_03_AppleWatch_200315_14_36_12.csv', function(data) {
-    // d3.csv('data/swimming/ALU_01_AppleWatch200311_14_13_46.csv', function(data) {
+// d3.csv('data/rollerskating/FLO_01_AppleWatch_200319_17_59_20.csv', function(data) {
+// d3.csv('data/bouldern/VIVI_06_AppleWatch200309_10_59_38.csv', function(data) {
+// d3.csv('data/skaten/ROMAN_03_AppleWatch_200315_14_36_12.csv', function(data) {
+d3.csv('data/swimming/ALU_01_AppleWatch200311_14_13_46.csv', function(data) {
     var dataValues = d3.values(data)[0]; // top row of columns = names
     var columnNum = Object.keys(dataValues); // putting names into array
     // console.log(Object.keys(dataValues));
 
     data.forEach(function(mydata, i) {
         acceleration[i] = {
-            //   x: +mydata[columnNum[11]],
-            //   y: +mydata[columnNum[12]],
-            //   z: +mydata[columnNum[13]]
             x: +mydata[columnNum[2]],
             y: +mydata[columnNum[3]],
             z: +mydata[columnNum[4]]
         };
         motionYawRollPitch[i] = {
-            //   x: +mydata[columnNum[15]],
-            //   y: +mydata[columnNum[16]],
-            //   z: +mydata[columnNum[17]]
             x: +mydata[columnNum[6]],
             y: +mydata[columnNum[7]],
             z: +mydata[columnNum[8]]
         };
         gravity[i] = {
-            //   x: +mydata[columnNum[29]],
-            //   y: +mydata[columnNum[30]],
-            //   z: +mydata[columnNum[31]]
             x: +mydata[columnNum[20]],
             y: +mydata[columnNum[21]],
             z: +mydata[columnNum[22]]
@@ -200,13 +188,13 @@ d3.csv('data/rollerskating/FLO_01_AppleWatch_200319_17_59_20.csv', function(data
             w: +mydata[columnNum[19]]
         };
     });
-
     let temp = gravity;
 
     // find extent (min & max values) of either x, y or z to use for scaling
     // d3.extent returns a two element array of the minimum and maximum values from the array.
     // https://benclinkinbeard.com/d3tips/utility-methods-with-d3-array/?utm_content=buffer90c0a&utm_medium=social&utm_source=twitter.com&utm_campaign=buffer
-    let xExent = d3.extent(temp, function(d) {
+
+    var xExent = d3.extent(temp, function(d) {
             return d.x;
         }),
         yExent = d3.extent(temp, function(d) {
@@ -216,18 +204,8 @@ d3.csv('data/rollerskating/FLO_01_AppleWatch_200319_17_59_20.csv', function(data
             return d.z;
         });
 
-    // points for labels and grid overlay
-    let orientPoint = {
-        xMax: xExent[1],
-        xCen: (xExent[1] + xExent[0]) / 2,
-        xMin: xExent[0],
-        yMax: yExent[1],
-        yCen: (yExent[1] + yExent[0]) / 2,
-        yMin: yExent[0],
-        zMax: zExent[1],
-        zCen: (zExent[1] + zExent[0]) / 2,
-        zMin: zExent[0]
-    };
+    // console.log('Inside: ', gravity);
+    // exportOutside(gravity);
 
     // SCALING IN d3 (distribution of points)
     // https://github.com/d3/d3-scale
@@ -235,16 +213,17 @@ d3.csv('data/rollerskating/FLO_01_AppleWatch_200319_17_59_20.csv', function(data
     // https://www.d3indepth.com/scales/
     // Simply put: scales transform a number in a certain interval (called the domain)
     // into a number in another interval (called the range).
-    let xScale = d3.scale
+
+    var xScale = d3.scale
         .linear()
         .domain(xExent)
         .range([-50, 50]);
     //array min & max of data set
-    let yScale = d3.scale
+    var yScale = d3.scale
         .linear()
         .domain(yExent)
         .range([-50, 50]);
-    let zScale = d3.scale
+    var zScale = d3.scale
         .linear()
         .domain(zExent)
         .range([-50, 50]);
@@ -370,9 +349,9 @@ d3.csv('data/rollerskating/FLO_01_AppleWatch_200319_17_59_20.csv', function(data
         let sphere_geometry = new THREE.SphereGeometry(0.5, 20, 20);
         // let material = new THREE.MeshLambertMaterial({ color: '#FFB742' });
         let material = new THREE.MeshPhongMaterial({
-            // map: THREE.ImageUtils.loadTexture('assets/water.jpg') // swim map
-            map: THREE.ImageUtils.loadTexture('assets/griptape_polar.png') // skate map
-            // map: THREE.ImageUtils.loadTexture('assets/boulder_green_small_sat.png') // boulder map
+            map: THREE.ImageUtils.loadTexture('assets/water.jpg') // swim map
+            // map: THREE.ImageUtils.loadTexture('assets/griptape_polar.png') // skate map
+            // map: THREE.ImageUtils.loadTexture('assets/boulder_bw_small_sat.png') // boulder map
             // color: 0xff8336 // tint
         });
         // material.transparent = true;
@@ -386,7 +365,7 @@ d3.csv('data/rollerskating/FLO_01_AppleWatch_200319_17_59_20.csv', function(data
                 let f = sphereNoise.geometry.faces[i];
                 let p = sphereNoise.geometry.vertices[f.a]; //take the first vertex from each face
                 // p.normalize().multiplyScalar(1 + 1.5 * noise.perlin3(uv[0].x * k, uv[0].y * k, time));
-                p.normalize().multiplyScalar(1 + 1.5 * noise.perlin3(p.x * k + time, p.y * k, p.z * k + time));
+                p.normalize().multiplyScalar(1.5 + 1.5 * noise.perlin3(p.x * k + time, p.y * k, p.z * k + time));
             }
             sphereNoise.geometry.verticesNeedUpdate = true; //must be set or vertices will not update
             sphereNoise.geometry.computeVertexNormals();
@@ -632,8 +611,8 @@ d3.csv('data/rollerskating/FLO_01_AppleWatch_200319_17_59_20.csv', function(data
         let lineMat = new MeshLineMaterial({
             map: strokeTexture,
             useMap: 1,
-            // color: new THREE.Color('#45818E'), //swim color blue
-            color: new THREE.Color('#FF8336'), //skate color orange
+            color: new THREE.Color('#45818E'), //swim color blue
+            // color: new THREE.Color('#FF8336'), //skate color orange
             // color: new THREE.Color(0x6aa84f), // boulder color green
             // color: new THREE.Color(colors[~~Maf.randomInRange(0, colors.length)]),
             lineWidth: 0.3,
@@ -655,7 +634,7 @@ d3.csv('data/rollerskating/FLO_01_AppleWatch_200319_17_59_20.csv', function(data
 
     // LIGHT
     function lighting() {
-        ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+        let ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
         scene.add(ambientLight);
 
         let pointLight1 = new THREE.PointLight(0xff7f00, 0.8);
@@ -770,10 +749,15 @@ d3.csv('data/rollerskating/FLO_01_AppleWatch_200319_17_59_20.csv', function(data
 
         let dataInput = gui.addFolder('Choose Sport');
         dataInput.add(params, 'dataSource', ['bouldering', 'skating', 'swimming']);
-        dataInput.add(params, 'acceleration');
-        // dataInput.add(params, 'gravity');
-        // dataInput.add(params, 'sound');
+
         dataInput.open();
+
+        let dataSrc = gui.addFolder('Data Sources');
+        dataSrc.add(params, 'acceleration');
+        dataSrc.add(params, 'gravity');
+        dataSrc.add(params, 'sound');
+        dataSrc.open();
+
         gui.open();
     }
 
@@ -782,9 +766,23 @@ d3.csv('data/rollerskating/FLO_01_AppleWatch_200319_17_59_20.csv', function(data
         this.acceleration = function() {
             show_acceleration = false;
         };
+        this.gravity = function() {
+            show_acceleration = false;
+        };
+        this.sound = function() {
+            show_acceleration = false;
+        };
     }
 
     lighting();
     buildGui();
     animate();
 });
+// function exportOutside(gravity) {
+//     console.log('in function: ', gravity);
+//     // return gravity;
+// }
+// console.log('outside: ', gravity);
+// var temp = gravity;
+
+// console.log('Outsdie exent: ', xExent, yExent, zExent);
