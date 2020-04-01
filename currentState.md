@@ -18,9 +18,8 @@
 #### GUI Interaction (not properly working yet)
 <img src="https://i.imgur.com/FeDdBiH.png" width="40%">
 
-#### Demo
-https://vimeo.com/40307168
-
+#### Demo Video
+https://vimeo.com/403071681
 
 ### GOALS
 
