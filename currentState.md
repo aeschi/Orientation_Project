@@ -19,4 +19,6 @@
 <img src="https://i.imgur.com/FeDdBiH.png" width="40%">
 
 #### Demo
-[![](https://i.imgur.com/B6PLfEG.png)](https://vimeo.com/403071681 "200104 Orientation Project Viz Test")
+<img src="https://i.imgur.com/B6PLfEG.png" width="40%">
+
+[LINK TO DEMO](https://vimeo.com/40307168)
