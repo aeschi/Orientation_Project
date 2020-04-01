@@ -15,6 +15,10 @@
 - [ ]  Meshline links: [git](https://github.com/spite/THREE.MeshLine), [demo](https://www.clicktorelease.com/code/THREE.MeshLine/demo/index.html), [splinecurve](https://threejs.org/docs/#api/en/extras/curves/SplineCurve), [three constan.spline](https://github.com/spite/THREE.ConstantSpline)
 - [ ] no rotation.. maybe with [for each](https://www.mediaevent.de/javascript/for-in-foreach.html) / et all
 ------
+### 01.04.20
+- The gravity sensor provides a three dimensional vector indicating the direction and magnitude of gravity. Typically, this sensor is used to determine the device's relative orientation in space. 
+- should add description of data
+
 ### 31.03.20 
 - [x]  gradient/climbing grip texture for noiseSpheres (possible adjust color with .color, but not the opacity)
 - screenshots/recording for check in
