@@ -34,7 +34,7 @@ OUTPUT
 - [x] no interaction 
 - [x] the visualisation is animated, but might jitter slightly
 - [x] basic represantation of sport (e.g. fitting color)
-- [ ] still frames from animation for product design (e.g. gear/shirt with with abstract “climbing” illustration)
+- [ ] still frames from animation for product design (e.g. gear/shirt with abstract “climbing” illustration)
 - [x] visual understanding of input features (no beautification)
 
 #### BEST CASE
