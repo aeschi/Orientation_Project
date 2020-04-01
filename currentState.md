@@ -19,6 +19,4 @@
 <img src="https://i.imgur.com/FeDdBiH.png" width="40%">
 
 #### Demo
-<img src="https://i.imgur.com/B6PLfEG.png" width="40%">
-
-[LINK TO DEMO](https://vimeo.com/40307168)
+[](https://vimeo.com/40307168)
