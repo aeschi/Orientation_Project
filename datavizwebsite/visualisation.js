@@ -146,7 +146,9 @@ var acceleration = [],
 
 var format = d3.format('+.3f');
 
+// d3.csv('data/bouldern/VIVI_06_AppleWatch200309_10_59_38.csv', function(data) {
 d3.csv('data/skaten/ROMAN_03_AppleWatch_200315_14_36_12.csv', function(data) {
+    // d3.csv('data/swimming/ALU_01_AppleWatch200311_14_13_46.csv', function(data) {
     var dataValues = d3.values(data)[0]; // top row of columns = names
     var columnNum = Object.keys(dataValues); // putting names into array
     //   console.log(Object.keys(dataValues));
@@ -428,10 +430,12 @@ d3.csv('data/skaten/ROMAN_03_AppleWatch_200315_14_36_12.csv', function(data) {
     // sphere noise
     // let sphere_geometry = new THREE.SphereBufferGeometry(5, 20, 20);
     // let material = new THREE.MeshBasicMaterial({ color: 0xffff00 });
-    let sphere_geometry = new THREE.SphereGeometry(1, 20, 20);
+    let sphere_geometry = new THREE.SphereGeometry(0.5, 20, 20);
     // let material = new THREE.MeshLambertMaterial({ color: '#FFB742' });
     let material = new THREE.MeshPhongMaterial({
-        map: THREE.ImageUtils.loadTexture('assets/boulder_red_small_sat.png')
+        // map: THREE.ImageUtils.loadTexture('assets/water.jpg') // swim map
+        map: THREE.ImageUtils.loadTexture('assets/griptape_polar.png') // skate map
+        // map: THREE.ImageUtils.loadTexture('assets/boulder_green_small_sat.png') // boulder map
         // color: 0xff8336
     });
     // material.transparent = true;
@@ -445,7 +449,7 @@ d3.csv('data/skaten/ROMAN_03_AppleWatch_200315_14_36_12.csv', function(data) {
             var f = sphereNoise.geometry.faces[i];
             var p = sphereNoise.geometry.vertices[f.a]; //take the first vertex from each face
             //   p.normalize().multiplyScalar(10 + 2.3 * noise.perlin3(uv[0].x * k, uv[0].y * k, time));
-            p.normalize().multiplyScalar(1 + 0.1 * noise.perlin3(p.x * k + time, p.y * k, p.z * k + time));
+            p.normalize().multiplyScalar(1 + 1.5 * noise.perlin3(p.x * k + time, p.y * k, p.z * k + time));
         }
         sphereNoise.geometry.verticesNeedUpdate = true; //must be set or vertices will not update
         sphereNoise.geometry.computeVertexNormals();
@@ -680,7 +684,9 @@ d3.csv('data/skaten/ROMAN_03_AppleWatch_200315_14_36_12.csv', function(data) {
     let lineMat = new MeshLineMaterial({
         map: strokeTexture,
         useMap: 1,
-        color: new THREE.Color('#FF8336'), //
+        // color: new THREE.Color('#45818E'), //swim color blue
+        color: new THREE.Color('#FF8336'), //skate color orange
+        // color: new THREE.Color(0x6aa84f), // boulder color green
         // color: new THREE.Color(colors[~~Maf.randomInRange(0, colors.length)]),
         lineWidth: 0.3,
         near: 1,
@@ -713,12 +719,12 @@ d3.csv('data/skaten/ROMAN_03_AppleWatch_200315_14_36_12.csv', function(data) {
     let sphereGroup = new THREE.Object3D();
 
     // going through all data points - draw point, with color
-    for (let i = 1; i < motionYawRollPitch.length; i += 3) {
-        let scaling = 5;
+    for (let i = 1; i < gravity.length; i += 1) {
+        let scaling = 3;
         let timeFactor = 0; //.00003; // stretching data over time
-        let x = xScale(motionYawRollPitch[i].x + i * timeFactor) / scaling;
-        let y = yScale(motionYawRollPitch[i].y + i * timeFactor) / scaling;
-        let z = zScale(motionYawRollPitch[i].z + i * timeFactor) / scaling;
+        let x = xScale(gravity[i].x + i * timeFactor) / scaling;
+        let y = yScale(gravity[i].y + i * timeFactor) / scaling;
+        let z = zScale(gravity[i].z + i * timeFactor) / scaling;
 
         // let u = xScale(motionYawRollPitch[i - 1].x);
         // let v = yScale(motionYawRollPitch[i - 1].y);
@@ -727,7 +733,7 @@ d3.csv('data/skaten/ROMAN_03_AppleWatch_200315_14_36_12.csv', function(data) {
         let colorMap = mapValues(i, 1, pointCount, 0, 150);
 
         var sphereNoise = new THREE.Mesh(sphere_geometry, material);
-        sphereNoise.position.x = x; // UNTERSCHIEDLICHE SPHERE GRÖßen!!!
+        sphereNoise.position.x = -x; // UNTERSCHIEDLICHE SPHERE GRÖßen!!!
         sphereNoise.position.y = y;
         sphereNoise.position.z = z;
         sphereNoise.rotation.x = (Math.PI / 6) * (i % 4);
@@ -756,14 +762,14 @@ d3.csv('data/skaten/ROMAN_03_AppleWatch_200315_14_36_12.csv', function(data) {
 
         let colorMap = mapValues(i, 1, pointCount, 0, 150);
 
-        // let cubeMaterial = new THREE.MeshLambertMaterial({ color: 0xd5d5d5 });
-        // // cubeMaterial.color.setRGB((180 - colorMap) / 255, 100 / 255, 150 / 255);
-        // cubeMaterial.color.setRGB(102 / 255, 255 / 255, 185 / 255);
-        // cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
-        // cube.position.x = x;
-        // cube.position.y = y;
-        // cube.position.z = z;
-        // cube.rotation.x = (Math.PI / 2) * (i % 2);
+        let cubeMaterial = new THREE.MeshLambertMaterial({ color: 0xd5d5d5 });
+        // cubeMaterial.color.setRGB((180 - colorMap) / 255, 100 / 255, 150 / 255);
+        cubeMaterial.color.setRGB(102 / 255, 255 / 255, 185 / 255);
+        cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
+        cube.position.x = -x;
+        cube.position.y = y;
+        cube.position.z = z;
+        cube.rotation.x = (Math.PI / 2) * (i % 2);
         // scene.add(cube);
         // sphereGroup.add(cube);
 
@@ -815,8 +821,8 @@ d3.csv('data/skaten/ROMAN_03_AppleWatch_200315_14_36_12.csv', function(data) {
         spotLight1.shadow.camera.far = 200;
         scene.add(spotLight1);
 
-        spotLight2 = new THREE.SpotLight(0xf4148d, 1);
-        spotLight2.position.set(100, 100, 50);
+        spotLight2 = new THREE.SpotLight(0xff8336, 1);
+        spotLight2.position.set(-50, 10, 0);
         spotLight2.angle = Math.PI / 6;
         spotLight2.penumbra = 0.05;
         spotLight2.decay = 1.5;
@@ -826,7 +832,7 @@ d3.csv('data/skaten/ROMAN_03_AppleWatch_200315_14_36_12.csv', function(data) {
         spotLight2.shadow.mapSize.height = 1024;
         spotLight2.shadow.camera.near = 10;
         spotLight2.shadow.camera.far = 200;
-        // scene.add(spotLight2);
+        scene.add(spotLight2);
 
         spotLight3 = new THREE.SpotLight(0x5dd1fb, 2);
         spotLight3.position.set(-100, 20, -80);
@@ -845,8 +851,8 @@ d3.csv('data/skaten/ROMAN_03_AppleWatch_200315_14_36_12.csv', function(data) {
         // lightHelper1 = new THREE.SpotLightHelper(spotLight1);
         // scene.add(lightHelper1);
 
-        //   lightHelper2 = new THREE.SpotLightHelper(spotLight2);
-        //   scene.add(lightHelper2);
+        // lightHelper2 = new THREE.SpotLightHelper(spotLight2);
+        // scene.add(lightHelper2);
 
         //   lightHelper3 = new THREE.SpotLightHelper(spotLight3);
         //   scene.add(lightHelper3);
@@ -894,7 +900,7 @@ d3.csv('data/skaten/ROMAN_03_AppleWatch_200315_14_36_12.csv', function(data) {
         // makeRoughBall(ball, modulate(Math.pow(lowerMaxFr, 0.8), 0, 1, 0, 8), modulate(upperAvgFr, 0, 1, 0, 4));
 
         // renderer.clear();
-        // lightHelper1.update();
+        // lightHelper2.update();
         window.requestAnimationFrame(animate, renderer.domElement);
         // controls.update();
         // lineMesh.material.uniforms.visibility.value = animateVisibility ? (time / 10000) % 1.0 : 1.0;
@@ -934,6 +940,6 @@ d3.csv('data/skaten/ROMAN_03_AppleWatch_200315_14_36_12.csv', function(data) {
     }
 
     lighting();
-    buildGui();
+    // buildGui();
     animate();
 });
