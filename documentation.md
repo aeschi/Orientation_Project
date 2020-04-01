@@ -6,7 +6,7 @@
 [codepen](https://codepen.io/Zebrathy/pen/dyoaoPQ?editors=0010),
 [webaudio sandbox](https://github.com/mrdoob/three.js/blob/master/examples/webaudio_sandbox.html),
 [other example](https://codepen.io/EllenProbst/pen/RQQmJK?editors=0010)
-- [ ]  clean up code!
+- [ ]  restructure code.. for gui
 - [ ]  sound edit 
 - [ ]  how to switch between sports (via GUI?)
 - [ ]  still images/ porttraits and viz
@@ -18,6 +18,7 @@
 ### 01.04.20
 - The gravity sensor provides a three dimensional vector indicating the direction and magnitude of gravity. Typically, this sensor is used to determine the device's relative orientation in space. 
 - should add description of data
+- [x]  clean up code
 
 ### 31.03.20 
 - [x]  gradient/climbing grip texture for noiseSpheres (possible adjust color with .color, but not the opacity)
