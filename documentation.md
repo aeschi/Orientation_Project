@@ -17,6 +17,7 @@
 ------
 ### 31.03.20 
 - [x]  gradient/climbing grip texture for noiseSpheres (possible adjust color with .color, but not the opacity)
+- screenshots/recording for check in
 
 <img src="https://i.imgur.com/ofL368O.png" width="70%">
 
