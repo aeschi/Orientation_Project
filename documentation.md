@@ -13,12 +13,40 @@
 - [ ]  create narrative/connection for sports to viz
 - [ ]  need for keyframe animation? [link](https://threejs.org/examples/?q=misc#misc_animation_keys), [git](https://github.com/mrdoob/three.js/blob/master/examples/misc_animation_keys.html)
 - [ ]  Meshline links: [git](https://github.com/spite/THREE.MeshLine), [demo](https://www.clicktorelease.com/code/THREE.MeshLine/demo/index.html), [splinecurve](https://threejs.org/docs/#api/en/extras/curves/SplineCurve), [three constan.spline](https://github.com/spite/THREE.ConstantSpline)
-- [ ] no rotation.. maybe with [for each](https://www.mediaevent.de/javascript/for-in-foreach.html) / et all
 ------
 ### 01.04.20
 - The gravity sensor provides a three dimensional vector indicating the direction and magnitude of gravity. Typically, this sensor is used to determine the device's relative orientation in space. 
 - should add description of data
 - [x]  clean up code
+- check in summary https://github.com/aeschi/Orientation_Project/master/currentState.md
+- work on gui
+
+#### Data input:
+<img src="https://i.imgur.com/GFrDjqY.png" width="80%">
+
+#### Different Sports
+
+Bouldering
+
+<img src="https://i.imgur.com/yIC62Ua.png" width="80%">
+
+Swimming
+
+<img src="https://i.imgur.com/FVm2t0R.png" width="80%">
+
+Skating
+
+<img src="https://i.imgur.com/wN8mrSR.png" width="80%">
+
+GUI Interaction (not properly working yet)
+
+<img src="https://i.imgur.com/FeDdBiH.png" width="40%">
+
+Demo 
+
+https://vimeo.com/40307168
+
+
 
 ### 31.03.20 
 - [x]  gradient/climbing grip texture for noiseSpheres (possible adjust color with .color, but not the opacity)
