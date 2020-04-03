@@ -14,6 +14,7 @@ Links:
 - [ ] final beautification for each sport with color, shapes,.. (doable)
 - [ ] sound design/editing for swimming and bouldering (doable)
 - [ ] prepare presentation (doable)
+- [ ] image capture button Links: https://codepen.io/shivasaxena/pen/QEzAAv , https://jsfiddle.net/2pha/art388yv/
 
 ------
 
@@ -32,7 +33,7 @@ Links:
 - [x] line animation
 - [ ] more abstract sound design
 - [ ] pulsing light
-- [ ] image capture button
+- [ ] image capture button Links: https://codepen.io/shivasaxena/pen/QEzAAv , https://jsfiddle.net/2pha/art388yv/
 
 - important to show creative/technical process in final presentation (reflect on it..)
 
