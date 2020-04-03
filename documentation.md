@@ -1,25 +1,24 @@
 #### Next Steps
 
-- [x]  try out different inputs/interpretations of data 
-- [ ]  improve sound animation Links: 
+- [ ]  create better narrative/connection for sports to viz
+- [ ] fix GUI functionality (doable)
+- [ ]  restructure code.. for gui
+- [ ] improve perfomance for smoother animation (we'll see)
+- [ ] improve sound animation (doable)
+Links: 
 [medium article](https://medium.com/@mag_ops/music-visualiser-with-three-js-web-audio-api-b30175e7b5ba),
 [codepen](https://codepen.io/Zebrathy/pen/dyoaoPQ?editors=0010),
 [webaudio sandbox](https://github.com/mrdoob/three.js/blob/master/examples/webaudio_sandbox.html),
 [other example](https://codepen.io/EllenProbst/pen/RQQmJK?editors=0010)
-- [ ]  restructure code.. for gui
-- [ ]  sound edit 
-- [ ]  how to switch between sports (via GUI?)
-- [ ]  still images/ porttraits and viz
-- [ ]  create narrative/connection for sports to viz
-- [ ]  need for keyframe animation? [link](https://threejs.org/examples/?q=misc#misc_animation_keys), [git](https://github.com/mrdoob/three.js/blob/master/examples/misc_animation_keys.html)
-- [ ]  Meshline links: [git](https://github.com/spite/THREE.MeshLine), [demo](https://www.clicktorelease.com/code/THREE.MeshLine/demo/index.html), [splinecurve](https://threejs.org/docs/#api/en/extras/curves/SplineCurve), [three constan.spline](https://github.com/spite/THREE.ConstantSpline)
-- [ ] fix GUI functionality (doable)
-- [ ] improve perfomance for smoother animation (we'll see)
-- [ ] improve sound animation (doable)
-- [ ] create still frames (very doable)
+- [ ] create still frames (very doable)  porttraits and viz
 - [ ] final beautification for each sport with color, shapes,.. (doable)
 - [ ] sound design/editing for swimming and bouldering (doable)
 - [ ] prepare presentation (doable)
+
+------
+
+- [ ]  need for keyframe animation? [link](https://threejs.org/examples/?q=misc#misc_animation_keys), [git](https://github.com/mrdoob/three.js/blob/master/examples/misc_animation_keys.html)
+- [ ]  Meshline links: [git](https://github.com/spite/THREE.MeshLine), [demo](https://www.clicktorelease.com/code/THREE.MeshLine/demo/index.html), [splinecurve](https://threejs.org/docs/#api/en/extras/curves/SplineCurve), [three constan.spline](https://github.com/spite/THREE.ConstantSpline)
 
 ------
 
