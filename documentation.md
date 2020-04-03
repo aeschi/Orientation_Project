@@ -5,6 +5,8 @@
 - [ ]  restructure code.. for gui
 - [ ] improve perfomance for smoother animation (we'll see)
 - [ ] improve sound animation (doable)
+- [ ] sound design/editing for swimming and bouldering (doable)
+- should add description of data: The gravity sensor provides a three dimensional vector indicating the direction and magnitude of gravity. Typically, this sensor is used to determine the device's relative orientation in space. 
 Links: 
 [medium article](https://medium.com/@mag_ops/music-visualiser-with-three-js-web-audio-api-b30175e7b5ba),
 [codepen](https://codepen.io/Zebrathy/pen/dyoaoPQ?editors=0010),
@@ -12,7 +14,6 @@ Links:
 [other example](https://codepen.io/EllenProbst/pen/RQQmJK?editors=0010)
 - [ ] create still frames (very doable)  porttraits and viz
 - [ ] final beautification for each sport with color, shapes,.. (doable)
-- [ ] sound design/editing for swimming and bouldering (doable)
 - [ ] prepare presentation (doable)
 - [ ] image capture button Links: https://codepen.io/shivasaxena/pen/QEzAAv , https://jsfiddle.net/2pha/art388yv/
 
