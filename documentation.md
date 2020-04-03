@@ -27,6 +27,7 @@ Links:
 - [x] gui functionality: blend in/out data sets (except gravity)
 - [x] line animation
 - [x] improved performance (less sphereNoise data points, starting without animtion)
+- created one summary csv of sports
 
 ### 02.04.20
 - check in with lena - suggestions:
