@@ -13,7 +13,30 @@
 - [ ]  create narrative/connection for sports to viz
 - [ ]  need for keyframe animation? [link](https://threejs.org/examples/?q=misc#misc_animation_keys), [git](https://github.com/mrdoob/three.js/blob/master/examples/misc_animation_keys.html)
 - [ ]  Meshline links: [git](https://github.com/spite/THREE.MeshLine), [demo](https://www.clicktorelease.com/code/THREE.MeshLine/demo/index.html), [splinecurve](https://threejs.org/docs/#api/en/extras/curves/SplineCurve), [three constan.spline](https://github.com/spite/THREE.ConstantSpline)
+- [ ] fix GUI functionality (doable)
+- [ ] improve perfomance for smoother animation (we'll see)
+- [ ] improve sound animation (doable)
+- [ ] create still frames (very doable)
+- [ ] final beautification for each sport with color, shapes,.. (doable)
+- [ ] sound design/editing for swimming and bouldering (doable)
+- [ ] prepare presentation (doable)
+
 ------
+
+### 03.04.20
+- [x] gui functionality: blend in/out data sets (except gravity)
+- [x] line animation
+- [x] improved performance (less sphereNoise data points, starting without animtion)
+
+### 02.04.20
+- check in with lena - suggestions:
+- [x] line animation
+- [ ] more abstract sound design
+- [ ] pulsing light
+- [ ] image capture button
+
+- important to show creative/technical process in final presentation (reflect on it..)
+
 ### 01.04.20
 - The gravity sensor provides a three dimensional vector indicating the direction and magnitude of gravity. Typically, this sensor is used to determine the device's relative orientation in space. 
 - should add description of data
