@@ -69,16 +69,34 @@ let stats;
 let gui;
 
 // gui variables
-let bouldering, skating, swimming;
-let dataSport = 'skating';
-let show_acceleration = true;
+let sound_vis = true;
+let gravity_vis = true;
+let acc_vis = true;
+let sphereGroup;
+let animateVisibility = false;
+let params;
+let dataSource;
+
+let sphereMaterial;
+let sphereTexture = [];
 
 // Meshline
 let strokeTexture;
+let lineMat;
+let lineColors;
 
 var loader = new THREE.TextureLoader();
 loader.load('assets/stroke.png', function(texture) {
     strokeTexture = texture;
+});
+loader.load('assets/water.jpg', function(texture) {
+    sphereTexture[0] = texture;
+});
+loader.load('assets/griptape_polar.png', function(texture) {
+    sphereTexture[1] = texture;
+});
+loader.load('assets/boulder_bw_small_sat.png', function(texture) {
+    sphereTexture[2] = texture;
 });
 
 // INFO
@@ -116,7 +134,7 @@ const controls = new THREE.OrbitControls(camera, renderer.domElement);
 controls.minDistance = 10;
 controls.maxDistance = 450;
 controls.autoRotate = true;
-controls.autoRotateSpeed = 1;
+controls.autoRotateSpeed = 0.5;
 controls.enableDamping = true;
 controls.dampingFactor = 0.15;
 controls.maxPolarAngle = (2 * Math.PI) / 3.5;
@@ -144,51 +162,105 @@ function vec(x, y, z) {
 var acceleration = [],
     motionYawRollPitch = [],
     gravity = [],
-    quaternationData = [];
+    quaternationData = [],
+    skateAcceleration = [],
+    skateMotionYawRollPitch = [],
+    skateGravity = [],
+    skateQuaternationData = [],
+    boulderAcceleration = [],
+    boulderMotionYawRollPitch = [],
+    boulderGravity = [],
+    boulderQuaternationData = [],
+    swimAcceleration = [],
+    swimMotionYawRollPitch = [],
+    swimGravity = [],
+    swimQuaternationData = [];
+
+var temp;
 
 var xExent, yExent, zExent;
 
 var format = d3.format('+.3f');
 
-// if(params.dataSource == 'skating'){
-//     dataSport = 'data/skaten/ROMAN_03_AppleWatch_200315_14_36_12.csv'
-// }else if(params.dataSource == 'bouldering'){
-//     dataSport = 'data/bouldern/VIVI_06_AppleWatch200309_10_59_38.csv'
-// }else if(params.dataSource == 'swimming'){
-//     dataSport = 'data/swimming/ALU_01_AppleWatch200311_14_13_46.csv'
-// }
-// d3.csv('data/rollerskating/FLO_01_AppleWatch_200319_17_59_20.csv', function(data) {
-// d3.csv('data/bouldern/VIVI_06_AppleWatch200309_10_59_38.csv', function(data) {
-// d3.csv('data/skaten/ROMAN_03_AppleWatch_200315_14_36_12.csv', function(data) {
-d3.csv('data/swimming/ALU_01_AppleWatch200311_14_13_46.csv', function(data) {
+d3.csv('data/skate_boulder_swim_labeled.csv', function(data) {
     var dataValues = d3.values(data)[0]; // top row of columns = names
     var columnNum = Object.keys(dataValues); // putting names into array
-    // console.log(Object.keys(dataValues));
+    console.log(Object.keys(dataValues));
 
     data.forEach(function(mydata, i) {
-        acceleration[i] = {
-            x: +mydata[columnNum[2]],
-            y: +mydata[columnNum[3]],
-            z: +mydata[columnNum[4]]
+        // SKATE
+        skateAcceleration[i] = {
+            x: +mydata[columnNum[0]],
+            y: +mydata[columnNum[1]],
+            z: +mydata[columnNum[2]]
         };
-        motionYawRollPitch[i] = {
+        skateMotionYawRollPitch[i] = {
+            x: +mydata[columnNum[3]],
+            y: +mydata[columnNum[4]],
+            z: +mydata[columnNum[5]]
+        };
+        skateGravity[i] = {
+            x: +mydata[columnNum[10]],
+            y: +mydata[columnNum[11]],
+            z: +mydata[columnNum[12]]
+        };
+        skateQuaternationData[i] = {
             x: +mydata[columnNum[6]],
             y: +mydata[columnNum[7]],
-            z: +mydata[columnNum[8]]
+            z: +mydata[columnNum[8]],
+            w: +mydata[columnNum[9]]
         };
-        gravity[i] = {
+        // BOULDER
+        boulderAcceleration[i] = {
+            x: +mydata[columnNum[14]],
+            y: +mydata[columnNum[15]],
+            z: +mydata[columnNum[16]]
+        };
+        boulderMotionYawRollPitch[i] = {
+            x: +mydata[columnNum[17]],
+            y: +mydata[columnNum[18]],
+            z: +mydata[columnNum[19]]
+        };
+        boulderGravity[i] = {
+            x: +mydata[columnNum[24]],
+            y: +mydata[columnNum[25]],
+            z: +mydata[columnNum[26]]
+        };
+        boulderQuaternationData[i] = {
             x: +mydata[columnNum[20]],
             y: +mydata[columnNum[21]],
-            z: +mydata[columnNum[22]]
+            z: +mydata[columnNum[22]],
+            w: +mydata[columnNum[23]]
         };
-        quaternationData[i] = {
-            x: +mydata[columnNum[16]],
-            y: +mydata[columnNum[17]],
-            z: +mydata[columnNum[18]],
-            w: +mydata[columnNum[19]]
+        //SWIM
+        swimAcceleration[i] = {
+            x: +mydata[columnNum[28]],
+            y: +mydata[columnNum[29]],
+            z: +mydata[columnNum[30]]
+        };
+        swimMotionYawRollPitch[i] = {
+            x: +mydata[columnNum[31]],
+            y: +mydata[columnNum[32]],
+            z: +mydata[columnNum[33]]
+        };
+        swimGravity[i] = {
+            x: +mydata[columnNum[38]],
+            y: +mydata[columnNum[39]],
+            z: +mydata[columnNum[40]]
+        };
+        swimQuaternationData[i] = {
+            x: +mydata[columnNum[34]],
+            y: +mydata[columnNum[35]],
+            z: +mydata[columnNum[36]],
+            w: +mydata[columnNum[37]]
         };
     });
-    let temp = gravity;
+    temp = skateGravity;
+
+    acceleration = skateAcceleration;
+    motionYawRollPitch = skateMotionYawRollPitch;
+    gravity = skateGravity;
+    quaternationData = skateQuaternationData;
 
     // find extent (min & max values) of either x, y or z to use for scaling
     // d3.extent returns a two element array of the minimum and maximum values from the array.
@@ -342,47 +414,41 @@ d3.csv('data/swimming/ALU_01_AppleWatch200311_14_13_46.csv', function(data) {
     let ball = new THREE.Mesh(icosahedronGeometry, lambertMaterial);
     ball.position.set(0, 0, 0);
     ball.castShadow = true;
+
     scene.add(ball);
 
     // SPHERE NOISE SHAPE
     function createSphereNoise() {
-        let sphere_geometry = new THREE.SphereGeometry(0.5, 20, 20);
+        let sphere_geometry = new THREE.SphereGeometry(1, 50, 50);
         // let material = new THREE.MeshLambertMaterial({ color: '#FFB742' });
-        let material = new THREE.MeshPhongMaterial({
-            map: THREE.ImageUtils.loadTexture('assets/water.jpg') // swim map
-            // map: THREE.ImageUtils.loadTexture('assets/griptape_polar.png') // skate map
-            // map: THREE.ImageUtils.loadTexture('assets/boulder_bw_small_sat.png') // boulder map
-            // color: 0xff8336 // tint
+
+        sphereMaterial = new THREE.MeshPhongMaterial({
+            map: sphereTexture[2],
+            specular: 0xc0c0c,
+            shininess: 70
         });
-        // material.transparent = true;
-        // material.opacity = 0.6;
-        // let sphereNoise = new THREE.Mesh(sphere_geometry, material);
         let updateNoise = function() {
             let time = 0; //performance.now() * 0.0005;
-            let k = 5;
+            let k = 2;
             for (let i = 0; i < sphereNoise.geometry.faces.length; i++) {
                 let uv = sphereNoise.geometry.faceVertexUvs[0][i]; //faceVertexUvs is a huge arrayed stored inside of another array
                 let f = sphereNoise.geometry.faces[i];
                 let p = sphereNoise.geometry.vertices[f.a]; //take the first vertex from each face
-                // p.normalize().multiplyScalar(1 + 1.5 * noise.perlin3(uv[0].x * k, uv[0].y * k, time));
-                p.normalize().multiplyScalar(1.5 + 1.5 * noise.perlin3(p.x * k + time, p.y * k, p.z * k + time));
+                p.normalize().multiplyScalar(1 + 0.3 * noise.perlin3(p.x * k + time, p.y * k, p.z * k + time));
             }
             sphereNoise.geometry.verticesNeedUpdate = true; //must be set or vertices will not update
             sphereNoise.geometry.computeVertexNormals();
             sphereNoise.geometry.normalsNeedUpdate = true;
         };
-        // sphereNoise.castShadow = true;
-        // scene.add(sphereNoise);
 
         let sphereGroup = new THREE.Object3D();
-        for (let i = 1; i < gravity.length; i += 1) {
+        for (let i = 1; i < gravity.length; i += 25) {
             let scaling = 1.5;
-            let timeFactor = 0; //.00003; // stretching data over time
-            let x = xScale(gravity[i].x + i * timeFactor) / scaling;
-            let y = yScale(gravity[i].y + i * timeFactor) / scaling;
-            let z = zScale(gravity[i].z + i * timeFactor) / scaling;
+            let x = xScale(gravity[i].x) / scaling;
+            let y = yScale(gravity[i].y) / scaling;
+            let z = zScale(gravity[i].z) / scaling;
 
-            var sphereNoise = new THREE.Mesh(sphere_geometry, material);
+            var sphereNoise = new THREE.Mesh(sphere_geometry, sphereMaterial);
             sphereNoise.position.x = -x; // UNTERSCHIEDLICHE SPHERE GRÖßEN!!!
             sphereNoise.position.y = y;
             sphereNoise.position.z = z;
@@ -394,7 +460,6 @@ d3.csv('data/swimming/ALU_01_AppleWatch200311_14_13_46.csv', function(data) {
         updateNoise();
         scene.add(sphereGroup);
     }
-    createSphereNoise();
 
     // POINTCLOUD WHITE
     let pointCloud;
@@ -407,10 +472,9 @@ d3.csv('data/swimming/ALU_01_AppleWatch200311_14_13_46.csv', function(data) {
 
         let pointCloudGeo = new THREE.Geometry();
         for (let i = 0; i < acceleration.length; i++) {
-            let timeFactor = 0.0003; // stretching data over time
-            let x = xScale(acceleration[i].x + i * timeFactor);
-            let y = yScale(acceleration[i].y + i * timeFactor);
-            let z = zScale(acceleration[i].z + i * timeFactor);
+            let x = xScale(acceleration[i].x);
+            let y = yScale(acceleration[i].y);
+            let z = zScale(acceleration[i].z);
             pointCloudGeo.vertices.push(new THREE.Vector3(x, z, y));
 
             // Colormap Pointcloud
@@ -420,7 +484,6 @@ d3.csv('data/swimming/ALU_01_AppleWatch200311_14_13_46.csv', function(data) {
         pointCloud = new THREE.Points(pointCloudGeo, pointCloudMat);
         scatterPlot.add(pointCloud);
     }
-    createPointCloud();
 
     // KEYFRAME ANIMATION
     function createKFA() {
@@ -562,75 +625,56 @@ d3.csv('data/swimming/ALU_01_AppleWatch200311_14_13_46.csv', function(data) {
         let clip = new THREE.AnimationClip('Action', 17, [scaleKF]); // AnimationClip( name : String, duration : Number, tracks : Array )
         mixer = new THREE.AnimationMixer(pointCloud); // setup the THREE.AnimationMixer
         let clipAction = mixer.clipAction(clip); // create a ClipAction and set it to play
+
         clipAction.play();
     }
-    createKFA();
 
     // MESH LINE
+    let lineMesh;
     function createMeshline() {
         let lineGeometry = new THREE.Geometry();
 
-        for (let i = 1; i < acceleration.length; i += 10) {
-            if (i % 10 == 0) {
-                let x = 0;
-                let y = 0;
-                let z = 0;
-                var v = vec(x, y, z);
-            } else {
-                let x = xScale(acceleration[i].x) / 2.5;
-                let y = yScale(acceleration[i].y) / 2.5;
-                let z = zScale(acceleration[i].z) / 2.5;
-                var v = vec(x, y, z);
-            }
+        for (let i = 1; i < acceleration.length; i += 5) {
+            // if (i % 11 == 0) {
+            //     let x = 0;
+            //     let y = 0;
+            //     let z = 0;
+            //     var v = vec(x, y, z);
+            // } else {
+            let x = xScale(acceleration[i].x) / 2.5;
+            let y = yScale(acceleration[i].y) / 2.5;
+            let z = zScale(acceleration[i].z) / 2.5;
+            var v = vec(x, y, z);
+            // }
             lineGeometry.vertices.push(v);
         }
 
-        let colors = [
-            0xed6a5a,
-            0xf4f1bb,
-            0x9bc1bc,
-            0x5ca4a9,
-            0xe6ebe0,
-            0xf0b67f,
-            0xfe5f55,
-            0xd6d1b1,
-            0xc7efcf,
-            0xeef5db,
-            0x50514f,
-            0xf25f5c,
-            0xffe066,
-            0x247ba0,
-            0x70c1b3
-        ];
+        lineColors = [0x45818e, 0xff8336, 0x6aa84f];
 
         let line = new MeshLine();
         line.setGeometry(lineGeometry, function(p) {
             return 2 + Math.sin(50 * p);
         });
 
-        let lineMat = new MeshLineMaterial({
+        lineMat = new MeshLineMaterial({
             map: strokeTexture,
             useMap: 1,
-            color: new THREE.Color('#45818E'), //swim color blue
-            // color: new THREE.Color('#FF8336'), //skate color orange
-            // color: new THREE.Color(0x6aa84f), // boulder color green
-            // color: new THREE.Color(colors[~~Maf.randomInRange(0, colors.length)]),
-            lineWidth: 0.3,
+            color: new THREE.Color(lineColors[1]),
+            lineWidth: 0.4,
             near: 1,
             far: 100000,
-            opacity: 1,
+            opacity: 0.9,
             // dashArray: new THREE.Vector2(10, 5),
             blending: THREE.NormalBlending,
             transparent: true
         });
 
-        let lineMesh = new THREE.Mesh(line.geometry, lineMat);
+        lineMesh = new THREE.Mesh(line.geometry, lineMat);
 
         // lineMesh.castShadow = true;
         // lineMesh.customDepthMaterial = lineMat;
         scene.add(lineMesh);
     }
-    createMeshline();
 
     // LIGHT
     function lighting() {
@@ -705,7 +749,6 @@ d3.csv('data/swimming/ALU_01_AppleWatch200311_14_13_46.csv', function(data) {
     }
     window.addEventListener('resize', onWindowResize, false);
 
-    let animateVisibility = true;
     function animate(time) {
         // get audio data
         // analyser.getFrequencyData(dataArrayOld);
@@ -720,20 +763,65 @@ d3.csv('data/swimming/ALU_01_AppleWatch200311_14_13_46.csv', function(data) {
             // ball.scale.y = ball.scale.x = ball.scale.z = audioData[0] / 40;
         }
         renderer.clear();
-        // lightHelper3.update();
         window.requestAnimationFrame(animate, renderer.domElement);
-        // controls.update();
-        // lineMesh.material.uniforms.visibility.value = animateVisibility ? (time / 10000) % 1.0 : 1.0;
+        controls.update();
+        lineMesh.material.uniforms.visibility.value = animateVisibility ? (time / 25000) % 1.0 : 1.0;
         render();
     }
 
     let clock = new THREE.Clock();
     function render() {
         analyser.getFrequencyData();
-        // scatterplot animation
+
+        // scatterplot & line animation
         let delta = clock.getDelta();
-        if (mixer) {
+        if (mixer && animateVisibility) {
             mixer.update(delta);
+        }
+        if (acc_vis) {
+            pointCloud.visible = true;
+        } else if (acc_vis == false) {
+            pointCloud.visible = false;
+            lineMesh.material.uniforms.visibility.value = 0;
+        }
+
+        if (sound_vis) {
+            ball.visible = true;
+        } else if (sound_vis == false) {
+            ball.visible = false;
+        }
+
+        if (gravity_vis) {
+            // sphereGroup.visible = true;
+        } else if (gravity_vis == false) {
+            sphereGroup.children.forEach(child => (child.visible = false));
+        }
+
+        // change LineColor & sphereTexture with sport
+        if (params.dataSource == 'swimming') {
+            lineMat.color = new THREE.Color(lineColors[0]);
+            sphereMaterial.map = sphereTexture[0];
+            acceleration = swimAcceleration;
+            motionYawRollPitch = swimMotionYawRollPitch;
+            gravity = swimGravity;
+            quaternationData = swimQuaternationData;
+            drawVisuals();
+        } else if (params.dataSource == 'skating') {
+            lineMat.color = new THREE.Color(lineColors[1]);
+            sphereMaterial.map = sphereTexture[1];
+            acceleration = skateAcceleration;
+            motionYawRollPitch = skateMotionYawRollPitch;
+            gravity = skateGravity;
+            quaternationData = skateQuaternationData;
+            drawVisuals();
+        } else if (params.dataSource == 'bouldering') {
+            lineMat.color = new THREE.Color(lineColors[2]);
+            sphereMaterial.map = sphereTexture[2];
+            acceleration = boulderAcceleration;
+            motionYawRollPitch = boulderMotionYawRollPitch;
+            gravity = boulderGravity;
+            quaternationData = boulderQuaternationData;
+            drawVisuals();
         }
 
         // camera.lookAt(scene.position);
@@ -753,9 +841,10 @@ d3.csv('data/swimming/ALU_01_AppleWatch200311_14_13_46.csv', function(data) {
         dataInput.open();
 
         let dataSrc = gui.addFolder('Data Sources');
-        dataSrc.add(params, 'acceleration');
         dataSrc.add(params, 'gravity');
         dataSrc.add(params, 'sound');
+        dataSrc.add(params, 'acceleration');
+        dataSrc.add(params, 'animate_acc').name('animate acceleration');
         dataSrc.open();
 
         gui.open();
@@ -764,25 +853,44 @@ d3.csv('data/swimming/ALU_01_AppleWatch200311_14_13_46.csv', function(data) {
     function Params() {
         this.dataSource = 'skating';
         this.acceleration = function() {
-            show_acceleration = false;
+            if (acc_vis) {
+                acc_vis = false;
+            } else {
+                acc_vis = true;
+            }
+        };
+        this.animate_acc = function() {
+            if (animateVisibility) {
+                animateVisibility = false;
+            } else {
+                lineMesh.material.uniforms.visibility.value = 0;
+                animateVisibility = true;
+            }
         };
         this.gravity = function() {
-            show_acceleration = false;
+            if (gravity_vis) {
+                gravity_vis = false;
+            } else {
+                gravity_vis = true;
+            }
         };
         this.sound = function() {
-            show_acceleration = false;
+            if (sound_vis) {
+                sound_vis = false;
+            } else {
+                sound_vis = true;
+            }
         };
     }
 
     lighting();
     buildGui();
+    function drawVisuals() {
+        createMeshline();
+        createSphereNoise();
+        createPointCloud();
+        createKFA();
+    }
+    drawVisuals();
     animate();
 });
-// function exportOutside(gravity) {
-//     console.log('in function: ', gravity);
-//     // return gravity;
-// }
-// console.log('outside: ', gravity);
-// var temp = gravity;
-
-// console.log('Outsdie exent: ', xExent, yExent, zExent);
