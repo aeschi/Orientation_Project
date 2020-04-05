@@ -1,8 +1,9 @@
 #### Next Steps
 
-- [ ]  create better narrative/connection for sports to viz
+- [ ] create better narrative/connection for sports to viz
 - [ ] fix GUI functionality (doable)
-- [ ]  restructure code.. for gui
+- [ ] add material/ updateNoise function for every sport - swimming more reflective..
+- [ ] restructure code.. for gui
 - [ ] improve perfomance for smoother animation (we'll see)
 - [ ] improve sound animation (doable)
 - [ ] sound design/editing for swimming and bouldering (doable)
@@ -23,6 +24,10 @@ Links:
 - [ ]  Meshline links: [git](https://github.com/spite/THREE.MeshLine), [demo](https://www.clicktorelease.com/code/THREE.MeshLine/demo/index.html), [splinecurve](https://threejs.org/docs/#api/en/extras/curves/SplineCurve), [three constan.spline](https://github.com/spite/THREE.ConstantSpline)
 
 ------
+### 05.04.20
+- [x] fixed one csv bug line in pointCloud
+- [x] color adjustment with sport change (should add material/ updateNoise function for every sport - swimming more reflective..)
+- 
 
 ### 03.04.20
 - [x] gui functionality: blend in/out data sets (except gravity)
