@@ -23,7 +23,7 @@ function createText2D(text, color, font, size, segW, segH) {
     let planeMat = new THREE.MeshBasicMaterial({
         map: tex,
         color: 0xffffff,
-        transparent: true
+        transparent: true,
     });
     let mesh = new THREE.Mesh(plane, planeMat);
     mesh.scale.set(0.1, 0.1, 0.1);
@@ -51,14 +51,14 @@ function modulate(val, minVal, maxVal, outMin, outMax) {
 }
 
 function avg(arr) {
-    var total = arr.reduce(function(sum, b) {
+    var total = arr.reduce(function (sum, b) {
         return sum + b;
     }, 0);
     return total / arr.length;
 }
 
 function max(arr) {
-    return arr.reduce(function(a, b) {
+    return arr.reduce(function (a, b) {
         return Math.max(a, b);
     }, 0);
 }
@@ -86,16 +86,16 @@ let lineMat;
 let lineColors;
 
 var loader = new THREE.TextureLoader();
-loader.load('assets/stroke.png', function(texture) {
+loader.load('assets/stroke.png', function (texture) {
     strokeTexture = texture;
 });
-loader.load('assets/water.jpg', function(texture) {
+loader.load('assets/water.jpg', function (texture) {
     sphereTexture[0] = texture;
 });
-loader.load('assets/griptape_polar.png', function(texture) {
+loader.load('assets/griptape_polar.png', function (texture) {
     sphereTexture[1] = texture;
 });
-loader.load('assets/boulder_bw_small_sat.png', function(texture) {
+loader.load('assets/boulder_bw_small_sat.png', function (texture) {
     sphereTexture[2] = texture;
 });
 
@@ -116,7 +116,7 @@ loader.load('assets/boulder_bw_small_sat.png', function(texture) {
 
 // renderer
 let renderer = new THREE.WebGLRenderer({
-    antialias: true
+    antialias: true,
 });
 let w = window.innerWidth;
 let h = window.innerHeight;
@@ -182,77 +182,77 @@ var xExent, yExent, zExent;
 
 var format = d3.format('+.3f');
 
-d3.csv('data/skate_boulder_swim_labeled.csv', function(data) {
+d3.csv('data/skate_boulder_swim_labeled.csv', function (data) {
     var dataValues = d3.values(data)[0]; // top row of columns = names
     var columnNum = Object.keys(dataValues); // putting names into array
     console.log(Object.keys(dataValues));
 
-    data.forEach(function(mydata, i) {
+    data.forEach(function (mydata, i) {
         // SKATE
         skateAcceleration[i] = {
             x: +mydata[columnNum[0]],
             y: +mydata[columnNum[1]],
-            z: +mydata[columnNum[2]]
+            z: +mydata[columnNum[2]],
         };
         skateMotionYawRollPitch[i] = {
             x: +mydata[columnNum[3]],
             y: +mydata[columnNum[4]],
-            z: +mydata[columnNum[5]]
+            z: +mydata[columnNum[5]],
         };
         skateGravity[i] = {
             x: +mydata[columnNum[10]],
             y: +mydata[columnNum[11]],
-            z: +mydata[columnNum[12]]
+            z: +mydata[columnNum[12]],
         };
         skateQuaternationData[i] = {
             x: +mydata[columnNum[6]],
             y: +mydata[columnNum[7]],
             z: +mydata[columnNum[8]],
-            w: +mydata[columnNum[9]]
+            w: +mydata[columnNum[9]],
         };
         // BOULDER
         boulderAcceleration[i] = {
             x: +mydata[columnNum[14]],
             y: +mydata[columnNum[15]],
-            z: +mydata[columnNum[16]]
+            z: +mydata[columnNum[16]],
         };
         boulderMotionYawRollPitch[i] = {
             x: +mydata[columnNum[17]],
             y: +mydata[columnNum[18]],
-            z: +mydata[columnNum[19]]
+            z: +mydata[columnNum[19]],
         };
         boulderGravity[i] = {
             x: +mydata[columnNum[24]],
             y: +mydata[columnNum[25]],
-            z: +mydata[columnNum[26]]
+            z: +mydata[columnNum[26]],
         };
         boulderQuaternationData[i] = {
             x: +mydata[columnNum[20]],
             y: +mydata[columnNum[21]],
             z: +mydata[columnNum[22]],
-            w: +mydata[columnNum[23]]
+            w: +mydata[columnNum[23]],
         };
         //SWIM
         swimAcceleration[i] = {
             x: +mydata[columnNum[28]],
             y: +mydata[columnNum[29]],
-            z: +mydata[columnNum[30]]
+            z: +mydata[columnNum[30]],
         };
         swimMotionYawRollPitch[i] = {
             x: +mydata[columnNum[31]],
             y: +mydata[columnNum[32]],
-            z: +mydata[columnNum[33]]
+            z: +mydata[columnNum[33]],
         };
         swimGravity[i] = {
             x: +mydata[columnNum[38]],
             y: +mydata[columnNum[39]],
-            z: +mydata[columnNum[40]]
+            z: +mydata[columnNum[40]],
         };
         swimQuaternationData[i] = {
             x: +mydata[columnNum[34]],
             y: +mydata[columnNum[35]],
             z: +mydata[columnNum[36]],
-            w: +mydata[columnNum[37]]
+            w: +mydata[columnNum[37]],
         };
     });
     temp = skateGravity;
@@ -266,13 +266,13 @@ d3.csv('data/skate_boulder_swim_labeled.csv', function(data) {
     // d3.extent returns a two element array of the minimum and maximum values from the array.
     // https://benclinkinbeard.com/d3tips/utility-methods-with-d3-array/?utm_content=buffer90c0a&utm_medium=social&utm_source=twitter.com&utm_campaign=buffer
 
-    var xExent = d3.extent(temp, function(d) {
+    var xExent = d3.extent(temp, function (d) {
             return d.x;
         }),
-        yExent = d3.extent(temp, function(d) {
+        yExent = d3.extent(temp, function (d) {
             return d.y;
         }),
-        zExent = d3.extent(temp, function(d) {
+        zExent = d3.extent(temp, function (d) {
             return d.z;
         });
 
@@ -286,19 +286,10 @@ d3.csv('data/skate_boulder_swim_labeled.csv', function(data) {
     // Simply put: scales transform a number in a certain interval (called the domain)
     // into a number in another interval (called the range).
 
-    var xScale = d3.scale
-        .linear()
-        .domain(xExent)
-        .range([-50, 50]);
+    var xScale = d3.scale.linear().domain(xExent).range([-50, 50]);
     //array min & max of data set
-    var yScale = d3.scale
-        .linear()
-        .domain(yExent)
-        .range([-50, 50]);
-    var zScale = d3.scale
-        .linear()
-        .domain(zExent)
-        .range([-50, 50]);
+    var yScale = d3.scale.linear().domain(yExent).range([-50, 50]);
+    var zScale = d3.scale.linear().domain(zExent).range([-50, 50]);
 
     //  ---- ADDING VIZ ELEMENTS ----
 
@@ -323,11 +314,11 @@ d3.csv('data/skate_boulder_swim_labeled.csv', function(data) {
     //https://codepen.io/EllenProbst/pen/RQQmJK?editors=0010 //code source
 
     // AUDIO file
-    window.onload = function() {
+    window.onload = function () {
         let context = listener.context;
     };
     // One-liner to resume playback when user interacted with the page.
-    document.querySelector('button').addEventListener('click', function() {
+    document.querySelector('button').addEventListener('click', function () {
         context.resume().then(() => {
             console.log('Playback resumed successfully');
         });
@@ -338,7 +329,7 @@ d3.csv('data/skate_boulder_swim_labeled.csv', function(data) {
     var listener = new THREE.AudioListener();
     var audio = new THREE.Audio(listener);
     audio.crossOrigin = 'anonymous';
-    audioLoader.load(stream, function(buffer) {
+    audioLoader.load(stream, function (buffer) {
         audio.setBuffer(buffer);
         audio.setLoop(true);
         audio.play();
@@ -369,7 +360,7 @@ d3.csv('data/skate_boulder_swim_labeled.csv', function(data) {
     }
 
     function splitFrenquencyArray(arr, n) {
-        var tab = Object.keys(arr).map(function(key) {
+        var tab = Object.keys(arr).map(function (key) {
             return arr[key];
         });
         var len = tab.length,
@@ -388,7 +379,7 @@ d3.csv('data/skate_boulder_swim_labeled.csv', function(data) {
     // AUDIO VIZ
     let simplexNoise = new SimplexNoise();
     function makeRoughBall(mesh, bassFr, treFr) {
-        mesh.geometry.vertices.forEach(function(vertex, i) {
+        mesh.geometry.vertices.forEach(function (vertex, i) {
             var offset = mesh.geometry.parameters.radius;
             var amp = 7;
             var time = window.performance.now();
@@ -408,7 +399,7 @@ d3.csv('data/skate_boulder_swim_labeled.csv', function(data) {
     let icosahedronGeometry = new THREE.IcosahedronGeometry(10, 4);
     let lambertMaterial = new THREE.MeshLambertMaterial({
         color: 0xffffff,
-        wireframe: true
+        wireframe: true,
     });
 
     let ball = new THREE.Mesh(icosahedronGeometry, lambertMaterial);
@@ -425,9 +416,9 @@ d3.csv('data/skate_boulder_swim_labeled.csv', function(data) {
         sphereMaterial = new THREE.MeshPhongMaterial({
             map: sphereTexture[2],
             specular: 0xc0c0c,
-            shininess: 70
+            shininess: 70,
         });
-        let updateNoise = function() {
+        let updateNoise = function () {
             let time = 0; //performance.now() * 0.0005;
             let k = 2;
             for (let i = 0; i < sphereNoise.geometry.faces.length; i++) {
@@ -442,7 +433,7 @@ d3.csv('data/skate_boulder_swim_labeled.csv', function(data) {
         };
 
         let sphereGroup = new THREE.Object3D();
-        for (let i = 1; i < gravity.length; i += 25) {
+        for (let i = 1; i < gravity.length; i += 3) {
             let scaling = 1.5;
             let x = xScale(gravity[i].x) / scaling;
             let y = yScale(gravity[i].y) / scaling;
@@ -467,7 +458,7 @@ d3.csv('data/skate_boulder_swim_labeled.csv', function(data) {
         let pointCloudMat = new THREE.PointsMaterial({
             color: 0xffffff,
             // vertexColors: true,
-            size: 0.5
+            size: 0.5,
         });
 
         let pointCloudGeo = new THREE.Geometry();
@@ -538,7 +529,7 @@ d3.csv('data/skate_boulder_swim_labeled.csv', function(data) {
             zScale(gravity[13 * stepSize].z),
             xScale(gravity[14 * stepSize].x),
             yScale(gravity[14 * stepSize].y),
-            zScale(gravity[14 * stepSize].z)
+            zScale(gravity[14 * stepSize].z),
         ];
 
         // SCALE
@@ -618,7 +609,7 @@ d3.csv('data/skate_boulder_swim_labeled.csv', function(data) {
             quaternationData[14 * stepSize].x,
             quaternationData[14 * stepSize].y,
             quaternationData[14 * stepSize].z,
-            quaternationData[14 * stepSize].w
+            quaternationData[14 * stepSize].w,
         ];
 
         // create an animation sequence with the tracks
@@ -652,7 +643,7 @@ d3.csv('data/skate_boulder_swim_labeled.csv', function(data) {
         lineColors = [0x45818e, 0xff8336, 0x6aa84f];
 
         let line = new MeshLine();
-        line.setGeometry(lineGeometry, function(p) {
+        line.setGeometry(lineGeometry, function (p) {
             return 2 + Math.sin(50 * p);
         });
 
@@ -666,7 +657,7 @@ d3.csv('data/skate_boulder_swim_labeled.csv', function(data) {
             opacity: 0.9,
             // dashArray: new THREE.Vector2(10, 5),
             blending: THREE.NormalBlending,
-            transparent: true
+            transparent: true,
         });
 
         lineMesh = new THREE.Mesh(line.geometry, lineMat);
@@ -764,7 +755,7 @@ d3.csv('data/skate_boulder_swim_labeled.csv', function(data) {
         }
         renderer.clear();
         window.requestAnimationFrame(animate, renderer.domElement);
-        controls.update();
+        // controls.update();
         lineMesh.material.uniforms.visibility.value = animateVisibility ? (time / 25000) % 1.0 : 1.0;
         render();
     }
@@ -794,7 +785,7 @@ d3.csv('data/skate_boulder_swim_labeled.csv', function(data) {
         if (gravity_vis) {
             // sphereGroup.visible = true;
         } else if (gravity_vis == false) {
-            sphereGroup.children.forEach(child => (child.visible = false));
+            sphereGroup.children.forEach((child) => (child.visible = false));
         }
 
         // change LineColor & sphereTexture with sport
@@ -805,7 +796,7 @@ d3.csv('data/skate_boulder_swim_labeled.csv', function(data) {
             motionYawRollPitch = swimMotionYawRollPitch;
             gravity = swimGravity;
             quaternationData = swimQuaternationData;
-            drawVisuals();
+            // drawVisuals();
         } else if (params.dataSource == 'skating') {
             lineMat.color = new THREE.Color(lineColors[1]);
             sphereMaterial.map = sphereTexture[1];
@@ -813,7 +804,7 @@ d3.csv('data/skate_boulder_swim_labeled.csv', function(data) {
             motionYawRollPitch = skateMotionYawRollPitch;
             gravity = skateGravity;
             quaternationData = skateQuaternationData;
-            drawVisuals();
+            // drawVisuals();
         } else if (params.dataSource == 'bouldering') {
             lineMat.color = new THREE.Color(lineColors[2]);
             sphereMaterial.map = sphereTexture[2];
@@ -821,7 +812,7 @@ d3.csv('data/skate_boulder_swim_labeled.csv', function(data) {
             motionYawRollPitch = boulderMotionYawRollPitch;
             gravity = boulderGravity;
             quaternationData = boulderQuaternationData;
-            drawVisuals();
+            // drawVisuals();
         }
 
         // camera.lookAt(scene.position);
@@ -852,14 +843,14 @@ d3.csv('data/skate_boulder_swim_labeled.csv', function(data) {
 
     function Params() {
         this.dataSource = 'skating';
-        this.acceleration = function() {
+        this.acceleration = function () {
             if (acc_vis) {
                 acc_vis = false;
             } else {
                 acc_vis = true;
             }
         };
-        this.animate_acc = function() {
+        this.animate_acc = function () {
             if (animateVisibility) {
                 animateVisibility = false;
             } else {
@@ -867,14 +858,14 @@ d3.csv('data/skate_boulder_swim_labeled.csv', function(data) {
                 animateVisibility = true;
             }
         };
-        this.gravity = function() {
+        this.gravity = function () {
             if (gravity_vis) {
                 gravity_vis = false;
             } else {
                 gravity_vis = true;
             }
         };
-        this.sound = function() {
+        this.sound = function () {
             if (sound_vis) {
                 sound_vis = false;
             } else {
@@ -885,12 +876,12 @@ d3.csv('data/skate_boulder_swim_labeled.csv', function(data) {
 
     lighting();
     buildGui();
-    function drawVisuals() {
-        createMeshline();
-        createSphereNoise();
-        createPointCloud();
-        createKFA();
-    }
-    drawVisuals();
+    // function drawVisuals() {
+    createMeshline();
+    createSphereNoise();
+    createPointCloud();
+    createKFA();
+    // }
+    // drawVisuals();
     animate();
 });
