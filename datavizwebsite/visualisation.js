@@ -76,14 +76,20 @@ let sphereGroup;
 let animateVisibility = false;
 let params;
 let dataSource;
+let changedInput = false;
+let changedVisibility = false;
 
 let sphereMaterial;
 let sphereTexture = [];
 
 // Meshline
 let strokeTexture;
-let lineMat;
-let lineColors;
+let swimLineMat;
+let swimLineColors;
+let skateLineMat;
+let skateLineColors;
+let boulderLineMat;
+let boulderLineColors;
 
 var loader = new THREE.TextureLoader();
 loader.load('assets/stroke.png', function (texture) {
@@ -151,9 +157,12 @@ scene.background = new THREE.Color('#131313');
 // scene.background = new THREE.Color( 0xe0e0e0 );
 scene.fog = new THREE.FogExp2(scene.background, 0.002);
 
-// dataviz
-let scatterPlot = new THREE.Object3D();
-scene.add(scatterPlot);
+function reinit() {
+    let scene = new THREE.Scene();
+    scene.background = new THREE.Color('#131313');
+    // scene.background = new THREE.Color( 0xe0e0e0 );
+    scene.fog = new THREE.FogExp2(scene.background, 0.002);
+}
 
 function vec(x, y, z) {
     return new THREE.Vector3(x, y, z);
@@ -176,16 +185,17 @@ var acceleration = [],
     swimGravity = [],
     swimQuaternationData = [];
 
-var temp;
+var tempSkate, tempBoulder, tempSwim;
 
 var xExent, yExent, zExent;
+var xExentSwim, yExentSwim, zExentSwim;
 
 var format = d3.format('+.3f');
 
 d3.csv('data/skate_boulder_swim_labeled.csv', function (data) {
     var dataValues = d3.values(data)[0]; // top row of columns = names
     var columnNum = Object.keys(dataValues); // putting names into array
-    console.log(Object.keys(dataValues));
+    // console.log(Object.keys(dataValues));
 
     data.forEach(function (mydata, i) {
         // SKATE
@@ -255,29 +265,44 @@ d3.csv('data/skate_boulder_swim_labeled.csv', function (data) {
             w: +mydata[columnNum[37]],
         };
     });
-    temp = skateGravity;
 
-    acceleration = skateAcceleration;
-    motionYawRollPitch = skateMotionYawRollPitch;
-    gravity = skateGravity;
-    quaternationData = skateQuaternationData;
+    tempSkate = boulderGravity;
+    tempSwim = swimGravity;
+    tempBoulder = boulderGravity;
 
     // find extent (min & max values) of either x, y or z to use for scaling
     // d3.extent returns a two element array of the minimum and maximum values from the array.
     // https://benclinkinbeard.com/d3tips/utility-methods-with-d3-array/?utm_content=buffer90c0a&utm_medium=social&utm_source=twitter.com&utm_campaign=buffer
 
-    var xExent = d3.extent(temp, function (d) {
+    var xExentSkate = d3.extent(tempSkate, function (d) {
             return d.x;
         }),
-        yExent = d3.extent(temp, function (d) {
+        yExentSkate = d3.extent(tempSkate, function (d) {
             return d.y;
         }),
-        zExent = d3.extent(temp, function (d) {
+        zExentSkate = d3.extent(tempSkate, function (d) {
             return d.z;
         });
 
-    // console.log('Inside: ', gravity);
-    // exportOutside(gravity);
+    var xExentSwim = d3.extent(tempSwim, function (d) {
+            return d.x;
+        }),
+        yExentSwim = d3.extent(tempSwim, function (d) {
+            return d.y;
+        }),
+        zExentSwim = d3.extent(tempSwim, function (d) {
+            return d.z;
+        });
+
+    var xExentBoulder = d3.extent(tempBoulder, function (d) {
+            return d.x;
+        }),
+        yExentBoulder = d3.extent(tempBoulder, function (d) {
+            return d.y;
+        }),
+        zExentBoulder = d3.extent(tempBoulder, function (d) {
+            return d.z;
+        });
 
     // SCALING IN d3 (distribution of points)
     // https://github.com/d3/d3-scale
@@ -286,10 +311,18 @@ d3.csv('data/skate_boulder_swim_labeled.csv', function (data) {
     // Simply put: scales transform a number in a certain interval (called the domain)
     // into a number in another interval (called the range).
 
-    var xScale = d3.scale.linear().domain(xExent).range([-50, 50]);
-    //array min & max of data set
-    var yScale = d3.scale.linear().domain(yExent).range([-50, 50]);
-    var zScale = d3.scale.linear().domain(zExent).range([-50, 50]);
+    // min & max of data set
+    var xScaleSkate = d3.scale.linear().domain(xExentSkate).range([-50, 50]);
+    var yScaleSkate = d3.scale.linear().domain(yExentSkate).range([-50, 50]);
+    var zScaleSkate = d3.scale.linear().domain(zExentSkate).range([-50, 50]);
+
+    var xScaleSwim = d3.scale.linear().domain(xExentSwim).range([-50, 50]);
+    var yScaleSwim = d3.scale.linear().domain(yExentSwim).range([-50, 50]);
+    var zScaleSwim = d3.scale.linear().domain(zExentSwim).range([-50, 50]);
+
+    var xScaleBoulder = d3.scale.linear().domain(xExentBoulder).range([-50, 50]);
+    var yScaleBoulder = d3.scale.linear().domain(yExentBoulder).range([-50, 50]);
+    var zScaleBoulder = d3.scale.linear().domain(zExentBoulder).range([-50, 50]);
 
     //  ---- ADDING VIZ ELEMENTS ----
 
@@ -408,263 +441,377 @@ d3.csv('data/skate_boulder_swim_labeled.csv', function (data) {
 
     scene.add(ball);
 
-    // SPHERE NOISE SHAPE
-    function createSphereNoise() {
-        let sphere_geometry = new THREE.SphereGeometry(1, 50, 50);
-        // let material = new THREE.MeshLambertMaterial({ color: '#FFB742' });
+    // ---- SWIM VISUALS ----
+    //
+    let swimLineMesh;
+    let swimPointCloud;
+    let swimSphereGroup = new THREE.Object3D();
+    let swimScatterPlot = new THREE.Object3D();
+    function swimVisuals() {
+        function createSwimSphereNoise() {
+            let swimSphereGeometry = new THREE.SphereGeometry(1, 50, 50);
 
-        sphereMaterial = new THREE.MeshPhongMaterial({
-            map: sphereTexture[2],
-            specular: 0xc0c0c,
-            shininess: 70,
-        });
-        let updateNoise = function () {
-            let time = 0; //performance.now() * 0.0005;
-            let k = 2;
-            for (let i = 0; i < sphereNoise.geometry.faces.length; i++) {
-                let uv = sphereNoise.geometry.faceVertexUvs[0][i]; //faceVertexUvs is a huge arrayed stored inside of another array
-                let f = sphereNoise.geometry.faces[i];
-                let p = sphereNoise.geometry.vertices[f.a]; //take the first vertex from each face
-                p.normalize().multiplyScalar(1 + 0.3 * noise.perlin3(p.x * k + time, p.y * k, p.z * k + time));
+            swimSphereMaterial = new THREE.MeshPhongMaterial({
+                map: sphereTexture[0],
+                specular: 0xc0c0c,
+                shininess: 70,
+            });
+
+            let updateNoise = function () {
+                let time = 0;
+                let k = 2;
+                for (let i = 0; i < swimSphereNoise.geometry.faces.length; i++) {
+                    let uv = swimSphereNoise.geometry.faceVertexUvs[0][i]; //faceVertexUvs is a huge arrayed stored inside of another array
+                    let f = swimSphereNoise.geometry.faces[i];
+                    let p = swimSphereNoise.geometry.vertices[f.a]; //take the first vertex from each face
+                    p.normalize().multiplyScalar(1 + 0.3 * noise.perlin3(p.x * k + time, p.y * k, p.z * k + time));
+                }
+                swimSphereNoise.geometry.verticesNeedUpdate = true; //must be set or vertices will not update
+                swimSphereNoise.geometry.computeVertexNormals();
+                swimSphereNoise.geometry.normalsNeedUpdate = true;
+            };
+
+            for (let i = 1; i < swimGravity.length; i += 12) {
+                let scaling = 1.3;
+                let x = xScaleSwim(swimGravity[i].x) / scaling;
+                let y = yScaleSwim(swimGravity[i].y) / scaling;
+                let z = zScaleSwim(swimGravity[i].z) / scaling;
+
+                var swimSphereNoise = new THREE.Mesh(swimSphereGeometry, swimSphereMaterial);
+                swimSphereNoise.position.x = -x; // UNTERSCHIEDLICHE SPHERE GRÖßEN!!!
+                swimSphereNoise.position.y = y;
+                swimSphereNoise.position.z = z;
+                swimSphereNoise.rotation.x = (Math.PI / 6) * (i % 4);
+                swimSphereNoise.castShadow = true;
+                // scene.add(swimSphereNoise);
+                swimSphereGroup.add(swimSphereNoise);
             }
-            sphereNoise.geometry.verticesNeedUpdate = true; //must be set or vertices will not update
-            sphereNoise.geometry.computeVertexNormals();
-            sphereNoise.geometry.normalsNeedUpdate = true;
-        };
-
-        let sphereGroup = new THREE.Object3D();
-        for (let i = 1; i < gravity.length; i += 3) {
-            let scaling = 1.5;
-            let x = xScale(gravity[i].x) / scaling;
-            let y = yScale(gravity[i].y) / scaling;
-            let z = zScale(gravity[i].z) / scaling;
-
-            var sphereNoise = new THREE.Mesh(sphere_geometry, sphereMaterial);
-            sphereNoise.position.x = -x; // UNTERSCHIEDLICHE SPHERE GRÖßEN!!!
-            sphereNoise.position.y = y;
-            sphereNoise.position.z = z;
-            sphereNoise.rotation.x = (Math.PI / 6) * (i % 4);
-            sphereNoise.castShadow = true;
-            scene.add(sphereNoise);
-            sphereGroup.add(sphereNoise);
-        }
-        updateNoise();
-        scene.add(sphereGroup);
-    }
-
-    // POINTCLOUD WHITE
-    let pointCloud;
-    function createPointCloud() {
-        let pointCloudMat = new THREE.PointsMaterial({
-            color: 0xffffff,
-            // vertexColors: true,
-            size: 0.5,
-        });
-
-        let pointCloudGeo = new THREE.Geometry();
-        for (let i = 0; i < acceleration.length; i++) {
-            let x = xScale(acceleration[i].x);
-            let y = yScale(acceleration[i].y);
-            let z = zScale(acceleration[i].z);
-            pointCloudGeo.vertices.push(new THREE.Vector3(x, z, y));
-
-            // Colormap Pointcloud
-            // let colorMap = mapValues(i, 1, acceleration.length, 0, 70);
-            // pointCloudGeo.colors.push(new THREE.Color().setRGB((170 - colorMap) / 255, 50 / 255, 67 / 255));
-        }
-        pointCloud = new THREE.Points(pointCloudGeo, pointCloudMat);
-        scatterPlot.add(pointCloud);
-    }
-
-    // KEYFRAME ANIMATION
-    function createKFA() {
-        // create a keyframe track (i.e. a timed sequence of keyframes) for each animated property
-        // Note: the keyframe track type should correspond to the type of the property being animated
-        let stepSize = Math.floor(quaternationData.length / 15);
-
-        // POSITION - VectorKeyframeTrack( name : String, times : Array, values : Array )
-        let positionKF = new THREE.VectorKeyframeTrack('.position', [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]);
-        positionKF.values = [
-            xScale(gravity[0 * stepSize].x),
-            yScale(gravity[0 * stepSize].y),
-            zScale(gravity[0 * stepSize].z),
-            xScale(gravity[1 * stepSize].x),
-            yScale(gravity[1 * stepSize].y),
-            zScale(gravity[1 * stepSize].z),
-            xScale(gravity[2 * stepSize].x),
-            yScale(gravity[2 * stepSize].y),
-            zScale(gravity[2 * stepSize].z),
-            xScale(gravity[3 * stepSize].x),
-            yScale(gravity[3 * stepSize].y),
-            zScale(gravity[3 * stepSize].z),
-            xScale(gravity[4 * stepSize].x),
-            yScale(gravity[4 * stepSize].y),
-            zScale(gravity[4 * stepSize].z),
-            xScale(gravity[5 * stepSize].x),
-            yScale(gravity[5 * stepSize].y),
-            zScale(gravity[5 * stepSize].z),
-            xScale(gravity[6 * stepSize].x),
-            yScale(gravity[6 * stepSize].y),
-            zScale(gravity[6 * stepSize].z),
-            xScale(gravity[7 * stepSize].x),
-            yScale(gravity[7 * stepSize].y),
-            zScale(gravity[7 * stepSize].z),
-            xScale(gravity[8 * stepSize].x),
-            yScale(gravity[8 * stepSize].y),
-            zScale(gravity[8 * stepSize].z),
-            xScale(gravity[9 * stepSize].x),
-            yScale(gravity[9 * stepSize].y),
-            zScale(gravity[9 * stepSize].z),
-            xScale(gravity[10 * stepSize].x),
-            yScale(gravity[10 * stepSize].y),
-            zScale(gravity[10 * stepSize].z),
-            xScale(gravity[11 * stepSize].x),
-            yScale(gravity[11 * stepSize].y),
-            zScale(gravity[11 * stepSize].z),
-            xScale(gravity[12 * stepSize].x),
-            yScale(gravity[12 * stepSize].y),
-            zScale(gravity[12 * stepSize].z),
-            xScale(gravity[13 * stepSize].x),
-            yScale(gravity[13 * stepSize].y),
-            zScale(gravity[13 * stepSize].z),
-            xScale(gravity[14 * stepSize].x),
-            yScale(gravity[14 * stepSize].y),
-            zScale(gravity[14 * stepSize].z),
-        ];
-
-        // SCALE
-        let scaleKF = new THREE.VectorKeyframeTrack(
-            '.scale',
-            [0, 1, 2, 3],
-            [0, 0, 0, 0.7, 0.7, 0.7, 1, 1, 1, 0, 0, 0],
-            THREE.InterpolateSmooth
-        );
-        scaleKF.scale(5);
-        // ROTATION
-        // Rotation should be performed using quaternions, using a THREE.QuaternionKeyframeTrack
-        // Interpolating Euler angles (.rotation property) can be problematic and is currently not supported
-        // set up rotation about x axis
-        let xAxis = new THREE.Vector3(1, 0, 0);
-
-        let qInitial = new THREE.Quaternion().setFromAxisAngle(xAxis, 0);
-        let qFinal = new THREE.Quaternion().setFromAxisAngle(xAxis, Math.PI);
-        let quaternionKF = new THREE.QuaternionKeyframeTrack('.quaternion', [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]);
-        quaternionKF.values = [
-            quaternationData[0 * stepSize].x,
-            quaternationData[0 * stepSize].y,
-            quaternationData[0 * stepSize].z,
-            quaternationData[0 * stepSize].w,
-            quaternationData[1 * stepSize].x,
-            quaternationData[1 * stepSize].y,
-            quaternationData[1 * stepSize].z,
-            quaternationData[1 * stepSize].w,
-            quaternationData[2 * stepSize].x,
-            quaternationData[2 * stepSize].y,
-            quaternationData[2 * stepSize].z,
-            quaternationData[2 * stepSize].w,
-            quaternationData[3 * stepSize].x,
-            quaternationData[3 * stepSize].y,
-            quaternationData[3 * stepSize].z,
-            quaternationData[3 * stepSize].w,
-            quaternationData[4 * stepSize].x,
-            quaternationData[4 * stepSize].y,
-            quaternationData[4 * stepSize].z,
-            quaternationData[4 * stepSize].w,
-            quaternationData[5 * stepSize].x,
-            quaternationData[5 * stepSize].y,
-            quaternationData[5 * stepSize].z,
-            quaternationData[5 * stepSize].w,
-            quaternationData[6 * stepSize].x,
-            quaternationData[6 * stepSize].y,
-            quaternationData[6 * stepSize].z,
-            quaternationData[6 * stepSize].w,
-            quaternationData[7 * stepSize].x,
-            quaternationData[7 * stepSize].y,
-            quaternationData[7 * stepSize].z,
-            quaternationData[7 * stepSize].w,
-            quaternationData[8 * stepSize].x,
-            quaternationData[8 * stepSize].y,
-            quaternationData[8 * stepSize].z,
-            quaternationData[8 * stepSize].w,
-            quaternationData[9 * stepSize].x,
-            quaternationData[9 * stepSize].y,
-            quaternationData[9 * stepSize].z,
-            quaternationData[9 * stepSize].w,
-            quaternationData[10 * stepSize].x,
-            quaternationData[10 * stepSize].y,
-            quaternationData[10 * stepSize].z,
-            quaternationData[10 * stepSize].w,
-            quaternationData[11 * stepSize].x,
-            quaternationData[11 * stepSize].y,
-            quaternationData[11 * stepSize].z,
-            quaternationData[11 * stepSize].w,
-            quaternationData[12 * stepSize].x,
-            quaternationData[12 * stepSize].y,
-            quaternationData[12 * stepSize].z,
-            quaternationData[12 * stepSize].w,
-            quaternationData[13 * stepSize].x,
-            quaternationData[13 * stepSize].y,
-            quaternationData[13 * stepSize].z,
-            quaternationData[13 * stepSize].w,
-            quaternationData[14 * stepSize].x,
-            quaternationData[14 * stepSize].y,
-            quaternationData[14 * stepSize].z,
-            quaternationData[14 * stepSize].w,
-        ];
-
-        // create an animation sequence with the tracks
-        let clip = new THREE.AnimationClip('Action', 17, [scaleKF]); // AnimationClip( name : String, duration : Number, tracks : Array )
-        mixer = new THREE.AnimationMixer(pointCloud); // setup the THREE.AnimationMixer
-        let clipAction = mixer.clipAction(clip); // create a ClipAction and set it to play
-
-        clipAction.play();
-    }
-
-    // MESH LINE
-    let lineMesh;
-    function createMeshline() {
-        let lineGeometry = new THREE.Geometry();
-
-        for (let i = 1; i < acceleration.length; i += 5) {
-            // if (i % 11 == 0) {
-            //     let x = 0;
-            //     let y = 0;
-            //     let z = 0;
-            //     var v = vec(x, y, z);
-            // } else {
-            let x = xScale(acceleration[i].x) / 2.5;
-            let y = yScale(acceleration[i].y) / 2.5;
-            let z = zScale(acceleration[i].z) / 2.5;
-            var v = vec(x, y, z);
-            // }
-            lineGeometry.vertices.push(v);
+            updateNoise();
+            scene.add(swimSphereGroup);
         }
 
-        lineColors = [0x45818e, 0xff8336, 0x6aa84f];
+        function createSwimMeshline() {
+            let swimLineGeometry = new THREE.Geometry();
 
-        let line = new MeshLine();
-        line.setGeometry(lineGeometry, function (p) {
-            return 2 + Math.sin(50 * p);
-        });
+            for (let i = 1; i < swimAcceleration.length; i += 5) {
+                const scaling = 2.5;
+                let x = xScaleSwim(swimAcceleration[i].x) / scaling;
+                let y = yScaleSwim(swimAcceleration[i].y) / scaling;
+                let z = zScaleSwim(swimAcceleration[i].z) / scaling;
+                var v = vec(x, y, z);
 
-        lineMat = new MeshLineMaterial({
-            map: strokeTexture,
-            useMap: 1,
-            color: new THREE.Color(lineColors[1]),
-            lineWidth: 0.4,
-            near: 1,
-            far: 100000,
-            opacity: 0.9,
-            // dashArray: new THREE.Vector2(10, 5),
-            blending: THREE.NormalBlending,
-            transparent: true,
-        });
+                swimLineGeometry.vertices.push(v);
+            }
 
-        lineMesh = new THREE.Mesh(line.geometry, lineMat);
+            let swimLine = new MeshLine();
+            swimLine.setGeometry(swimLineGeometry, function (p) {
+                return 2 + Math.sin(50 * p);
+            });
 
-        // lineMesh.castShadow = true;
-        // lineMesh.customDepthMaterial = lineMat;
-        scene.add(lineMesh);
+            swimLineMat = new MeshLineMaterial({
+                map: strokeTexture,
+                useMap: 1,
+                color: new THREE.Color(0x45818e),
+                lineWidth: 0.4,
+                near: 1,
+                far: 100000,
+                opacity: 0.9,
+                // dashArray: new THREE.Vector2(10, 5),
+                blending: THREE.NormalBlending,
+                transparent: true,
+            });
+
+            swimLineMesh = new THREE.Mesh(swimLine.geometry, swimLineMat);
+            scene.add(swimLineMesh);
+        }
+
+        function createSwimPointCloud() {
+            let swimPointCloudMat = new THREE.PointsMaterial({
+                color: 0xffffff,
+                // vertexColors: true,
+                size: 0.5,
+            });
+
+            let swimPointCloudGeo = new THREE.Geometry();
+            for (let i = 0; i < swimAcceleration.length; i++) {
+                let x = xScaleSwim(swimAcceleration[i].x);
+                let y = yScaleSwim(swimAcceleration[i].y);
+                let z = zScaleSwim(swimAcceleration[i].z);
+                swimPointCloudGeo.vertices.push(new THREE.Vector3(x, z, y));
+            }
+            swimPointCloud = new THREE.Points(swimPointCloudGeo, swimPointCloudMat);
+            swimScatterPlot.add(swimPointCloud);
+            scene.add(swimScatterPlot);
+        }
+
+        function createSwimKFA() {
+            // SCALE
+            let swimScaleKF = new THREE.VectorKeyframeTrack(
+                '.scale',
+                [0, 1, 2, 3],
+                [0, 0, 0, 0.7, 0.7, 0.7, 1, 1, 1, 0, 0, 0],
+                THREE.InterpolateSmooth
+            );
+            swimScaleKF.scale(5);
+
+            let swimClip = new THREE.AnimationClip('Action', 17, [swimScaleKF]); // AnimationClip( name : String, duration : Number, tracks : Array )
+            mixer = new THREE.AnimationMixer(swimPointCloud); // setup the THREE.AnimationMixer
+            let clipAction = mixer.clipAction(swimClip); // create a ClipAction and set it to play
+            clipAction.play();
+        }
+
+        createSwimMeshline();
+        createSwimPointCloud();
+        createSwimKFA();
+        createSwimSphereNoise();
+    }
+
+    // ---- SKATE VISUALS ----
+    //
+    let skateLineMesh;
+    let skatePointCloud;
+    let skateSphereGroup = new THREE.Object3D();
+    let skateScatterPlot = new THREE.Object3D();
+    function skateVisuals() {
+        function createSkateSphereNoise() {
+            let skateSphereGeometry = new THREE.SphereGeometry(1, 50, 50);
+
+            skateSphereMaterial = new THREE.MeshPhongMaterial({
+                map: sphereTexture[1],
+                specular: 0xc0c0c,
+                shininess: 70,
+            });
+
+            let updateNoise = function () {
+                let time = 0;
+                let k = 2;
+                for (let i = 0; i < skateSphereNoise.geometry.faces.length; i++) {
+                    let uv = skateSphereNoise.geometry.faceVertexUvs[0][i]; //faceVertexUvs is a huge arrayed stored inside of another array
+                    let f = skateSphereNoise.geometry.faces[i];
+                    let p = skateSphereNoise.geometry.vertices[f.a]; //take the first vertex from each face
+                    p.normalize().multiplyScalar(1 + 0.3 * noise.perlin3(p.x * k + time, p.y * k, p.z * k + time));
+                }
+                skateSphereNoise.geometry.verticesNeedUpdate = true; //must be set or vertices will not update
+                skateSphereNoise.geometry.computeVertexNormals();
+                skateSphereNoise.geometry.normalsNeedUpdate = true;
+            };
+
+            for (let i = 1; i < skateGravity.length; i += 12) {
+                let scaling = 1.3;
+                let x = xScaleSkate(skateGravity[i].x) / scaling;
+                let y = yScaleSkate(skateGravity[i].y) / scaling;
+                let z = zScaleSkate(skateGravity[i].z) / scaling;
+
+                var skateSphereNoise = new THREE.Mesh(skateSphereGeometry, skateSphereMaterial);
+                skateSphereNoise.position.x = -x; // UNTERSCHIEDLICHE SPHERE GRÖßEN!!!
+                skateSphereNoise.position.y = y;
+                skateSphereNoise.position.z = z;
+                skateSphereNoise.rotation.x = (Math.PI / 6) * (i % 4);
+                skateSphereNoise.castShadow = true;
+                // scene.add(skateSphereNoise);
+                skateSphereGroup.add(skateSphereNoise);
+            }
+            updateNoise();
+            scene.add(skateSphereGroup);
+        }
+
+        function createSkateMeshline() {
+            let skateLineGeometry = new THREE.Geometry();
+
+            for (let i = 1; i < skateAcceleration.length; i += 5) {
+                let x = xScaleSkate(skateAcceleration[i].x) / 2.5;
+                let y = yScaleSkate(skateAcceleration[i].y) / 2.5;
+                let z = zScaleSkate(skateAcceleration[i].z) / 2.5;
+                var v = vec(x, y, z);
+
+                skateLineGeometry.vertices.push(v);
+            }
+
+            let skateLine = new MeshLine();
+            skateLine.setGeometry(skateLineGeometry, function (p) {
+                return 2 + Math.sin(50 * p);
+            });
+
+            skateLineMat = new MeshLineMaterial({
+                map: strokeTexture,
+                useMap: 1,
+                color: new THREE.Color(0xff8336),
+                lineWidth: 0.4,
+                near: 1,
+                far: 100000,
+                opacity: 0.9,
+                // dashArray: new THREE.Vector2(10, 5),
+                blending: THREE.NormalBlending,
+                transparent: true,
+            });
+
+            skateLineMesh = new THREE.Mesh(skateLine.geometry, skateLineMat);
+            scene.add(skateLineMesh);
+        }
+
+        function createSkatePointCloud() {
+            let skatePointCloudMat = new THREE.PointsMaterial({
+                color: 0xffffff,
+                // vertexColors: true,
+                size: 0.5,
+            });
+
+            let skatePointCloudGeo = new THREE.Geometry();
+            for (let i = 0; i < skateAcceleration.length; i++) {
+                let x = xScaleSkate(skateAcceleration[i].x);
+                let y = yScaleSkate(skateAcceleration[i].y);
+                let z = zScaleSkate(skateAcceleration[i].z);
+                skatePointCloudGeo.vertices.push(new THREE.Vector3(x, z, y));
+            }
+            skatePointCloud = new THREE.Points(skatePointCloudGeo, skatePointCloudMat);
+            skateScatterPlot.add(skatePointCloud);
+            scene.add(skateScatterPlot);
+        }
+
+        function createSkateKFA() {
+            // SCALE
+            let skateScaleKF = new THREE.VectorKeyframeTrack(
+                '.scale',
+                [0, 1, 2, 3],
+                [0, 0, 0, 0.7, 0.7, 0.7, 1, 1, 1, 0, 0, 0],
+                THREE.InterpolateSmooth
+            );
+            skateScaleKF.scale(5);
+
+            let skateClip = new THREE.AnimationClip('Action', 17, [skateScaleKF]); // AnimationClip( name : String, duration : Number, tracks : Array )
+            mixer = new THREE.AnimationMixer(skatePointCloud); // setup the THREE.AnimationMixer
+            let clipAction = mixer.clipAction(skateClip); // create a ClipAction and set it to play
+            clipAction.play();
+        }
+
+        createSkateMeshline();
+        createSkatePointCloud();
+        createSkateKFA();
+        createSkateSphereNoise();
+    }
+
+    // ---- BOULDER VISUALS ----
+    //
+    let boulderLineMesh;
+    let boulderPointCloud;
+    let boulderSphereGroup = new THREE.Object3D();
+    let boulderScatterPlot = new THREE.Object3D();
+    function boulderVisuals() {
+        function createBoulderSphereNoise() {
+            let boulderSphereGeometry = new THREE.SphereGeometry(1, 50, 50);
+
+            boulderSphereMaterial = new THREE.MeshPhongMaterial({
+                map: sphereTexture[2],
+                specular: 0xc0c0c,
+                shininess: 70,
+            });
+
+            let updateNoise = function () {
+                let time = 0;
+                let k = 2;
+                for (let i = 0; i < boulderSphereNoise.geometry.faces.length; i++) {
+                    let uv = boulderSphereNoise.geometry.faceVertexUvs[0][i]; //faceVertexUvs is a huge arrayed stored inside of another array
+                    let f = boulderSphereNoise.geometry.faces[i];
+                    let p = boulderSphereNoise.geometry.vertices[f.a]; //take the first vertex from each face
+                    p.normalize().multiplyScalar(1 + 0.3 * noise.perlin3(p.x * k + time, p.y * k, p.z * k + time));
+                }
+                boulderSphereNoise.geometry.verticesNeedUpdate = true; //must be set or vertices will not update
+                boulderSphereNoise.geometry.computeVertexNormals();
+                boulderSphereNoise.geometry.normalsNeedUpdate = true;
+            };
+
+            for (let i = 1; i < boulderGravity.length; i += 12) {
+                let scaling = 1.3;
+                let x = xScaleBoulder(boulderGravity[i].x) / scaling;
+                let y = yScaleBoulder(boulderGravity[i].y) / scaling;
+                let z = zScaleBoulder(boulderGravity[i].z) / scaling;
+
+                var boulderSphereNoise = new THREE.Mesh(boulderSphereGeometry, boulderSphereMaterial);
+                boulderSphereNoise.position.x = -x; // UNTERSCHIEDLICHE SPHERE GRÖßEN!!!
+                boulderSphereNoise.position.y = y;
+                boulderSphereNoise.position.z = z;
+                boulderSphereNoise.rotation.x = (Math.PI / 6) * (i % 4);
+                boulderSphereNoise.castShadow = true;
+                // scene.add(boulderSphereNoise);
+                boulderSphereGroup.add(boulderSphereNoise);
+            }
+            updateNoise();
+            scene.add(boulderSphereGroup);
+        }
+
+        function createBoulderMeshline() {
+            let boulderLineGeometry = new THREE.Geometry();
+
+            for (let i = 1; i < boulderAcceleration.length; i += 5) {
+                let x = xScaleBoulder(boulderAcceleration[i].x) / 2.5;
+                let y = yScaleBoulder(boulderAcceleration[i].y) / 2.5;
+                let z = zScaleBoulder(boulderAcceleration[i].z) / 2.5;
+                var v = vec(x, y, z);
+
+                boulderLineGeometry.vertices.push(v);
+            }
+
+            let boulderLine = new MeshLine();
+            boulderLine.setGeometry(boulderLineGeometry, function (p) {
+                return 2 + Math.sin(50 * p);
+            });
+
+            boulderLineMat = new MeshLineMaterial({
+                map: strokeTexture,
+                useMap: 1,
+                color: new THREE.Color(0x6aa84f),
+                lineWidth: 0.4,
+                near: 1,
+                far: 100000,
+                opacity: 0.9,
+                // dashArray: new THREE.Vector2(10, 5),
+                blending: THREE.NormalBlending,
+                transparent: true,
+            });
+
+            boulderLineMesh = new THREE.Mesh(boulderLine.geometry, boulderLineMat);
+            scene.add(boulderLineMesh);
+        }
+
+        function createBoulderPointCloud() {
+            let boulderPointCloudMat = new THREE.PointsMaterial({
+                color: 0xffffff,
+                // vertexColors: true,
+                size: 0.5,
+            });
+
+            let boulderPointCloudGeo = new THREE.Geometry();
+            for (let i = 0; i < boulderAcceleration.length; i++) {
+                let x = xScaleBoulder(boulderAcceleration[i].x);
+                let y = yScaleBoulder(boulderAcceleration[i].y);
+                let z = zScaleBoulder(boulderAcceleration[i].z);
+                boulderPointCloudGeo.vertices.push(new THREE.Vector3(x, z, y));
+            }
+            boulderPointCloud = new THREE.Points(boulderPointCloudGeo, boulderPointCloudMat);
+            boulderScatterPlot.add(boulderPointCloud);
+            scene.add(boulderScatterPlot);
+        }
+
+        function createBoulderKFA() {
+            // SCALE
+            let boulderScaleKF = new THREE.VectorKeyframeTrack(
+                '.scale',
+                [0, 1, 2, 3],
+                [0, 0, 0, 0.7, 0.7, 0.7, 1, 1, 1, 0, 0, 0],
+                THREE.InterpolateSmooth
+            );
+            boulderScaleKF.scale(5);
+
+            let boulderClip = new THREE.AnimationClip('Action', 17, [boulderScaleKF]); // AnimationClip( name : String, duration : Number, tracks : Array )
+            mixer = new THREE.AnimationMixer(boulderPointCloud); // setup the THREE.AnimationMixer
+            let clipAction = mixer.clipAction(boulderClip); // create a ClipAction and set it to play
+            clipAction.play();
+        }
+
+        createBoulderMeshline();
+        createBoulderPointCloud();
+        createBoulderKFA();
+        createBoulderSphereNoise();
     }
 
     // LIGHT
@@ -740,7 +887,8 @@ d3.csv('data/skate_boulder_swim_labeled.csv', function (data) {
     }
     window.addEventListener('resize', onWindowResize, false);
 
-    function animate(time) {
+    function animate() {
+        renderer.clear();
         // get audio data
         // analyser.getFrequencyData(dataArrayOld);
         // analyser.getFrequencyData(dataArray);
@@ -756,7 +904,7 @@ d3.csv('data/skate_boulder_swim_labeled.csv', function (data) {
         renderer.clear();
         window.requestAnimationFrame(animate, renderer.domElement);
         // controls.update();
-        lineMesh.material.uniforms.visibility.value = animateVisibility ? (time / 25000) % 1.0 : 1.0;
+
         render();
     }
 
@@ -764,81 +912,137 @@ d3.csv('data/skate_boulder_swim_labeled.csv', function (data) {
     function render() {
         analyser.getFrequencyData();
 
-        // scatterplot & line animation
-        let delta = clock.getDelta();
-        if (mixer && animateVisibility) {
-            mixer.update(delta);
-        }
-        if (acc_vis) {
-            pointCloud.visible = true;
-        } else if (acc_vis == false) {
-            pointCloud.visible = false;
-            lineMesh.material.uniforms.visibility.value = 0;
+        // SHOW/HIDE SPECIFIC DATA
+        if (changedVisibility) {
+            if (sound_vis) {
+                ball.visible = true;
+            } else if (sound_vis == false) {
+                ball.visible = false;
+            }
+
+            if (params.dataSource == 'swimming') {
+                if (acc_vis) {
+                    scene.add(swimScatterPlot);
+                    scene.add(swimLineMesh);
+                } else if (acc_vis == false) {
+                    scene.remove(swimScatterPlot);
+                    scene.remove(swimLineMesh);
+                }
+                if (gravity_vis) {
+                    scene.add(swimSphereGroup);
+                } else if (gravity_vis == false) {
+                    scene.remove(swimSphereGroup);
+                }
+            }
+
+            if (params.dataSource == 'skating') {
+                if (acc_vis) {
+                    scene.add(skateScatterPlot);
+                    scene.add(skateLineMesh);
+                } else if (acc_vis == false) {
+                    scene.remove(skateScatterPlot);
+                    scene.remove(skateLineMesh);
+                }
+                if (gravity_vis) {
+                    scene.add(skateSphereGroup);
+                } else if (gravity_vis == false) {
+                    scene.remove(skateSphereGroup);
+                }
+            }
+
+            if (params.dataSource == 'bouldering') {
+                if (acc_vis) {
+                    scene.add(boulderScatterPlot);
+                    scene.add(boulderLineMesh);
+                } else if (acc_vis == false) {
+                    scene.remove(boulderScatterPlot);
+                    scene.remove(boulderLineMesh);
+                }
+                if (gravity_vis) {
+                    scene.add(boulderSphereGroup);
+                } else if (gravity_vis == false) {
+                    scene.remove(boulderSphereGroup);
+                }
+            }
+            changedVisibility = false;
         }
 
-        if (sound_vis) {
-            ball.visible = true;
-        } else if (sound_vis == false) {
-            ball.visible = false;
+        // SWITCH BETWEEN SPORTS
+        if (changedInput) {
+            if (params.dataSource == 'swimming') {
+                scene.remove(skateSphereGroup);
+                scene.remove(skateLineMesh);
+                scene.remove(skateScatterPlot);
+                scene.remove(boulderSphereGroup);
+                scene.remove(boulderLineMesh);
+                scene.remove(boulderScatterPlot);
+                swimVisuals();
+                changedInput = false;
+            } else if (params.dataSource == 'skating') {
+                scene.remove(swimSphereGroup);
+                scene.remove(swimLineMesh);
+                scene.remove(swimScatterPlot);
+                scene.remove(boulderSphereGroup);
+                scene.remove(boulderLineMesh);
+                scene.remove(boulderScatterPlot);
+                skateVisuals();
+                changedInput = false;
+            } else if (params.dataSource == 'bouldering') {
+                scene.remove(swimSphereGroup);
+                scene.remove(swimLineMesh);
+                scene.remove(swimScatterPlot);
+                scene.remove(skateSphereGroup);
+                scene.remove(skateLineMesh);
+                scene.remove(skateScatterPlot);
+                boulderVisuals();
+                changedInput = false;
+            }
         }
 
-        if (gravity_vis) {
-            // sphereGroup.visible = true;
-        } else if (gravity_vis == false) {
-            sphereGroup.children.forEach((child) => (child.visible = false));
-        }
+        // ANIMATE ACCELERATION
+        function animateAcc() {
+            let delta = clock.getDelta();
 
-        // change LineColor & sphereTexture with sport
-        if (params.dataSource == 'swimming') {
-            lineMat.color = new THREE.Color(lineColors[0]);
-            sphereMaterial.map = sphereTexture[0];
-            acceleration = swimAcceleration;
-            motionYawRollPitch = swimMotionYawRollPitch;
-            gravity = swimGravity;
-            quaternationData = swimQuaternationData;
-            // drawVisuals();
-        } else if (params.dataSource == 'skating') {
-            lineMat.color = new THREE.Color(lineColors[1]);
-            sphereMaterial.map = sphereTexture[1];
-            acceleration = skateAcceleration;
-            motionYawRollPitch = skateMotionYawRollPitch;
-            gravity = skateGravity;
-            quaternationData = skateQuaternationData;
-            // drawVisuals();
-        } else if (params.dataSource == 'bouldering') {
-            lineMat.color = new THREE.Color(lineColors[2]);
-            sphereMaterial.map = sphereTexture[2];
-            acceleration = boulderAcceleration;
-            motionYawRollPitch = boulderMotionYawRollPitch;
-            gravity = boulderGravity;
-            quaternationData = boulderQuaternationData;
-            // drawVisuals();
+            if (params.dataSource == 'swimming') {
+                swimLineMesh.material.uniforms.visibility.value = animateVisibility ? (clock.elapsedTime / 50) % 1.0 : 1.0;
+            } else if (params.dataSource == 'skating') {
+                skateLineMesh.material.uniforms.visibility.value = animateVisibility ? (clock.elapsedTime / 50) % 1.0 : 1.0;
+            } else if (params.dataSource == 'bouldering') {
+                boulderLineMesh.material.uniforms.visibility.value = animateVisibility ? (clock.elapsedTime / 50) % 1.0 : 1.0;
+            }
+            if (mixer && animateVisibility) {
+                mixer.update(delta);
+            }
         }
+        animateAcc();
 
-        // camera.lookAt(scene.position);
+        camera.lookAt(scene.position);
         renderer.render(scene, camera);
         stats.update();
     }
-
     function buildGui() {
         gui = new dat.GUI();
         gui.domElement.id = 'gui';
 
         params = new Params();
 
-        let dataInput = gui.addFolder('Choose Sport');
-        dataInput.add(params, 'dataSource', ['bouldering', 'skating', 'swimming']);
-
-        dataInput.open();
+        gui.add(params, 'dataSource', ['bouldering', 'skating', 'swimming']).onChange(changeInput).name('Choose sport');
 
         let dataSrc = gui.addFolder('Data Sources');
-        dataSrc.add(params, 'gravity');
-        dataSrc.add(params, 'sound');
-        dataSrc.add(params, 'acceleration');
-        dataSrc.add(params, 'animate_acc').name('animate acceleration');
+        dataSrc.add(params, 'gravity').onChange(changeVis);
+        dataSrc.add(params, 'sound').onChange(changeVis);
+        dataSrc.add(params, 'acceleration').onChange(changeVis);
+        dataSrc.add(params, 'animate_acc').onChange(changeVis).name('animate acc');
         dataSrc.open();
-
         gui.open();
+    }
+
+    function changeInput() {
+        changedInput = true;
+    }
+
+    function changeVis() {
+        changedVisibility = true;
     }
 
     function Params() {
@@ -854,7 +1058,7 @@ d3.csv('data/skate_boulder_swim_labeled.csv', function (data) {
             if (animateVisibility) {
                 animateVisibility = false;
             } else {
-                lineMesh.material.uniforms.visibility.value = 0;
+                // skatelineMesh.material.uniforms.visibility.value = 0;
                 animateVisibility = true;
             }
         };
@@ -873,15 +1077,8 @@ d3.csv('data/skate_boulder_swim_labeled.csv', function (data) {
             }
         };
     }
-
-    lighting();
     buildGui();
-    // function drawVisuals() {
-    createMeshline();
-    createSphereNoise();
-    createPointCloud();
-    createKFA();
-    // }
-    // drawVisuals();
+    skateVisuals();
+    lighting();
     animate();
 });
