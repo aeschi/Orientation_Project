@@ -1,4 +1,4 @@
-// HELPER
+// ---- HELPER FUNCTIONS ----
 function createTextCanvas(text, color, font, size) {
     size = size || 30;
     let canvas = document.createElement('canvas');
@@ -63,26 +63,32 @@ function max(arr) {
     }, 0);
 }
 
-// THREE SETUP
+function vec(x, y, z) {
+    return new THREE.Vector3(x, y, z);
+}
 
-let stats;
+// ---- VARIABLES ----
+// GUI VAR
 let gui;
-
-// gui variables
 let sound_vis = true;
+let info_vis = false;
 let gravity_vis = true;
 let acc_vis = true;
-let sphereGroup;
 let animateVisibility = false;
 let params;
 let dataSource;
 let changedInput = false;
 let changedVisibility = false;
 
+// SPHERE VAR
+let sphereGroup;
 let sphereMaterial;
 let sphereTexture = [];
 
-// Meshline
+// AUDIO VAR
+let audioFile = [];
+
+// MESHLNE VAR
 let strokeTexture;
 let swimLineMat;
 let swimLineColors;
@@ -91,6 +97,7 @@ let skateLineColors;
 let boulderLineMat;
 let boulderLineColors;
 
+// ---- LOAD TEXTURES ----
 var loader = new THREE.TextureLoader();
 loader.load('assets/stroke.png', function (texture) {
     strokeTexture = texture;
@@ -106,22 +113,31 @@ loader.load('assets/boulder_bw_small_sat.png', function (texture) {
 });
 
 // INFO
-// let info = document.createElement('div');
-// info.setAttribute('style', 'white-space: pre;');
-// info.style.position = 'absolute';
-// info.style.bottom = '60px';
-// info.style.width = '100%';
-// info.style.textAlign = 'center';
-// info.style.color = '#fff';
-// info.style.fontWeight = 'bold';
-// info.style.backgroundColor = 'transparent';
-// info.style.zIndex = '1';
-// info.style.fontFamily = 'Arial';
-// info.innerHTML = 'Drag mouse to rotate camera';
-// document.body.appendChild(info);
+function infoText(content) {
+    let info = document.createElement('div');
+    info.setAttribute('style', 'white-space: pre-line;');
+    info.style.position = 'absolute';
+    info.style.bottom = '60px';
+    info.style.left = '20%';
+    info.style.width = '60%';
+    info.style.textAlign = 'left';
+    info.style.color = '#fff';
+    info.style.fontWeight = 'bold';
+    info.style.backgroundColor = 'transparent';
+    info.style.zIndex = '1';
+    info.style.fontFamily = 'Helvetica';
+    info.innerHTML = content;
+    if (!info_vis) {
+        document.getElementById(info).style.visibility = 'hidden';
+    } else if (info_vis) {
+        document.body.appendChild(info);
+    }
+}
 
-// renderer
+// ---- RENDERER ----
+//
 let renderer = new THREE.WebGLRenderer({
+    preserveDrawingBuffer: true,
     antialias: true,
 });
 let w = window.innerWidth;
@@ -131,7 +147,8 @@ document.body.appendChild(renderer.domElement);
 renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap; // default THREE.PCFShadowMap
 
-// camera
+// ---- CAMERA ----
+//
 let camera = new THREE.PerspectiveCamera(35, w / h, 1, 10000);
 camera.position.set(0, 50, 250);
 
@@ -146,27 +163,18 @@ controls.dampingFactor = 0.15;
 controls.maxPolarAngle = (2 * Math.PI) / 3.5;
 controls.zoomSpeed = 0.5;
 
-// stats (fps)
-stats = new Stats();
+// ---- STATS (fps) ----
+//
+let stats = new Stats();
 stats.showPanel(0); // 0: fps, 1: ms, 2: mb, 3+: custom
 document.body.appendChild(stats.dom);
 
-// scene
+// ---- SCENE ----
+//
 let scene = new THREE.Scene();
-scene.background = new THREE.Color('#131313');
-// scene.background = new THREE.Color( 0xe0e0e0 );
+scene.background = new THREE.Color('#131313'); // dunkel
+// scene.background = new THREE.Color(0xe0e0e0); //hell
 scene.fog = new THREE.FogExp2(scene.background, 0.002);
-
-function reinit() {
-    let scene = new THREE.Scene();
-    scene.background = new THREE.Color('#131313');
-    // scene.background = new THREE.Color( 0xe0e0e0 );
-    scene.fog = new THREE.FogExp2(scene.background, 0.002);
-}
-
-function vec(x, y, z) {
-    return new THREE.Vector3(x, y, z);
-}
 
 var acceleration = [],
     motionYawRollPitch = [],
@@ -184,11 +192,6 @@ var acceleration = [],
     swimMotionYawRollPitch = [],
     swimGravity = [],
     swimQuaternationData = [];
-
-var tempSkate, tempBoulder, tempSwim;
-
-var xExent, yExent, zExent;
-var xExentSwim, yExentSwim, zExentSwim;
 
 var format = d3.format('+.3f');
 
@@ -266,9 +269,9 @@ d3.csv('data/skate_boulder_swim_labeled.csv', function (data) {
         };
     });
 
-    tempSkate = boulderGravity;
-    tempSwim = swimGravity;
-    tempBoulder = boulderGravity;
+    var tempSkate = boulderGravity;
+    var tempSwim = swimGravity;
+    var tempBoulder = boulderGravity;
 
     // find extent (min & max values) of either x, y or z to use for scaling
     // d3.extent returns a two element array of the minimum and maximum values from the array.
@@ -311,7 +314,7 @@ d3.csv('data/skate_boulder_swim_labeled.csv', function (data) {
     // Simply put: scales transform a number in a certain interval (called the domain)
     // into a number in another interval (called the range).
 
-    // min & max of data set
+    // min & max numbers of data set
     var xScaleSkate = d3.scale.linear().domain(xExentSkate).range([-50, 50]);
     var yScaleSkate = d3.scale.linear().domain(yExentSkate).range([-50, 50]);
     var zScaleSkate = d3.scale.linear().domain(zExentSkate).range([-50, 50]);
@@ -339,11 +342,15 @@ d3.csv('data/skate_boulder_swim_labeled.csv', function (data) {
     }
     createFloor();
 
-    // AUDIO
+    // ---- AUDIO ----
+    //
     let analyser;
     let dataArrayOld;
     let audioData = [];
-    let stream = 'data/skaten/ROMAN_03_edit_garage.mp3';
+    audioFile[0] = 'data/skaten/ROMAN_03_edit_garage.mp3';
+    audioFile[1] = 'data/skaten/ROMAN_03_edit_garage.mp3';
+    audioFile[2] = 'data/skaten/ROMAN_03_edit_garage.mp3';
+    let stream = audioFile[1];
     //https://codepen.io/EllenProbst/pen/RQQmJK?editors=0010 //code source
 
     // AUDIO file
@@ -362,11 +369,15 @@ d3.csv('data/skate_boulder_swim_labeled.csv', function (data) {
     var listener = new THREE.AudioListener();
     var audio = new THREE.Audio(listener);
     audio.crossOrigin = 'anonymous';
-    audioLoader.load(stream, function (buffer) {
-        audio.setBuffer(buffer);
-        audio.setLoop(true);
-        audio.play();
-    });
+
+    function loadAudio() {
+        audioLoader.load(stream, function (buffer) {
+            audio.setBuffer(buffer);
+            audio.setLoop(true);
+            audio.play();
+        });
+    }
+    loadAudio();
 
     analyser = new THREE.AudioAnalyser(audio, fftSize);
 
@@ -409,7 +420,8 @@ d3.csv('data/skate_boulder_swim_labeled.csv', function (data) {
         return result;
     }
 
-    // AUDIO VIZ
+    // ---- AUDIO VISUALS ----
+    //
     let simplexNoise = new SimplexNoise();
     function makeRoughBall(mesh, bassFr, treFr) {
         mesh.geometry.vertices.forEach(function (vertex, i) {
@@ -438,7 +450,6 @@ d3.csv('data/skate_boulder_swim_labeled.csv', function (data) {
     let ball = new THREE.Mesh(icosahedronGeometry, lambertMaterial);
     ball.position.set(0, 0, 0);
     ball.castShadow = true;
-
     scene.add(ball);
 
     // ---- SWIM VISUALS ----
@@ -496,7 +507,7 @@ d3.csv('data/skate_boulder_swim_labeled.csv', function (data) {
             for (let i = 1; i < swimAcceleration.length; i += 5) {
                 const scaling = 2.5;
                 let x = xScaleSwim(swimAcceleration[i].x) / scaling;
-                let y = yScaleSwim(swimAcceleration[i].y) / scaling;
+                let y = yScaleSwim(swimAcceleration[i].y) / scaling - 20;
                 let z = zScaleSwim(swimAcceleration[i].z) / scaling;
                 var v = vec(x, y, z);
 
@@ -574,7 +585,7 @@ d3.csv('data/skate_boulder_swim_labeled.csv', function (data) {
     let skateScatterPlot = new THREE.Object3D();
     function skateVisuals() {
         function createSkateSphereNoise() {
-            let skateSphereGeometry = new THREE.SphereGeometry(1, 50, 50);
+            let skateSphereGeometry = new THREE.SphereGeometry(1.5, 50, 50);
 
             skateSphereMaterial = new THREE.MeshPhongMaterial({
                 map: sphereTexture[1],
@@ -589,14 +600,14 @@ d3.csv('data/skate_boulder_swim_labeled.csv', function (data) {
                     let uv = skateSphereNoise.geometry.faceVertexUvs[0][i]; //faceVertexUvs is a huge arrayed stored inside of another array
                     let f = skateSphereNoise.geometry.faces[i];
                     let p = skateSphereNoise.geometry.vertices[f.a]; //take the first vertex from each face
-                    p.normalize().multiplyScalar(1 + 0.3 * noise.perlin3(p.x * k + time, p.y * k, p.z * k + time));
+                    p.normalize().multiplyScalar(1.5 + 0.8 * noise.perlin3(p.x * k + time, p.y * k, p.z * k + time));
                 }
                 skateSphereNoise.geometry.verticesNeedUpdate = true; //must be set or vertices will not update
                 skateSphereNoise.geometry.computeVertexNormals();
                 skateSphereNoise.geometry.normalsNeedUpdate = true;
             };
 
-            for (let i = 1; i < skateGravity.length; i += 12) {
+            for (let i = 1; i < skateGravity.length; i += 2) {
                 let scaling = 1.3;
                 let x = xScaleSkate(skateGravity[i].x) / scaling;
                 let y = yScaleSkate(skateGravity[i].y) / scaling;
@@ -977,6 +988,8 @@ d3.csv('data/skate_boulder_swim_labeled.csv', function (data) {
                 scene.remove(boulderLineMesh);
                 scene.remove(boulderScatterPlot);
                 swimVisuals();
+                stream = audioFile[0];
+                loadAudio();
                 changedInput = false;
             } else if (params.dataSource == 'skating') {
                 scene.remove(swimSphereGroup);
@@ -986,6 +999,8 @@ d3.csv('data/skate_boulder_swim_labeled.csv', function (data) {
                 scene.remove(boulderLineMesh);
                 scene.remove(boulderScatterPlot);
                 skateVisuals();
+                stream = audioFile[1];
+                loadAudio();
                 changedInput = false;
             } else if (params.dataSource == 'bouldering') {
                 scene.remove(swimSphereGroup);
@@ -995,6 +1010,8 @@ d3.csv('data/skate_boulder_swim_labeled.csv', function (data) {
                 scene.remove(skateLineMesh);
                 scene.remove(skateScatterPlot);
                 boulderVisuals();
+                stream = audioFile[2];
+                loadAudio();
                 changedInput = false;
             }
         }
@@ -1020,6 +1037,7 @@ d3.csv('data/skate_boulder_swim_labeled.csv', function (data) {
         renderer.render(scene, camera);
         stats.update();
     }
+
     function buildGui() {
         gui = new dat.GUI();
         gui.domElement.id = 'gui';
@@ -1034,6 +1052,13 @@ d3.csv('data/skate_boulder_swim_labeled.csv', function (data) {
         dataSrc.add(params, 'acceleration').onChange(changeVis);
         dataSrc.add(params, 'animate_acc').onChange(changeVis).name('animate acc');
         dataSrc.open();
+
+        gui.add(params, 'datainfo');
+
+        let saveImg = gui.addFolder('Take a screenshot');
+        saveImg.add(params, 'download');
+        saveImg.open();
+
         gui.open();
     }
 
@@ -1076,7 +1101,38 @@ d3.csv('data/skate_boulder_swim_labeled.csv', function (data) {
                 sound_vis = true;
             }
         };
+        this.download = function () {
+            saveAsImage();
+        };
+
+        this.datainfo = function () {
+            if (info_vis) {
+                info_vis = false;
+            } else {
+                info_vis = true;
+            }
+
+            infoText(
+                "The GRAVITY sensor provides a three dimensional vector indicating the direction and magnitude of gravity. Typically, this sensor is used to determine the device's relative orientation in space.\n\nThe SOUND recording is filtered by its frequency levels.\n\nThe linear ACCELERATION sensor provides you with a three-dimensional vector representing acceleration along each device axis, excluding gravity. You can use this value to perform gesture detection."
+            );
+        };
     }
+
+    function saveAsImage() {
+        renderer.render(scene, camera);
+        renderer.domElement.toBlob(
+            function (blob) {
+                var a = document.createElement('a');
+                var url = URL.createObjectURL(blob);
+                a.href = url;
+                a.download = 'screenshot.png';
+                a.click();
+            },
+            'image/png',
+            1.0
+        );
+    }
+
     buildGui();
     skateVisuals();
     lighting();

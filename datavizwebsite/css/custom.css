@@ -16,9 +16,18 @@ body {
     background-color: #131313 !important;
 }
 
-.card {
-    background-color: #131313;
+/* dat.gui colors */
+.dg .cr.function {
+    border-left: 3px solid #b885a7;
 }
+
+.dg .cr.string {
+    border-left: 3px solid #b885a7;
+}
+
+/* .card {
+    background-color: #131313;
+} */
 
 /*home nav item*/
 .navbar-dark .navbar-brand {
