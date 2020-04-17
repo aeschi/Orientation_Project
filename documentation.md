@@ -21,12 +21,18 @@ Extra:
 
 ------
 ### 17.04.20
-- [x] fix GUI functionality (doable) - It's possible to switch between sports now :)
+- [x] fix GUI functionality (doable) - It's possible to switch between sports now :) 
+    - remove() function was the trick to blend out 3D Objects [source](https://stackoverflow.com/questions/18357529/threejs-remove-object-from-scene)
 - [x] restructure code.. for gui - every sport has a 'sport'Vis() function
 - [x] improve perfomance for smoother animation (we'll see) - depends on sphereNoise object amount mostly
     - Solution: less spheres, no default animation (can be turned on in gui), adjusting amount of data points per sport per visualisation style
+- fixed some console errors
+    
 - [x]  need for keyframe animation? Yes for pointCloud [link](https://threejs.org/examples/?q=misc#misc_animation_keys), [git](https://github.com/mrdoob/three.js/blob/master/examples/misc_animation_keys.html)
 - [x]  Meshline links: [git](https://github.com/spite/THREE.MeshLine), [demo](https://www.clicktorelease.com/code/THREE.MeshLine/demo/index.html), [splinecurve](https://threejs.org/docs/#api/en/extras/curves/SplineCurve), [three constan.spline](https://github.com/spite/THREE.ConstantSpline)
+
+### 14.04.20
+- more research on switching between sports
 
 ### 05.04.20
 - [x] fixed one csv bug line in pointCloud
