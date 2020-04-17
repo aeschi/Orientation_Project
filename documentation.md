@@ -1,13 +1,10 @@
 #### Next Steps
-
+- [ ] switch between sounds as well
 - [ ] create better narrative/connection for sports to viz
-- [ ] fix GUI functionality (doable)
-- [ ] add material/ updateNoise function for every sport - swimming more reflective..
-- [ ] restructure code.. for gui
 - [ ] improve perfomance for smoother animation (we'll see)
 - [ ] improve sound animation (doable)
 - [ ] sound design/editing for swimming and bouldering (doable)
-- should add description of data: The gravity sensor provides a three dimensional vector indicating the direction and magnitude of gravity. Typically, this sensor is used to determine the device's relative orientation in space. 
+- [ ] should add description of data: The gravity sensor provides a three dimensional vector indicating the direction and magnitude of gravity. Typically, this sensor is used to determine the device's relative orientation in space. 
 Links: 
 [medium article](https://medium.com/@mag_ops/music-visualiser-with-three-js-web-audio-api-b30175e7b5ba),
 [codepen](https://codepen.io/Zebrathy/pen/dyoaoPQ?editors=0010),
@@ -18,16 +15,22 @@ Links:
 - [ ] prepare presentation (doable)
 - [ ] image capture button Links: https://codepen.io/shivasaxena/pen/QEzAAv , https://jsfiddle.net/2pha/art388yv/
 
-------
+Extra:
+- [ ] adjust animation length for different sports for meshline
+- [ ] adjust material/ updateNoise function for every sport - swimming more reflective..
 
-- [ ]  need for keyframe animation? [link](https://threejs.org/examples/?q=misc#misc_animation_keys), [git](https://github.com/mrdoob/three.js/blob/master/examples/misc_animation_keys.html)
-- [ ]  Meshline links: [git](https://github.com/spite/THREE.MeshLine), [demo](https://www.clicktorelease.com/code/THREE.MeshLine/demo/index.html), [splinecurve](https://threejs.org/docs/#api/en/extras/curves/SplineCurve), [three constan.spline](https://github.com/spite/THREE.ConstantSpline)
-
 ------
+### 17.04.20
+- [x] fix GUI functionality (doable) - It's possible to switch between sports now :)
+- [x] restructure code.. for gui - every sport has a 'sport'Vis() function
+- [x] improve perfomance for smoother animation (we'll see) - depends on sphereNoise object amount mostly
+    - Solution: less spheres, no default animation (can be turned on in gui), adjusting amount of data points per sport per visualisation style
+- [x]  need for keyframe animation? Yes for pointCloud [link](https://threejs.org/examples/?q=misc#misc_animation_keys), [git](https://github.com/mrdoob/three.js/blob/master/examples/misc_animation_keys.html)
+- [x]  Meshline links: [git](https://github.com/spite/THREE.MeshLine), [demo](https://www.clicktorelease.com/code/THREE.MeshLine/demo/index.html), [splinecurve](https://threejs.org/docs/#api/en/extras/curves/SplineCurve), [three constan.spline](https://github.com/spite/THREE.ConstantSpline)
+
 ### 05.04.20
 - [x] fixed one csv bug line in pointCloud
 - [x] color adjustment with sport change (should add material/ updateNoise function for every sport - swimming more reflective..)
-- 
 
 ### 03.04.20
 - [x] gui functionality: blend in/out data sets (except gravity)
