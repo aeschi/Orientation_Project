@@ -5,6 +5,8 @@
 - [ ] improve sound animation (doable)
 - [ ] sound design/editing for swimming and bouldering (doable)
 - [ ] should add description of data: The gravity sensor provides a three dimensional vector indicating the direction and magnitude of gravity. Typically, this sensor is used to determine the device's relative orientation in space. 
+[hide text](https://stackoverflow.com/questions/6242976/javascript-hide-show-element)
+
 Links: 
 [medium article](https://medium.com/@mag_ops/music-visualiser-with-three-js-web-audio-api-b30175e7b5ba),
 [codepen](https://codepen.io/Zebrathy/pen/dyoaoPQ?editors=0010),
