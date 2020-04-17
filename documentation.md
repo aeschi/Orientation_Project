@@ -1,24 +1,23 @@
 #### Next Steps
 - [ ] switch between sounds as well
 - [ ] create better narrative/connection for sports to viz
-- [ ] improve perfomance for smoother animation (we'll see)
+- [ ] improve perfomance for smoother animation (we'll see) - Maybe add() and remove() instead of sportViz() in render()
 - [ ] improve sound animation (doable)
 - [ ] sound design/editing for swimming and bouldering (doable)
-- [ ] should add description of data: The gravity sensor provides a three dimensional vector indicating the direction and magnitude of gravity. Typically, this sensor is used to determine the device's relative orientation in space. 
-[hide text](https://stackoverflow.com/questions/6242976/javascript-hide-show-element)
 
 Links: 
 [medium article](https://medium.com/@mag_ops/music-visualiser-with-three-js-web-audio-api-b30175e7b5ba),
 [codepen](https://codepen.io/Zebrathy/pen/dyoaoPQ?editors=0010),
 [webaudio sandbox](https://github.com/mrdoob/three.js/blob/master/examples/webaudio_sandbox.html),
 [other example](https://codepen.io/EllenProbst/pen/RQQmJK?editors=0010)
-- [ ] create still frames (very doable)  porttraits and viz
+- [ ] create still frames (very doable)  portraits and viz
 - [ ] final beautification for each sport with color, shapes,.. (doable)
 - [ ] prepare presentation (doable)
 
 Extra:
 - [ ] adjust animation length for different sports for meshline
 - [ ] adjust material/ updateNoise function for every sport - swimming more reflective..
+- [ ] need to write better text and [hide text](https://stackoverflow.com/questions/6242976/javascript-hide-show-element)
 
 ------
 ### 17.04.20
@@ -29,7 +28,7 @@ Extra:
     - Solution: less spheres, no default animation (can be turned on in gui), adjusting amount of data points per sport per visualisation style
 - fixed some console errors
 - [x] image capture button: https://codepen.io/shivasaxena/pen/QEzAAv ,with this: https://jsfiddle.net/2pha/art388yv/
-
+- [ ] added description of data: The gravity sensor provides a three dimensional vector indicating the direction and magnitude of gravity. Typically, this sensor is used to determine the device's relative orientation in space..
     
 - [x]  need for keyframe animation? Yes for pointCloud [link](https://threejs.org/examples/?q=misc#misc_animation_keys), [git](https://github.com/mrdoob/three.js/blob/master/examples/misc_animation_keys.html)
 - [x]  Meshline links: [git](https://github.com/spite/THREE.MeshLine), [demo](https://www.clicktorelease.com/code/THREE.MeshLine/demo/index.html), [splinecurve](https://threejs.org/docs/#api/en/extras/curves/SplineCurve), [three constan.spline](https://github.com/spite/THREE.ConstantSpline)
