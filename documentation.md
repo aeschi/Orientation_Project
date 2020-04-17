@@ -13,7 +13,6 @@ Links:
 - [ ] create still frames (very doable)  porttraits and viz
 - [ ] final beautification for each sport with color, shapes,.. (doable)
 - [ ] prepare presentation (doable)
-- [ ] image capture button Links: https://codepen.io/shivasaxena/pen/QEzAAv , https://jsfiddle.net/2pha/art388yv/
 
 Extra:
 - [ ] adjust animation length for different sports for meshline
@@ -27,6 +26,8 @@ Extra:
 - [x] improve perfomance for smoother animation (we'll see) - depends on sphereNoise object amount mostly
     - Solution: less spheres, no default animation (can be turned on in gui), adjusting amount of data points per sport per visualisation style
 - fixed some console errors
+- [x] image capture button: https://codepen.io/shivasaxena/pen/QEzAAv ,with this: https://jsfiddle.net/2pha/art388yv/
+
     
 - [x]  need for keyframe animation? Yes for pointCloud [link](https://threejs.org/examples/?q=misc#misc_animation_keys), [git](https://github.com/mrdoob/three.js/blob/master/examples/misc_animation_keys.html)
 - [x]  Meshline links: [git](https://github.com/spite/THREE.MeshLine), [demo](https://www.clicktorelease.com/code/THREE.MeshLine/demo/index.html), [splinecurve](https://threejs.org/docs/#api/en/extras/curves/SplineCurve), [three constan.spline](https://github.com/spite/THREE.ConstantSpline)
