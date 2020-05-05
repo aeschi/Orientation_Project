@@ -24,6 +24,12 @@ Extra:
 - working on sound
 - [x] if (previous data point - current data point > some value) show (less too close data points)
 
+<img src="https://i.imgur.com/TwLwJSG.png" width="50%">
+
+- update light orientation
+
+<img src="https://i.imgur.com/SiuuU6f.png" width="50%">
+
 ### 28.04.20
 - sound edit swimming file
 - testing sound switch (not working yet)
