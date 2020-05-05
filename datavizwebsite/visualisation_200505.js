@@ -135,6 +135,7 @@ function infoText(content) {
 }
 
 // ---- RENDERER ----
+//
 let renderer = new THREE.WebGLRenderer({
     preserveDrawingBuffer: true,
     antialias: true,
@@ -147,10 +148,11 @@ renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap; // default THREE.PCFShadowMap
 
 // ---- CAMERA ----
+//
 let camera = new THREE.PerspectiveCamera(35, w / h, 1, 10000);
 camera.position.set(0, 50, 250);
 
-// ---- ORBIT CONTROLS ----
+// orbit controls
 const controls = new THREE.OrbitControls(camera, renderer.domElement);
 controls.minDistance = 10;
 controls.maxDistance = 450;
@@ -162,17 +164,18 @@ controls.maxPolarAngle = (2 * Math.PI) / 3.5;
 controls.zoomSpeed = 0.5;
 
 // ---- STATS (fps) ----
+//
 let stats = new Stats();
 stats.showPanel(0); // 0: fps, 1: ms, 2: mb, 3+: custom
 document.body.appendChild(stats.dom);
 
 // ---- SCENE ----
+//
 let scene = new THREE.Scene();
 scene.background = new THREE.Color('#131313'); // dunkel
 // scene.background = new THREE.Color(0xe0e0e0); //hell
 scene.fog = new THREE.FogExp2(scene.background, 0.002);
 
-// ---- DATA ----
 var acceleration = [],
     motionYawRollPitch = [],
     gravity = [],
@@ -306,8 +309,9 @@ d3.csv('data/skate_boulder_swim_labeled.csv', function (data) {
 
     // SCALING IN d3 (distribution of points)
     // https://github.com/d3/d3-scale
+    // http://www.jeromecukier.net/2011/08/11/d3-scales-and-color/
     // https://www.d3indepth.com/scales/
-    // scales transform a number in a certain interval (called the domain)
+    // Simply put: scales transform a number in a certain interval (called the domain)
     // into a number in another interval (called the range).
 
     // min & max numbers of data set
@@ -325,7 +329,7 @@ d3.csv('data/skate_boulder_swim_labeled.csv', function (data) {
 
     //  ---- ADDING VIZ ELEMENTS ----
 
-    // ---- FLOOR PLANE ----
+    // FLOOR PLANE
     function createFloor() {
         let mesh = new THREE.Mesh(
             new THREE.PlaneBufferGeometry(2000, 2000),
@@ -338,31 +342,31 @@ d3.csv('data/skate_boulder_swim_labeled.csv', function (data) {
     }
     createFloor();
 
-    // ---- AUDIO ANLAYSER ----
-    // based on https://medium.com/@mag_ops/music-visualiser-with-three-js-web-audio-api-b30175e7b5ba
-    // and https://codepen.io/EllenProbst/pen/RQQmJK?editors=0010
-
+    // ---- AUDIO ----
+    //
     let analyser;
-    let dataArray;
+    let dataArrayOld;
+    let audioData = [];
     audioFile[0] = 'data/skaten/ROMAN_03_edit_garage.mp3';
     audioFile[1] = 'data/swimming/ALU_01_edit.mp3';
     audioFile[2] = 'data/bouldern/VIVI_04_edit.mp3';
     let stream = audioFile[0];
+    //https://codepen.io/EllenProbst/pen/RQQmJK?editors=0010 //code source
 
-    // AUDIO file
+    // // AUDIO file
     // window.onload = function () {
     //     let context = listener.context;
     // };
     // One-liner to resume playback when user interacted with the page.
-    // document.querySelector('button').addEventListener(
-    //     'click',
-    //     function () {
-    //         context.resume().then(() => {
-    //             console.log('Playback resumed successfully');
-    //         });
-    //     },
-    //     false
-    // );
+    document.querySelector('button').addEventListener(
+        'click',
+        function () {
+            context.resume().then(() => {
+                console.log('Playback resumed successfully');
+            });
+        },
+        false
+    );
 
     var fftSize = 512;
     var audioLoader = new THREE.AudioLoader();
@@ -380,37 +384,52 @@ d3.csv('data/skate_boulder_swim_labeled.csv', function (data) {
     loadAudio();
 
     analyser = new THREE.AudioAnalyser(audio, fftSize);
-    analyser.analyser.maxDecibels = 0;
-    analyser.analyser.minDecibels = -120;
-    dataArray = analyser.data;
 
-    function soundAnimation() {
-        var lowerHalfArray = dataArray.slice(0, dataArray.length / 2 - 1);
-        var upperHalfArray = dataArray.slice(dataArray.length / 2 - 1, dataArray.length - 1);
+    analyser.analyser.maxDecibels = -3;
+    analyser.analyser.minDecibels = -100;
+    dataArrayOld = analyser.data;
+    // var bufferLength = analyser.frequencyBinCount;
+    // var dataArray = new Uint8Array(bufferLength);
 
-        var overallAvg = avg(dataArray);
-        var lowerMax = max(lowerHalfArray);
-        var lowerAvg = avg(lowerHalfArray);
-        var upperMax = max(upperHalfArray);
-        var upperAvg = avg(upperHalfArray);
+    function getAudioData(data) {
+        // Split array into 3
+        var frequencyArray = splitFrenquencyArray(data, 3);
 
-        var lowerMaxFr = lowerMax / lowerHalfArray.length;
-        var lowerAvgFr = lowerAvg / lowerHalfArray.length;
-        var upperMaxFr = upperMax / upperHalfArray.length;
-        var upperAvgFr = upperAvg / upperHalfArray.length;
+        // Make average of frenquency array entries
+        for (var i = 0; i < frequencyArray.length; i++) {
+            var average = 0;
 
-        makeRoughBall(ball, modulate(Math.pow(lowerMaxFr, 0.8), 0, 1, 0, 4), modulate(upperAvgFr, 0, 1, 0, 8));
+            for (var j = 0; j < frequencyArray[i].length; j++) {
+                average += frequencyArray[i][j];
+            }
+            audioData[i] = average / frequencyArray[i].length;
+        }
 
-        // function modulate(val, minVal, maxVal, outMin, outMax) {
-        //     var fr = fractionate(val, minVal, maxVal);
-        //     var delta = outMax - outMin;
-        //     return outMin + fr * delta;
-        // }
+        console.log('audiodata: ', audioData);
+        return audioData;
+    }
+
+    function splitFrenquencyArray(arr, n) {
+        var tab = Object.keys(arr).map(function (key) {
+            return arr[key];
+        });
+        var len = tab.length,
+            result = [],
+            i = 0;
+
+        while (i < len) {
+            var size = Math.ceil((len - i) / n--);
+            result.push(tab.slice(i, i + size));
+            i += size;
+        }
+
+        return result;
     }
 
     // ---- AUDIO VISUALS ----
+    //
 
-    // Distort Mesh Ball
+    // Distort Mesh Ball based on https://medium.com/@mag_ops/music-visualiser-with-three-js-web-audio-api-b30175e7b5ba
     let simplexNoise = new SimplexNoise();
     function makeRoughBall(mesh, bassFr, treFr) {
         mesh.geometry.vertices.forEach(function (vertex, i) {
@@ -443,6 +462,7 @@ d3.csv('data/skate_boulder_swim_labeled.csv', function (data) {
     scene.add(ball);
 
     // ---- SWIM VISUALS ----
+    //
     let swimLineMesh;
     let swimPointCloud;
     let swimSphereGroup = new THREE.Object3D();
@@ -578,6 +598,7 @@ d3.csv('data/skate_boulder_swim_labeled.csv', function (data) {
     }
 
     // ---- SKATE VISUALS ----
+    //
     let skateLineMesh;
     let skatePointCloud;
     let skateSphereGroup = new THREE.Object3D();
@@ -709,6 +730,7 @@ d3.csv('data/skate_boulder_swim_labeled.csv', function (data) {
     }
 
     // ---- BOULDER VISUALS ----
+    //
     let boulderLineMesh;
     let boulderPointCloud;
     let boulderSphereGroup = new THREE.Object3D();
@@ -841,7 +863,7 @@ d3.csv('data/skate_boulder_swim_labeled.csv', function (data) {
         createBoulderSphereNoise();
     }
 
-    // ---- LIGHTING ----
+    // LIGHT
     function lighting() {
         let ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
         scene.add(ambientLight);
@@ -908,7 +930,6 @@ d3.csv('data/skate_boulder_swim_labeled.csv', function (data) {
         // scene.add(lightHelper4);
     }
 
-    // ---- RENDER ----
     function onWindowResize() {
         let newWidth = window.innerWidth;
         let newHeight = window.innerHeight;
@@ -920,11 +941,16 @@ d3.csv('data/skate_boulder_swim_labeled.csv', function (data) {
 
     function animate() {
         renderer.clear();
-
         // get audio data
-        analyser.getFrequencyData(dataArray);
-        soundAnimation();
+        // analyser.getFrequencyData(dataArrayOld);
+        analyser.getFrequencyData();
+        getAudioData(dataArrayOld);
 
+        if (audioData[0] >= 1) {
+            //     planetMedium.scale.y = planetMedium.scale.x = planetMedium.scale.z = 5 + audioData[0] / 20;
+            makeRoughBall(ball, (0.5 * audioData[0]) / 40, (0.7 * audioData[0]) / 40);
+            // ball.scale.y = ball.scale.x = ball.scale.z = audioData[0] / 40;
+        }
         renderer.clear();
         window.requestAnimationFrame(animate, renderer.domElement);
         // controls.update();
@@ -1058,7 +1084,6 @@ d3.csv('data/skate_boulder_swim_labeled.csv', function (data) {
         stats.update();
     }
 
-    // ---- GUI ----
     function buildGui() {
         gui = new dat.GUI();
         gui.domElement.id = 'gui';
@@ -1081,6 +1106,14 @@ d3.csv('data/skate_boulder_swim_labeled.csv', function (data) {
         saveImg.open();
 
         gui.open();
+    }
+
+    function changeInput() {
+        changedInput = true;
+    }
+
+    function changeVis() {
+        changedVisibility = true;
     }
 
     function Params() {
@@ -1129,14 +1162,6 @@ d3.csv('data/skate_boulder_swim_labeled.csv', function (data) {
                 "The GRAVITY sensor provides a three dimensional vector indicating the direction and magnitude of gravity. Typically, this sensor is used to determine the device's relative orientation in space.\n\nThe SOUND recording is filtered by its frequency levels.\n\nThe linear ACCELERATION sensor provides you with a three-dimensional vector representing acceleration along each device axis, excluding gravity. You can use this value to perform gesture detection."
             );
         };
-    }
-
-    function changeInput() {
-        changedInput = true;
-    }
-
-    function changeVis() {
-        changedVisibility = true;
     }
 
     function saveAsImage() {
