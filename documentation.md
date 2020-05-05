@@ -10,7 +10,7 @@ Links:
 [codepen](https://codepen.io/Zebrathy/pen/dyoaoPQ?editors=0010),
 [webaudio sandbox](https://github.com/mrdoob/three.js/blob/master/examples/webaudio_sandbox.html),
 [other example](https://codepen.io/EllenProbst/pen/RQQmJK?editors=0010)
-- [ ] create still frames (very doable)  portraits and viz
+- [ ] create still frames (very doable) portraits and viz
 - [ ] final beautification for each sport with color, shapes,.. (doable)
 - [ ] prepare presentation (doable)
 
@@ -20,6 +20,11 @@ Extra:
 - [ ] need to write better text and [hide text](https://stackoverflow.com/questions/6242976/javascript-hide-show-element)
 
 ------
+### 28.04.20
+- sound edit swimming file
+- testing sound switch (not working yet)
+
+
 ### 17.04.20
 - [x] fix GUI functionality (doable) - It's possible to switch between sports now :) 
     - remove() function was the trick to blend out 3D Objects [source](https://stackoverflow.com/questions/18357529/threejs-remove-object-from-scene)
