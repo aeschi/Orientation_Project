@@ -348,9 +348,9 @@ d3.csv('data/skate_boulder_swim_labeled.csv', function (data) {
     let dataArrayOld;
     let audioData = [];
     audioFile[0] = 'data/skaten/ROMAN_03_edit_garage.mp3';
-    audioFile[1] = 'data/skaten/ROMAN_03_edit_garage.mp3';
+    audioFile[1] = 'data/swimming/ALU_01_edit.mp3';
     audioFile[2] = 'data/skaten/ROMAN_03_edit_garage.mp3';
-    let stream = audioFile[1];
+    let stream = audioFile[0];
     //https://codepen.io/EllenProbst/pen/RQQmJK?editors=0010 //code source
 
     // AUDIO file
@@ -482,21 +482,32 @@ d3.csv('data/skate_boulder_swim_labeled.csv', function (data) {
                 swimSphereNoise.geometry.normalsNeedUpdate = true;
             };
 
-            for (let i = 1; i < swimGravity.length; i += 12) {
-                let scaling = 1.3;
-                let x = xScaleSwim(swimGravity[i].x) / scaling;
-                let y = yScaleSwim(swimGravity[i].y) / scaling;
-                let z = zScaleSwim(swimGravity[i].z) / scaling;
+            let swimCounter = 0;
+            console.log('swim length: ', swimGravity.length);
 
-                var swimSphereNoise = new THREE.Mesh(swimSphereGeometry, swimSphereMaterial);
-                swimSphereNoise.position.x = -x; // UNTERSCHIEDLICHE SPHERE GRÖßEN!!!
-                swimSphereNoise.position.y = y;
-                swimSphereNoise.position.z = z;
-                swimSphereNoise.rotation.x = (Math.PI / 6) * (i % 4);
-                swimSphereNoise.castShadow = true;
-                // scene.add(swimSphereNoise);
-                swimSphereGroup.add(swimSphereNoise);
+            for (let i = 1; i < swimGravity.length; i += 1) {
+                let swimPos = vec(swimGravity[i].x, swimGravity[i].y, swimGravity[i].z);
+                let previousSwimPos = vec(swimGravity[i - 1].x, swimGravity[i - 1].y, swimGravity[i - 1].z);
+
+                // console.log(swimPos.distanceTo(previousSwimPos));
+                if (swimPos.distanceTo(previousSwimPos) > 0.003) {
+                    let scaling = 1.3;
+                    let x = xScaleSwim(swimGravity[i].x) / scaling;
+                    let y = yScaleSwim(swimGravity[i].y) / scaling;
+                    let z = zScaleSwim(swimGravity[i].z) / scaling;
+
+                    var swimSphereNoise = new THREE.Mesh(swimSphereGeometry, swimSphereMaterial);
+                    swimSphereNoise.position.x = -x; // UNTERSCHIEDLICHE SPHERE GRÖßEN!!!
+                    swimSphereNoise.position.y = y;
+                    swimSphereNoise.position.z = z;
+                    swimSphereNoise.rotation.x = (Math.PI / 6) * (i % 4);
+                    swimSphereNoise.castShadow = true;
+                    // scene.add(swimSphereNoise);
+                    swimSphereGroup.add(swimSphereNoise);
+                    swimCounter++;
+                }
             }
+            console.log('swimcounter: ', swimCounter);
             updateNoise();
             scene.add(swimSphereGroup);
         }
@@ -504,7 +515,7 @@ d3.csv('data/skate_boulder_swim_labeled.csv', function (data) {
         function createSwimMeshline() {
             let swimLineGeometry = new THREE.Geometry();
 
-            for (let i = 1; i < swimAcceleration.length; i += 5) {
+            for (let i = 1; i < swimAcceleration.length; i += 15) {
                 const scaling = 2.5;
                 let x = xScaleSwim(swimAcceleration[i].x) / scaling;
                 let y = yScaleSwim(swimAcceleration[i].y) / scaling - 20;
@@ -607,21 +618,29 @@ d3.csv('data/skate_boulder_swim_labeled.csv', function (data) {
                 skateSphereNoise.geometry.normalsNeedUpdate = true;
             };
 
-            for (let i = 1; i < skateGravity.length; i += 2) {
-                let scaling = 1.3;
-                let x = xScaleSkate(skateGravity[i].x) / scaling;
-                let y = yScaleSkate(skateGravity[i].y) / scaling;
-                let z = zScaleSkate(skateGravity[i].z) / scaling;
+            let counterSkateBalls = 0;
+            for (let i = 1; i < skateGravity.length; i += 1) {
+                let skatePos = vec(skateGravity[i].x, skateGravity[i].y, skateGravity[i].z);
+                let previousSkatePos = vec(skateGravity[i - 1].x, skateGravity[i - 1].y, skateGravity[i - 1].z);
 
-                var skateSphereNoise = new THREE.Mesh(skateSphereGeometry, skateSphereMaterial);
-                skateSphereNoise.position.x = -x; // UNTERSCHIEDLICHE SPHERE GRÖßEN!!!
-                skateSphereNoise.position.y = y;
-                skateSphereNoise.position.z = z;
-                skateSphereNoise.rotation.x = (Math.PI / 6) * (i % 4);
-                skateSphereNoise.castShadow = true;
-                // scene.add(skateSphereNoise);
-                skateSphereGroup.add(skateSphereNoise);
+                if (skatePos.distanceTo(previousSkatePos) > 0.1) {
+                    let scaling = 1.3;
+                    let x = xScaleSkate(skateGravity[i].x) / scaling;
+                    let y = yScaleSkate(skateGravity[i].y) / scaling;
+                    let z = zScaleSkate(skateGravity[i].z) / scaling;
+
+                    var skateSphereNoise = new THREE.Mesh(skateSphereGeometry, skateSphereMaterial);
+                    skateSphereNoise.position.x = -x; // UNTERSCHIEDLICHE SPHERE GRÖßEN!!!
+                    skateSphereNoise.position.y = y;
+                    skateSphereNoise.position.z = z;
+                    skateSphereNoise.rotation.x = (Math.PI / 6) * (i % 4);
+                    skateSphereNoise.castShadow = true;
+                    // scene.add(skateSphereNoise);
+                    skateSphereGroup.add(skateSphereNoise);
+                    counterSkateBalls++;
+                }
             }
+            console.log('counterSkateBalls: ', counterSkateBalls);
             updateNoise();
             scene.add(skateSphereGroup);
         }
@@ -731,21 +750,31 @@ d3.csv('data/skate_boulder_swim_labeled.csv', function (data) {
                 boulderSphereNoise.geometry.normalsNeedUpdate = true;
             };
 
-            for (let i = 1; i < boulderGravity.length; i += 12) {
-                let scaling = 1.3;
-                let x = xScaleBoulder(boulderGravity[i].x) / scaling;
-                let y = yScaleBoulder(boulderGravity[i].y) / scaling;
-                let z = zScaleBoulder(boulderGravity[i].z) / scaling;
+            let boulderCounter = 0;
+            console.log('boulder length: ', boulderGravity.length);
+            for (let i = 1; i < boulderGravity.length; i += 1) {
+                let boulderPos = vec(boulderGravity[i].x, boulderGravity[i].y, boulderGravity[i].z);
+                let previousBoulderPos = vec(boulderGravity[i - 1].x, boulderGravity[i - 1].y, boulderGravity[i - 1].z);
 
-                var boulderSphereNoise = new THREE.Mesh(boulderSphereGeometry, boulderSphereMaterial);
-                boulderSphereNoise.position.x = -x; // UNTERSCHIEDLICHE SPHERE GRÖßEN!!!
-                boulderSphereNoise.position.y = y;
-                boulderSphereNoise.position.z = z;
-                boulderSphereNoise.rotation.x = (Math.PI / 6) * (i % 4);
-                boulderSphereNoise.castShadow = true;
-                // scene.add(boulderSphereNoise);
-                boulderSphereGroup.add(boulderSphereNoise);
+                // console.log(boulderPos.distanceTo(previousBoulderPos));
+                if (boulderPos.distanceTo(previousBoulderPos) > 0.025) {
+                    let scaling = 1.3;
+                    let x = xScaleBoulder(boulderGravity[i].x) / scaling;
+                    let y = yScaleBoulder(boulderGravity[i].y) / scaling;
+                    let z = zScaleBoulder(boulderGravity[i].z) / scaling;
+
+                    var boulderSphereNoise = new THREE.Mesh(boulderSphereGeometry, boulderSphereMaterial);
+                    boulderSphereNoise.position.x = -x; // UNTERSCHIEDLICHE SPHERE GRÖßEN!!!
+                    boulderSphereNoise.position.y = y;
+                    boulderSphereNoise.position.z = z;
+                    boulderSphereNoise.rotation.x = (Math.PI / 6) * (i % 4);
+                    boulderSphereNoise.castShadow = true;
+                    // scene.add(boulderSphereNoise);
+                    boulderSphereGroup.add(boulderSphereNoise);
+                    boulderCounter++;
+                }
             }
+            console.log('boulderCounter: ', boulderCounter);
             updateNoise();
             scene.add(boulderSphereGroup);
         }
@@ -753,7 +782,7 @@ d3.csv('data/skate_boulder_swim_labeled.csv', function (data) {
         function createBoulderMeshline() {
             let boulderLineGeometry = new THREE.Geometry();
 
-            for (let i = 1; i < boulderAcceleration.length; i += 5) {
+            for (let i = 1; i < boulderAcceleration.length; i += 8) {
                 let x = xScaleBoulder(boulderAcceleration[i].x) / 2.5;
                 let y = yScaleBoulder(boulderAcceleration[i].y) / 2.5;
                 let z = zScaleBoulder(boulderAcceleration[i].z) / 2.5;
@@ -839,7 +868,7 @@ d3.csv('data/skate_boulder_swim_labeled.csv', function (data) {
         pointLight1.shadow.camera.far = 400;
         // scene.add(pointLight1);
 
-        spotLight1 = new THREE.SpotLight(0xffffff, 1.3);
+        let spotLight1 = new THREE.SpotLight(0xffffff, 1.3);
         spotLight1.position.set(50, 100, 80);
         spotLight1.angle = Math.PI / 8;
         spotLight1.penumbra = 0.2;
@@ -852,12 +881,12 @@ d3.csv('data/skate_boulder_swim_labeled.csv', function (data) {
         spotLight1.shadow.camera.far = 200;
         scene.add(spotLight1);
 
-        spotLight2 = new THREE.SpotLight(0x5dd1fb, 0.8);
-        spotLight2.position.set(-50, 10, 0);
-        spotLight2.angle = Math.PI / 4;
+        let spotLight2 = new THREE.SpotLight(0x5dd1fb, 0.8);
+        spotLight2.position.set(-100, 10, -20);
+        spotLight2.angle = Math.PI / 5;
         spotLight2.penumbra = 0.05;
         spotLight2.decay = 1.5;
-        spotLight2.distance = 300;
+        spotLight2.distance = 500;
         spotLight2.castShadow = true;
         spotLight2.shadow.mapSize.width = 1024;
         spotLight2.shadow.mapSize.height = 1024;
@@ -865,28 +894,31 @@ d3.csv('data/skate_boulder_swim_labeled.csv', function (data) {
         spotLight2.shadow.camera.far = 200;
         scene.add(spotLight2);
 
-        spotLight3 = new THREE.PointLight(0xff8336, 1);
-        spotLight3.position.set(0, 0, 0);
-        // spotLight3.angle = Math.PI / 3;
-        spotLight3.penumbra = 0.05;
-        spotLight3.decay = 1.5;
-        spotLight3.distance = 300;
-        spotLight3.castShadow = true;
-        spotLight3.shadow.mapSize.width = 1024;
-        spotLight3.shadow.mapSize.height = 1024;
-        spotLight3.shadow.camera.near = 10;
-        spotLight3.shadow.camera.far = 400;
-        scene.add(spotLight3);
+        let pointLight2 = new THREE.PointLight(0xff8336, 1);
+        pointLight2.position.set(0, 0, 0);
+        // pointLight2.angle = Math.PI / 3;
+        pointLight2.penumbra = 0.05;
+        pointLight2.decay = 1.5;
+        pointLight2.distance = 300;
+        pointLight2.castShadow = true;
+        pointLight2.shadow.mapSize.width = 1024;
+        pointLight2.shadow.mapSize.height = 1024;
+        pointLight2.shadow.camera.near = 10;
+        pointLight2.shadow.camera.far = 400;
+        scene.add(pointLight2);
 
-        //   // HELPER GRID FOR LIGHTS/CAMERA
+        //  HELPER GRID FOR LIGHTS/CAMERA
         // lightHelper1 = new THREE.SpotLightHelper(spotLight1);
         // scene.add(lightHelper1);
 
         // lightHelper2 = new THREE.SpotLightHelper(spotLight2);
         // scene.add(lightHelper2);
 
-        // lightHelper3 = new THREE.SpotLightHelper(spotLight3);
+        // lightHelper3 = new THREE.PointLightHelper(pointLight1);
         // scene.add(lightHelper3);
+
+        // lightHelper4 = new THREE.PointLightHelper(pointLight2);
+        // scene.add(lightHelper4);
     }
 
     function onWindowResize() {
@@ -915,6 +947,10 @@ d3.csv('data/skate_boulder_swim_labeled.csv', function (data) {
         renderer.clear();
         window.requestAnimationFrame(animate, renderer.domElement);
         // controls.update();
+        // lightHelper1.update();
+        // lightHelper2.update();
+        // lightHelper3.update();
+        // lightHelper4.update();
 
         render();
     }
@@ -988,7 +1024,7 @@ d3.csv('data/skate_boulder_swim_labeled.csv', function (data) {
                 scene.remove(boulderLineMesh);
                 scene.remove(boulderScatterPlot);
                 swimVisuals();
-                stream = audioFile[0];
+                stream = audioFile[1];
                 loadAudio();
                 changedInput = false;
             } else if (params.dataSource == 'skating') {
@@ -999,7 +1035,7 @@ d3.csv('data/skate_boulder_swim_labeled.csv', function (data) {
                 scene.remove(boulderLineMesh);
                 scene.remove(boulderScatterPlot);
                 skateVisuals();
-                stream = audioFile[1];
+                stream = audioFile[0];
                 loadAudio();
                 changedInput = false;
             } else if (params.dataSource == 'bouldering') {
@@ -1016,7 +1052,7 @@ d3.csv('data/skate_boulder_swim_labeled.csv', function (data) {
             }
         }
 
-        // ANIMATE ACCELERATION
+        // ANIMATE ACCELERATION with changing MESHLINE visibility and THREE.AnimationMixer for PointCloud
         function animateAcc() {
             let delta = clock.getDelta();
 
