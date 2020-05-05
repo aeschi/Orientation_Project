@@ -32,6 +32,8 @@ Extra:
 
 <img src="https://i.imgur.com/SiuuU6f.png" width="50%">
 
+- downloaded all js scripts on index.html
+
 ### 28.04.20
 - sound edit swimming file
 - testing sound switch (not working yet)
