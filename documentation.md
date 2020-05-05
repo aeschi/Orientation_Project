@@ -22,9 +22,10 @@ Extra:
 ------
 ### 05.05.20
 - working on sound
-- [x] if (previous data point - current data point > some value) show (less too close data points)
+- [x] if (previous data point - current data point > some value) show (less too close data points, more structured)
 
-<img src="https://i.imgur.com/TwLwJSG.png" width="50%">
+387 data points (every point above certain distance to previous point) vs. 673 data points (every 12th data point)
+<img src="https://i.imgur.com/m4Be0cm.png" width="45%"> <img src="https://i.imgur.com/WuxDWXv.png" width="45%">
 
 - update light orientation
 
