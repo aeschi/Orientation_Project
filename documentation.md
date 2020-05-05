@@ -1,5 +1,4 @@
 #### Next Steps
-- [ ] switch between sounds as well
 - [ ] create better narrative/connection for sports to viz
 - [ ] improve perfomance for smoother animation (we'll see) - Maybe add() and remove() instead of sportViz() in render()
 - [ ] improve sound animation (doable)
@@ -22,7 +21,7 @@ Extra:
 
 ------
 ### 05.05.20
-- working on sound
+- [x] switch between sounds works now - had to stop audio before switching
 - [x] if (previous data point - current data point > some value) show (less too close data points, more structured & better perfomance in fps)
 
 387 data points (every point above certain distance to previous point) vs. 673 data points (every 12th data point)
