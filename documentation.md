@@ -4,6 +4,7 @@
 - [ ] improve perfomance for smoother animation (we'll see) - Maybe add() and remove() instead of sportViz() in render()
 - [ ] improve sound animation (doable)
 - [ ] sound design/editing for swimming and bouldering (doable)
+- [ ] change lighting for each sport
 
 Links: 
 [medium article](https://medium.com/@mag_ops/music-visualiser-with-three-js-web-audio-api-b30175e7b5ba),
