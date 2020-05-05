@@ -22,6 +22,8 @@ Extra:
 ------
 ### 05.05.20
 - [x] switch between sounds works now - had to stop audio before switching
+- sound stops when sound not visible
+- first edit boulder sound file
 - [x] if (previous data point - current data point > some value) show (less too close data points, more structured & better perfomance in fps)
 
 387 data points (every point above certain distance to previous point) vs. 673 data points (every 12th data point)
