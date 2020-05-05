@@ -4,6 +4,7 @@
 - [ ] improve perfomance for smoother animation (we'll see) - Maybe add() and remove() instead of sportViz() in render()
 - [ ] improve sound animation (doable)
 - [ ] sound design/editing for swimming and bouldering (doable)
+- [ ] if (previous data point - current data point > abs(value)) show (less too close data points)
 
 Links: 
 [medium article](https://medium.com/@mag_ops/music-visualiser-with-three-js-web-audio-api-b30175e7b5ba),
@@ -20,6 +21,9 @@ Extra:
 - [ ] need to write better text and [hide text](https://stackoverflow.com/questions/6242976/javascript-hide-show-element)
 
 ------
+### 05.05.20
+- working on sound
+
 ### 28.04.20
 - sound edit swimming file
 - testing sound switch (not working yet)
