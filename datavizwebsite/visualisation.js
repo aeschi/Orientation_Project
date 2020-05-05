@@ -349,7 +349,7 @@ d3.csv('data/skate_boulder_swim_labeled.csv', function (data) {
     let audioData = [];
     audioFile[0] = 'data/skaten/ROMAN_03_edit_garage.mp3';
     audioFile[1] = 'data/swimming/ALU_01_edit.mp3';
-    audioFile[2] = 'data/skaten/ROMAN_03_edit_garage.mp3';
+    audioFile[2] = 'data/bouldern/VIVI_04_cut.m4a';
     let stream = audioFile[0];
     //https://codepen.io/EllenProbst/pen/RQQmJK?editors=0010 //code source
 
@@ -358,11 +358,15 @@ d3.csv('data/skate_boulder_swim_labeled.csv', function (data) {
         let context = listener.context;
     };
     // One-liner to resume playback when user interacted with the page.
-    document.querySelector('button').addEventListener('click', function () {
-        context.resume().then(() => {
-            console.log('Playback resumed successfully');
-        });
-    });
+    document.querySelector('button').addEventListener(
+        'click',
+        function () {
+            context.resume().then(() => {
+                console.log('Playback resumed successfully');
+            });
+        },
+        false // is this needed?
+    );
 
     var fftSize = 512;
     var audioLoader = new THREE.AudioLoader();
@@ -483,7 +487,7 @@ d3.csv('data/skate_boulder_swim_labeled.csv', function (data) {
             };
 
             let swimCounter = 0;
-            console.log('swim length: ', swimGravity.length);
+            // console.log('swim length: ', swimGravity.length);
 
             for (let i = 1; i < swimGravity.length; i += 1) {
                 let swimPos = vec(swimGravity[i].x, swimGravity[i].y, swimGravity[i].z);
@@ -507,7 +511,7 @@ d3.csv('data/skate_boulder_swim_labeled.csv', function (data) {
                     swimCounter++;
                 }
             }
-            console.log('swimcounter: ', swimCounter);
+            // console.log('swimcounter: ', swimCounter);
             updateNoise();
             scene.add(swimSphereGroup);
         }
@@ -640,7 +644,7 @@ d3.csv('data/skate_boulder_swim_labeled.csv', function (data) {
                     counterSkateBalls++;
                 }
             }
-            console.log('counterSkateBalls: ', counterSkateBalls);
+            // console.log('counterSkateBalls: ', counterSkateBalls);
             updateNoise();
             scene.add(skateSphereGroup);
         }
@@ -751,7 +755,7 @@ d3.csv('data/skate_boulder_swim_labeled.csv', function (data) {
             };
 
             let boulderCounter = 0;
-            console.log('boulder length: ', boulderGravity.length);
+            // console.log('boulder length: ', boulderGravity.length);
             for (let i = 1; i < boulderGravity.length; i += 1) {
                 let boulderPos = vec(boulderGravity[i].x, boulderGravity[i].y, boulderGravity[i].z);
                 let previousBoulderPos = vec(boulderGravity[i - 1].x, boulderGravity[i - 1].y, boulderGravity[i - 1].z);
@@ -774,7 +778,7 @@ d3.csv('data/skate_boulder_swim_labeled.csv', function (data) {
                     boulderCounter++;
                 }
             }
-            console.log('boulderCounter: ', boulderCounter);
+            // console.log('boulderCounter: ', boulderCounter);
             updateNoise();
             scene.add(boulderSphereGroup);
         }
@@ -1024,6 +1028,7 @@ d3.csv('data/skate_boulder_swim_labeled.csv', function (data) {
                 scene.remove(boulderLineMesh);
                 scene.remove(boulderScatterPlot);
                 swimVisuals();
+                audio.stop();
                 stream = audioFile[1];
                 loadAudio();
                 changedInput = false;
@@ -1035,6 +1040,7 @@ d3.csv('data/skate_boulder_swim_labeled.csv', function (data) {
                 scene.remove(boulderLineMesh);
                 scene.remove(boulderScatterPlot);
                 skateVisuals();
+                audio.stop();
                 stream = audioFile[0];
                 loadAudio();
                 changedInput = false;
@@ -1046,6 +1052,7 @@ d3.csv('data/skate_boulder_swim_labeled.csv', function (data) {
                 scene.remove(skateLineMesh);
                 scene.remove(skateScatterPlot);
                 boulderVisuals();
+                audio.stop();
                 stream = audioFile[2];
                 loadAudio();
                 changedInput = false;
