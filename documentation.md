@@ -1,15 +1,8 @@
 #### Next Steps
 - [ ] create better narrative/connection for sports to viz
-- [ ] improve perfomance for smoother animation (we'll see) - Maybe add() and remove() instead of sportViz() in render()
-- [ ] improve sound animation (doable)
 - [ ] sound design/editing for swimming and bouldering (doable)
 - [ ] change lighting for each sport
 
-Links: 
-[medium article](https://medium.com/@mag_ops/music-visualiser-with-three-js-web-audio-api-b30175e7b5ba),
-[codepen](https://codepen.io/Zebrathy/pen/dyoaoPQ?editors=0010),
-[webaudio sandbox](https://github.com/mrdoob/three.js/blob/master/examples/webaudio_sandbox.html),
-[other example](https://codepen.io/EllenProbst/pen/RQQmJK?editors=0010)
 - [ ] create still frames (very doable) portraits and viz
 - [ ] final beautification for each sport with color, shapes,.. (doable)
 - [ ] prepare presentation (doable)
@@ -23,6 +16,12 @@ Extra:
 ### 05.05.20
 - [x] switch between sounds works now - had to stop audio before switching
 - sound stops when sound not visible
+- [x] improve sound animation (doable)
+Links: 
+[medium article](https://medium.com/@mag_ops/music-visualiser-with-three-js-web-audio-api-b30175e7b5ba),
+[codepen](https://codepen.io/Zebrathy/pen/dyoaoPQ?editors=0010),
+[webaudio sandbox](https://github.com/mrdoob/three.js/blob/master/examples/webaudio_sandbox.html),
+[other example](https://codepen.io/EllenProbst/pen/RQQmJK?editors=0010)
 - first edit boulder sound file
 - [x] if (previous data point - current data point > some value) show (less too close data points, more structured & better perfomance in fps)
 
@@ -39,16 +38,16 @@ Extra:
 - sound edit swimming file
 - testing sound switch (not working yet)
 
-
 ### 17.04.20
 - [x] fix GUI functionality (doable) - It's possible to switch between sports now :) 
     - remove() function was the trick to blend out 3D Objects [source](https://stackoverflow.com/questions/18357529/threejs-remove-object-from-scene)
 - [x] restructure code.. for gui - every sport has a 'sport'Vis() function
-- [x] improve perfomance for smoother animation (we'll see) - depends on sphereNoise object amount mostly
+- [x] improve perfomance for smoother animation - depends on sphereNoise object amount mostly
     - Solution: less spheres, no default animation (can be turned on in gui), adjusting amount of data points per sport per visualisation style
+- [x] improve perfomance for smoother animation - add() and remove() instead of sportViz() in render()
 - fixed some console errors
 - [x] image capture button: https://codepen.io/shivasaxena/pen/QEzAAv ,with this: https://jsfiddle.net/2pha/art388yv/
-- [ ] added description of data: The gravity sensor provides a three dimensional vector indicating the direction and magnitude of gravity. Typically, this sensor is used to determine the device's relative orientation in space..
+- [x] added description of data: The gravity sensor provides a three dimensional vector indicating the direction and magnitude of gravity. Typically, this sensor is used to determine the device's relative orientation in space..
     
 - [x]  need for keyframe animation? Yes for pointCloud [link](https://threejs.org/examples/?q=misc#misc_animation_keys), [git](https://github.com/mrdoob/three.js/blob/master/examples/misc_animation_keys.html)
 - [x]  Meshline links: [git](https://github.com/spite/THREE.MeshLine), [demo](https://www.clicktorelease.com/code/THREE.MeshLine/demo/index.html), [splinecurve](https://threejs.org/docs/#api/en/extras/curves/SplineCurve), [three constan.spline](https://github.com/spite/THREE.ConstantSpline)
