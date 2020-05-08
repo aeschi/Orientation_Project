@@ -15,6 +15,14 @@ Extra:
 ------
 ### 08.05.20
 - [x] test deployment (sound starts with sound button.. maybe add start button at beginning for this)
+- presentation topics:
+    - technical developement
+    - visual developement:
+        - picture of coral & other vis elements -> combine various shapes
+        - meshline from example
+        - speherNoise from mood
+        - particles from beginning csv file (inspo chalk explosion)
+        - sound vis from sound example - liked mesh
 
 ### 05.05.20
 - [x] switch between sounds works now - had to stop audio before switching
