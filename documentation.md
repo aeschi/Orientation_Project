@@ -16,7 +16,7 @@ Extra:
 ### 08.05.20
 - [x] test deployment (sound starts with sound button.. maybe add start button at beginning for this)
 - presentation topics:
-    - technical developement
+    - technical developement: find balance between visual style and performance, compromise
     - visual developement:
         - picture of coral & other vis elements -> combine various shapes
         - meshline from example
