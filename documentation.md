@@ -13,6 +13,9 @@ Extra:
 - [ ] need to write better text and [hide text](https://stackoverflow.com/questions/6242976/javascript-hide-show-element)
 
 ------
+### 08.05.20
+- [x] test deployment (sound starts with sound button.. maybe add start button at beginning for this)
+
 ### 05.05.20
 - [x] switch between sounds works now - had to stop audio before switching
 - sound stops when sound not visible
