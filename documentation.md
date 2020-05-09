@@ -1,18 +1,21 @@
 #### Next Steps
-- [ ] create better narrative/connection for sports to viz
 - [ ] sound design/editing for swimming and bouldering (doable)
-- [ ] change lighting for each sport
+- [ ] final beautification for each sport with color, shapes, textures.. (doable)
 
 - [ ] create still frames (very doable) portraits and viz
-- [ ] final beautification for each sport with color, shapes,.. (doable)
 - [ ] prepare presentation (doable)
 
 Extra:
+- [ ] change lighting for each sport
 - [ ] adjust animation length for different sports for meshline
 - [ ] adjust material/ updateNoise function for every sport - swimming more reflective..
-- [ ] need to write better text and [hide text](https://stackoverflow.com/questions/6242976/javascript-hide-show-element)
+- [ ] need to write better text
 
 ------
+### 09.05.20
+- [x] create better narrative/connection for sports to viz (with text and sound
+- [x] show hide info text works
+
 ### 08.05.20
 - [x] test deployment (sound starts with sound button.. maybe add start button at beginning for this)
 - presentation topics:
@@ -23,6 +26,7 @@ Extra:
         - speherNoise from mood
         - particles from beginning csv file (inspo chalk explosion)
         - sound vis from sound example - liked mesh
+    - narrative of data
 
 ### 05.05.20
 - [x] switch between sounds works now - had to stop audio before switching
