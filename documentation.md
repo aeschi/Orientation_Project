@@ -15,6 +15,7 @@ Extra:
 ### 09.05.20
 - [x] create better narrative/connection for sports to viz (with text and sound
 - [x] show hide info text works
+- [x] started with sound design in abelton live 10 with [granular synthesis](https://www.izotope.com/en/learn/the-basics-of-granular-synthesis.html) should layer more noise, add delay, 
 
 ### 08.05.20
 - [x] test deployment (sound starts with sound button.. maybe add start button at beginning for this)
