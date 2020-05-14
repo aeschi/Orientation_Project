@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="Sports Viz" content="">
+    <meta name="Anna" content="">
+
+    <title>Data Viz</title>
+    <!-- Bootstrap core CSS -->
+    <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- custom CSS -->
+    <link href="css/custom.css" rel="stylesheet">
+
+    <!-- three.js -->
+    <script src="js/three.min.js"></script>
+    <script src="js/THREE.MeshLine.js"></script>
+    <script src="js/OrbitControls.js" charset="utf-8"></script>
+
+    <!-- d3.js -->
+    <script src="js/d3.v3.min.js" charset="utf-8"></script>
+
+    <!-- JavaScript Performance Monitor -->
+    <script src="js/stats.min.js"></script>
+
+    <!-- noise functions -->
+    <script src="js/perlin.js"></script>
+    <script src="js/simplex-noise/simplex-noise.js"></script>
+
+    <!-- common useful math functions -->
+    <script src="js/Maf.js"></script>
+
+    <!-- dat.gui for controls -->
+    <script type="text/javascript" src="js/dat.gui.min.js"></script>
+
+</head>
+
+<body>
+
+    <!-- Navigation -->
+    <nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="home.html">Home</a>
+            <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse"
+                data-target="#navbarResponsive" aria-controls="navbarResponsive"
+                aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarResponsive">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item active">
+                        <a class="nav-link" href="index.html">Compare Sports</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="about.html">About</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <div style="object-position:center">
+        <script src="visualisation.js"></script>
+        <div id="dataInfoText">
+            The <b>GRAVITY</b> sensor provides a three dimensional vector indicating the direction
+            and magnitude of gravity. Typically, this sensor is used to determine the device's
+            relative orientation in space.
+            <br><br>The <b>SOUND</b> recording is filtered by its frequency levels.
+            <br><br>The linear <b>ACCELERATION</b> sensor provides you with a three-dimensional
+            vector representing acceleration along each device axis, excluding gravity. You can use
+            this value to perform gesture detection.
+        </div>
+    </div>
+
+    <!-- <div id="my-gui-container"></div> -->
+
+
+    <!-- Bootstrap core JavaScript -->
+    <script src="vendor/jquery/jquery.min.js"></script>
+    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+</body>
