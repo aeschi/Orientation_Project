@@ -322,8 +322,8 @@ d3.csv('data/skate_boulder_swim_labeled.csv', function (data) {
 
     let analyser;
     let dataArray;
-    audioFile[0] = 'data/skaten/ROMAN_03_edit_garage.mp3';
-    audioFile[1] = 'data/swimming/GRANULAR_TEST3.wav';
+    audioFile[0] = 'data/skaten/GRANULAR_Skate.mp3';
+    audioFile[1] = 'data/swimming/GRANULAR_Swim.mp3';
     audioFile[2] = 'data/bouldern/VIVI_04_edit_louder.mp3';
     let stream = audioFile[0];
 
@@ -378,7 +378,7 @@ d3.csv('data/skate_boulder_swim_labeled.csv', function (data) {
         var upperMaxFr = upperMax / upperHalfArray.length;
         var upperAvgFr = upperAvg / upperHalfArray.length;
 
-        makeRoughBall(ball, modulate(Math.pow(lowerMaxFr, 0.8), 0, 1, 0, 4), modulate(upperAvgFr, 0, 1, 0, 8));
+        makeRoughBall(ball, modulate(Math.pow(lowerMaxFr, 0.4), 0, 1, 0, 3), modulate(upperAvgFr, 0, 1, 0, 4));
 
         // function modulate(val, minVal, maxVal, outMin, outMax) {
         //     var fr = fractionate(val, minVal, maxVal);
