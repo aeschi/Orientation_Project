@@ -324,7 +324,7 @@ d3.csv('data/skate_boulder_swim_labeled.csv', function (data) {
     let dataArray;
     audioFile[0] = 'data/skaten/GRANULAR_Skate.mp3';
     audioFile[1] = 'data/swimming/GRANULAR_Swim.mp3';
-    audioFile[2] = 'data/bouldern/VIVI_04_edit_louder.mp3';
+    audioFile[2] = 'data/bouldern/GRANULAR_Boulder.mp3';
     let stream = audioFile[0];
 
     // AUDIO file
