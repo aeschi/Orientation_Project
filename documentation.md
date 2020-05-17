@@ -12,6 +12,10 @@ Extra:
 - [ ] need to write better text
 
 ------
+### 14.05.20
+- [x] boulder sound recording/ design (& swim/skate)
+- heroku push
+
 ### 09.05.20
 - [x] create better narrative/connection for sports to viz (with text and sound
 - [x] show hide info text works
