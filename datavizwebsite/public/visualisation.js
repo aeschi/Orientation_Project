@@ -102,14 +102,29 @@ var loader = new THREE.TextureLoader();
 loader.load('data/textures/stroke.png', function (texture) {
     strokeTexture = texture;
 });
-loader.load('data/textures/water.jpg', function (texture) {
+loader.load('data/textures/wasser_normal_08.png', function (texture) {
     sphereTexture[0] = texture;
 });
-loader.load('data/textures/griptape_polar.png', function (texture) {
+loader.load('data/textures/griptape_normal_small.png', function (texture) {
     sphereTexture[1] = texture;
 });
-loader.load('data/textures/boulder_bw_small_sat.png', function (texture) {
+loader.load('data/textures/boulder_final_orange_04.png', function (texture) {
     sphereTexture[2] = texture;
+});
+loader.load('data/textures/water_normal_map.jpg', function (texture) {
+    sphereTexture[3] = texture;
+});
+loader.load('data/textures/ground_normal_map.png', function (texture) {
+    sphereTexture[4] = texture;
+});
+loader.load('data/textures/noise_normal_map.jpg', function (texture) {
+    sphereTexture[5] = texture;
+});
+loader.load('data/textures/rustiwall_normal_map.jpg', function (texture) {
+    sphereTexture[6] = texture;
+});
+loader.load('data/textures/cracks_normalmap.jpg', function (texture) {
+    sphereTexture[7] = texture;
 });
 
 // ---- RENDERER ----
@@ -428,22 +443,23 @@ d3.csv('data/skate_boulder_swim_labeled.csv', function (data) {
     let swimScatterPlot = new THREE.Object3D();
     function swimVisuals() {
         function createSwimSphereNoise() {
-            let swimSphereGeometry = new THREE.SphereGeometry(1, 50, 50);
+            let swimSphereGeometry = new THREE.SphereGeometry(1, 32, 32);
 
             swimSphereMaterial = new THREE.MeshPhongMaterial({
                 map: sphereTexture[0],
+                normalMap: sphereTexture[3],
                 specular: 0xc0c0c,
-                shininess: 70,
+                shininess: 60,
             });
 
             let updateNoise = function () {
                 let time = 0;
-                let k = 2;
+                let k = 1.5;
                 for (let i = 0; i < swimSphereNoise.geometry.faces.length; i++) {
                     let uv = swimSphereNoise.geometry.faceVertexUvs[0][i]; //faceVertexUvs is a huge arrayed stored inside of another array
                     let f = swimSphereNoise.geometry.faces[i];
                     let p = swimSphereNoise.geometry.vertices[f.a]; //take the first vertex from each face
-                    p.normalize().multiplyScalar(1 + 0.3 * noise.perlin3(p.x * k + time, p.y * k, p.z * k + time));
+                    p.normalize().multiplyScalar(1 + 0.2 * noise.perlin3(p.x * k + time, p.y * k, p.z * k + time));
                 }
                 swimSphereNoise.geometry.verticesNeedUpdate = true; //must be set or vertices will not update
                 swimSphereNoise.geometry.computeVertexNormals();
@@ -563,12 +579,13 @@ d3.csv('data/skate_boulder_swim_labeled.csv', function (data) {
     let skateScatterPlot = new THREE.Object3D();
     function skateVisuals() {
         function createSkateSphereNoise() {
-            let skateSphereGeometry = new THREE.SphereGeometry(1.5, 50, 50);
+            let skateSphereGeometry = new THREE.SphereGeometry(1.5, 32, 32);
 
             skateSphereMaterial = new THREE.MeshPhongMaterial({
                 map: sphereTexture[1],
+                normalMap: sphereTexture[5],
                 specular: 0xc0c0c,
-                shininess: 70,
+                shininess: 20,
             });
 
             let updateNoise = function () {
@@ -694,12 +711,13 @@ d3.csv('data/skate_boulder_swim_labeled.csv', function (data) {
     let boulderScatterPlot = new THREE.Object3D();
     function boulderVisuals() {
         function createBoulderSphereNoise() {
-            let boulderSphereGeometry = new THREE.SphereGeometry(1, 50, 50);
+            let boulderSphereGeometry = new THREE.SphereGeometry(1, 32, 32);
 
             boulderSphereMaterial = new THREE.MeshPhongMaterial({
                 map: sphereTexture[2],
+                normalMap: sphereTexture[7],
                 specular: 0xc0c0c,
-                shininess: 70,
+                shininess: 10,
             });
 
             let updateNoise = function () {
@@ -709,7 +727,7 @@ d3.csv('data/skate_boulder_swim_labeled.csv', function (data) {
                     let uv = boulderSphereNoise.geometry.faceVertexUvs[0][i]; //faceVertexUvs is a huge arrayed stored inside of another array
                     let f = boulderSphereNoise.geometry.faces[i];
                     let p = boulderSphereNoise.geometry.vertices[f.a]; //take the first vertex from each face
-                    p.normalize().multiplyScalar(1 + 0.3 * noise.perlin3(p.x * k + time, p.y * k, p.z * k + time));
+                    p.normalize().multiplyScalar(1 + 0.5 * noise.perlin3(p.x + time, p.y * k, p.z + time));
                 }
                 boulderSphereNoise.geometry.verticesNeedUpdate = true; //must be set or vertices will not update
                 boulderSphereNoise.geometry.computeVertexNormals();
@@ -734,6 +752,7 @@ d3.csv('data/skate_boulder_swim_labeled.csv', function (data) {
                     boulderSphereNoise.position.y = y;
                     boulderSphereNoise.position.z = z;
                     boulderSphereNoise.rotation.x = (Math.PI / 6) * (i % 4);
+                    boulderSphereNoise.rotation.y = (Math.PI / 6) * (i % 4);
                     boulderSphereNoise.castShadow = true;
                     // scene.add(boulderSphereNoise);
                     boulderSphereGroup.add(boulderSphereNoise);
@@ -906,7 +925,7 @@ d3.csv('data/skate_boulder_swim_labeled.csv', function (data) {
 
         renderer.clear();
         window.requestAnimationFrame(animate, renderer.domElement);
-        controls.update();
+        // controls.update();
         // lightHelper1.update();
         // lightHelper2.update();
         // lightHelper3.update();
