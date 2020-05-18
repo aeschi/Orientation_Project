@@ -1,7 +1,5 @@
 #### Next Steps
 - [ ] sound design/editing for swimming and bouldering (doable)
-- [ ] final beautification for each sport with color, shapes, textures.. (doable)
-
 - [ ] create still frames (very doable) portraits and viz
 - [ ] prepare presentation (doable)
 
@@ -12,6 +10,9 @@ Extra:
 - [ ] need to write better text
 
 ------
+### 18.05.20
+- [x] final beautification for each sport with color, shapes, textures.. (doable)
+
 ### 14.05.20
 - [x] boulder sound recording/ design (& swim/skate)
 - heroku push
