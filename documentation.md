@@ -13,6 +13,11 @@ Extra:
 ### 18.05.20
 - [x] final beautification for each sport with color, shapes, textures.. (doable)
 
+<img src="https://i.imgur.com/WfiPXFg.png" width="50%">
+<img src="https://i.imgur.com/s9Wy5iL.png" width="50%">
+<img src="https://i.imgur.com/ElYzqX1.png" width="50%">
+
+
 ### 14.05.20
 - [x] boulder sound recording/ design (& swim/skate)
 - heroku push
