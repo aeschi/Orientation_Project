@@ -10,7 +10,7 @@ Extra:
 - [ ] need to write better text
 
 ------
-### 18.05.20
+### 18.05.20 & 19.05.20
 - [x] final beautification for each sport with color, shapes, textures.. (doable)
 
 <img src="https://i.imgur.com/WfiPXFg.png" width="50%">
