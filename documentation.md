@@ -1,5 +1,6 @@
 #### Next Steps
-- [ ] sound design/editing for swimming and bouldering (doable)
+- [ ] clean up upload file (less textures..)
+- [ ] explanation window at the beginning + auto rotate
 - [ ] create still frames (very doable) portraits and viz
 - [ ] prepare presentation (doable)
 
@@ -10,6 +11,9 @@ Extra:
 - [ ] need to write better text
 
 ------
+### 21.05.20
+- sound edit/design
+
 ### 18.05.20 & 19.05.20
 - [x] final beautification for each sport with color, shapes, textures.. (doable)
 
