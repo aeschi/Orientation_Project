@@ -1,7 +1,6 @@
 #### Next Steps
 - [ ] clean up upload file (less textures..)
 - [ ] explanation window at the beginning + auto rotate
-- [ ] create still frames (very doable) portraits and viz
 - [ ] prepare presentation (doable)
 
 Extra:
@@ -11,6 +10,12 @@ Extra:
 - [ ] need to write better text
 
 ------
+### 22.05.20
+- [ ] create product comps
+
+### 22.05.20
+- [x] create still frames
+
 ### 21.05.20
 - sound edit/design
 
