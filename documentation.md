@@ -12,7 +12,10 @@ Extra:
 ------
 ### 22.05.20
 - [x] create product comps
-<img src="https://i.imgur.com/WfiPXFg.png" width="50%">
+
+<img src="https://i.imgur.com/KiyulXH.png" width="50%">
+<img src="https://i.imgur.com/oq1AR5U.png" width="50%">
+<img src="https://i.imgur.com/QyWubDH.png" width="50%">
 
 ### 22.05.20
 - [x] create still frames
@@ -23,10 +26,9 @@ Extra:
 ### 18.05.20 & 19.05.20
 - [x] final beautification for each sport with color, shapes, textures.. (doable)
 
-<img src="https://i.imgur.com/KiyulXH.png" width="50%">
-<img src="https://i.imgur.com/oq1AR5U.png" width="50%">
-<img src="https://i.imgur.com/QyWubDH.png" width="50%">
-
+<img src="https://i.imgur.com/WfiPXFg.png" width="50%">
+<img src="https://i.imgur.com/XHfHprY.png" width="50%">
+<img src="https://i.imgur.com/ElYzqX1.png" width="50%">
 
 ### 14.05.20
 - [x] boulder sound recording/ design (& swim/skate)
