@@ -1,6 +1,5 @@
 #### Next Steps
 - [ ] clean up upload file (less textures..)
-- [ ] explanation window at the beginning + auto rotate
 - [ ] prepare presentation (doable)
 
 Extra:
@@ -12,6 +11,7 @@ Extra:
 ------
 ### 22.05.20
 - [x] create product comps
+- [x] explanation window at the beginning + auto rotate
 
 <img src="https://i.imgur.com/KiyulXH.png" width="32%"><img src="https://i.imgur.com/oq1AR5U.png" width="32%"><img src="https://i.imgur.com/QyWubDH.png" width="32%">
 
