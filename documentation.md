@@ -13,9 +13,7 @@ Extra:
 ### 22.05.20
 - [x] create product comps
 
-<img src="https://i.imgur.com/KiyulXH.png" width="50%">
-<img src="https://i.imgur.com/oq1AR5U.png" width="50%">
-<img src="https://i.imgur.com/QyWubDH.png" width="50%">
+<img src="https://i.imgur.com/KiyulXH.png" width="32%"><img src="https://i.imgur.com/oq1AR5U.png" width="32%"><img src="https://i.imgur.com/QyWubDH.png" width="32%">
 
 ### 22.05.20
 - [x] create still frames
