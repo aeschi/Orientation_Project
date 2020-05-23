@@ -14,6 +14,7 @@ Extra:
 - [x] explanation window at the beginning + auto rotate
 - [x] clean up upload file (less textures..)
 - resource for sensor data https://www.w3.org/TR/motion-sensors/#gravity-and-linear-acceleration
+- swimming so simple sphere noise bc data recording stopped
 
 <img src="https://i.imgur.com/KiyulXH.png" width="32%"><img src="https://i.imgur.com/oq1AR5U.png" width="32%"><img src="https://i.imgur.com/QyWubDH.png" width="32%">
 
