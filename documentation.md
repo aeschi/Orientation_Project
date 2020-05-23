@@ -1,12 +1,7 @@
 #### Next Steps
 - [ ] prepare presentation (doable)
-- check gravity swimming
-
-Extra:
-- [ ] change lighting for each sport
-- [ ] adjust animation length for different sports for meshline
-- [ ] adjust material/ updateNoise function for every sport - swimming more reflective..
-- [ ] need to write better text
+- [ ] trailer
+- [ ] need to write better text for about
 
 ------
 ### 23.05.20
