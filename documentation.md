@@ -1,6 +1,6 @@
 #### Next Steps
-- [ ] clean up upload file (less textures..)
 - [ ] prepare presentation (doable)
+- check gravity swimming
 
 Extra:
 - [ ] change lighting for each sport
@@ -9,9 +9,11 @@ Extra:
 - [ ] need to write better text
 
 ------
-### 22.05.20
+### 23.05.20
 - [x] create product comps
 - [x] explanation window at the beginning + auto rotate
+- [x] clean up upload file (less textures..)
+- resource for sensor data https://www.w3.org/TR/motion-sensors/#gravity-and-linear-acceleration
 
 <img src="https://i.imgur.com/KiyulXH.png" width="32%"><img src="https://i.imgur.com/oq1AR5U.png" width="32%"><img src="https://i.imgur.com/QyWubDH.png" width="32%">
 
