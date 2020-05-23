@@ -1,72 +1,3 @@
-// ---- HELPER FUNCTIONS ----
-function createTextCanvas(text, color, font, size) {
-    size = size || 30;
-    let canvas = document.createElement('canvas');
-    let ctx = canvas.getContext('2d'); // 2D rendering
-    let fontStr = size + 'px ' + (font || 'Arial');
-    ctx.font = fontStr;
-    let w = ctx.measureText(text).width;
-    let h = Math.ceil(size);
-    canvas.width = w;
-    canvas.height = h;
-    ctx.font = fontStr;
-    ctx.fillStyle = color || 'white';
-    ctx.fillText(text, 0, Math.ceil(size * 0.8));
-    return canvas;
-}
-
-function createText2D(text, color, font, size, segW, segH) {
-    let canvas = createTextCanvas(text, color, font, size);
-    let plane = new THREE.PlaneGeometry(canvas.width, canvas.height, segW, segH);
-    let tex = new THREE.Texture(canvas);
-    tex.needsUpdate = true;
-    let planeMat = new THREE.MeshBasicMaterial({
-        map: tex,
-        color: 0xffffff,
-        transparent: true,
-    });
-    let mesh = new THREE.Mesh(plane, planeMat);
-    mesh.scale.set(0.1, 0.1, 0.1);
-    mesh.doubleSided = true;
-    return mesh;
-}
-
-function sq(x) {
-    let s = Math.pow(x, 2);
-    return s;
-}
-
-function mapValues(num, in_min, in_max, out_min, out_max) {
-    return ((num - in_min) * (out_max - out_min)) / (in_max - in_min) + out_min;
-}
-
-function fractionate(val, minVal, maxVal) {
-    return (val - minVal) / (maxVal - minVal);
-}
-
-function modulate(val, minVal, maxVal, outMin, outMax) {
-    var fr = fractionate(val, minVal, maxVal);
-    var delta = outMax - outMin;
-    return outMin + fr * delta;
-}
-
-function avg(arr) {
-    var total = arr.reduce(function (sum, b) {
-        return sum + b;
-    }, 0);
-    return total / arr.length;
-}
-
-function max(arr) {
-    return arr.reduce(function (a, b) {
-        return Math.max(a, b);
-    }, 0);
-}
-
-function vec(x, y, z) {
-    return new THREE.Vector3(x, y, z);
-}
-
 // ---- VARIABLES ----
 // GUI VAR
 let gui;
@@ -98,34 +29,73 @@ let boulderLineMat;
 let boulderLineColors;
 
 // ---- LOAD TEXTURES ----
-var loader = new THREE.TextureLoader();
-loader.load('data/textures/stroke.png', function (texture) {
-    strokeTexture = texture;
-});
-loader.load('data/textures/wasser_normal_08.png', function (texture) {
-    sphereTexture[0] = texture;
-});
-loader.load('data/textures/griptape_normal_small.png', function (texture) {
-    sphereTexture[1] = texture;
-});
-loader.load('data/textures/boulder_final_orange_04.png', function (texture) {
-    sphereTexture[2] = texture;
-});
-loader.load('data/textures/water_normal_map.jpg', function (texture) {
-    sphereTexture[3] = texture;
-});
-loader.load('data/textures/ground_normal_map.png', function (texture) {
-    sphereTexture[4] = texture;
-});
-loader.load('data/textures/noise_normal_map.jpg', function (texture) {
-    sphereTexture[5] = texture;
-});
-loader.load('data/textures/rustiwall_normal_map.jpg', function (texture) {
-    sphereTexture[6] = texture;
-});
-loader.load('data/textures/cracks_normalmap.jpg', function (texture) {
-    sphereTexture[7] = texture;
-});
+function textureLoad() {
+    var loader = new THREE.TextureLoader();
+    loader.load(
+        'data/textures/stroke.png',
+        function (texture) {
+            strokeTexture = texture;
+        },
+        function (err) {
+            console.error('An error happened.');
+        }
+    );
+    loader.load(
+        'data/textures/wasser_normal_08.png',
+        function (texture) {
+            sphereTexture[0] = texture;
+        },
+        function (err) {
+            console.error('An error happened.');
+        }
+    );
+    loader.load(
+        'data/textures/griptape_normal_small.png',
+        function (texture) {
+            sphereTexture[1] = texture;
+        },
+        function (err) {
+            console.error('An error happened.');
+        }
+    );
+    loader.load(
+        'data/textures/boulder_final_orange_06.png',
+        function (texture) {
+            sphereTexture[2] = texture;
+        },
+        function (err) {
+            console.error('An error happened.');
+        }
+    );
+    loader.load(
+        'data/textures/water_normal_map.jpg',
+        function (texture) {
+            sphereTexture[3] = texture;
+        },
+        function (err) {
+            console.error('An error happened.');
+        }
+    );
+    loader.load(
+        'data/textures/cracks_normalmap.jpg',
+        function (texture) {
+            sphereTexture[4] = texture;
+        },
+        function (err) {
+            console.error('An error happened.');
+        }
+    );
+    loader.load(
+        'data/textures/noise_normal_map.jpg',
+        function (texture) {
+            sphereTexture[5] = texture;
+        },
+        function (err) {
+            console.error('An error happened.');
+        }
+    );
+}
+textureLoad();
 
 // ---- RENDERER ----
 let renderer = new THREE.WebGLRenderer({
@@ -148,7 +118,7 @@ const controls = new THREE.OrbitControls(camera, renderer.domElement);
 controls.minDistance = 10;
 controls.maxDistance = 450;
 controls.autoRotate = true;
-controls.autoRotateSpeed = 0.5;
+controls.autoRotateSpeed = 0.3;
 controls.enableDamping = true;
 controls.dampingFactor = 0.15;
 controls.maxPolarAngle = (2 * Math.PI) / 3.5;
@@ -337,12 +307,12 @@ d3.csv('data/skate_boulder_swim_labeled.csv', function (data) {
 
     let analyser;
     let dataArray;
-    audioFile[0] = 'data/skaten/GRANULAR_Skate.mp3';
-    audioFile[1] = 'data/swimming/GRANULAR_Swim.mp3';
-    audioFile[2] = 'data/bouldern/GRANULAR_Boulder.mp3';
+    audioFile[0] = 'data/audio/GRANULAR_Skate_03.mp3';
+    audioFile[1] = 'data/audio/GRANULAR_Swim_02.mp3';
+    audioFile[2] = 'data/audio/GRANULAR_Boulder_02_louder.mp3';
     let stream = audioFile[0];
 
-    // AUDIO file
+    // AUDIO files
     var fftSize = 512;
     var audioLoader = new THREE.AudioLoader();
     var listener = new THREE.AudioListener();
@@ -485,8 +455,9 @@ d3.csv('data/skate_boulder_swim_labeled.csv', function (data) {
                     swimSphereNoise.position.y = y;
                     swimSphereNoise.position.z = z;
                     swimSphereNoise.rotation.x = (Math.PI / 6) * (i % 4);
+                    swimSphereNoise.rotation.y = (Math.PI / 6) * (i % 5);
+                    swimSphereNoise.rotation.z = (Math.PI / 4) * (i % 3);
                     swimSphereNoise.castShadow = true;
-                    // scene.add(swimSphereNoise);
                     swimSphereGroup.add(swimSphereNoise);
                     swimCounter++;
                 }
@@ -517,7 +488,7 @@ d3.csv('data/skate_boulder_swim_labeled.csv', function (data) {
             swimLineMat = new MeshLineMaterial({
                 map: strokeTexture,
                 useMap: 1,
-                color: new THREE.Color(0x45818e),
+                color: new THREE.Color(0x33708d),
                 lineWidth: 0.4,
                 near: 1,
                 far: 100000,
@@ -583,7 +554,7 @@ d3.csv('data/skate_boulder_swim_labeled.csv', function (data) {
 
             skateSphereMaterial = new THREE.MeshPhongMaterial({
                 map: sphereTexture[1],
-                normalMap: sphereTexture[5],
+                // normalMap: sphereTexture[5],
                 specular: 0xc0c0c,
                 shininess: 20,
             });
@@ -618,8 +589,9 @@ d3.csv('data/skate_boulder_swim_labeled.csv', function (data) {
                     skateSphereNoise.position.y = y;
                     skateSphereNoise.position.z = z;
                     skateSphereNoise.rotation.x = (Math.PI / 6) * (i % 4);
+                    skateSphereNoise.rotation.y = (Math.PI / 6) * (i % 5);
+                    skateSphereNoise.rotation.z = (Math.PI / 4) * (i % 3);
                     skateSphereNoise.castShadow = true;
-                    // scene.add(skateSphereNoise);
                     skateSphereGroup.add(skateSphereNoise);
                     counterSkateBalls++;
                 }
@@ -715,9 +687,9 @@ d3.csv('data/skate_boulder_swim_labeled.csv', function (data) {
 
             boulderSphereMaterial = new THREE.MeshPhongMaterial({
                 map: sphereTexture[2],
-                normalMap: sphereTexture[7],
+                normalMap: sphereTexture[4],
                 specular: 0xc0c0c,
-                shininess: 10,
+                shininess: 2,
             });
 
             let updateNoise = function () {
@@ -752,9 +724,9 @@ d3.csv('data/skate_boulder_swim_labeled.csv', function (data) {
                     boulderSphereNoise.position.y = y;
                     boulderSphereNoise.position.z = z;
                     boulderSphereNoise.rotation.x = (Math.PI / 6) * (i % 4);
-                    boulderSphereNoise.rotation.y = (Math.PI / 6) * (i % 4);
+                    boulderSphereNoise.rotation.y = (Math.PI / 6) * (i % 5);
+                    boulderSphereNoise.rotation.z = (Math.PI / 4) * (i % 3);
                     boulderSphereNoise.castShadow = true;
-                    // scene.add(boulderSphereNoise);
                     boulderSphereGroup.add(boulderSphereNoise);
                     boulderCounter++;
                 }
@@ -784,7 +756,7 @@ d3.csv('data/skate_boulder_swim_labeled.csv', function (data) {
             boulderLineMat = new MeshLineMaterial({
                 map: strokeTexture,
                 useMap: 1,
-                color: new THREE.Color(0x6aa84f),
+                color: new THREE.Color(0x729a7d), //6aa84f
                 lineWidth: 0.4,
                 near: 1,
                 far: 100000,
@@ -917,19 +889,15 @@ d3.csv('data/skate_boulder_swim_labeled.csv', function (data) {
     window.addEventListener('resize', onWindowResize, false);
 
     function animate() {
-        renderer.clear();
-
         // get audio data
         analyser.getFrequencyData(dataArray);
         soundAnimation();
 
         renderer.clear();
         window.requestAnimationFrame(animate, renderer.domElement);
-        // controls.update();
-        // lightHelper1.update();
-        // lightHelper2.update();
-        // lightHelper3.update();
-        // lightHelper4.update();
+
+        // let the camera rotate slowly
+        controls.update();
 
         render();
     }
@@ -1040,11 +1008,11 @@ d3.csv('data/skate_boulder_swim_labeled.csv', function (data) {
             let delta = clock.getDelta();
 
             if (params.dataSource == 'swimming') {
-                swimLineMesh.material.uniforms.visibility.value = animateVisibility ? (clock.elapsedTime / 50) % 1.0 : 1.0;
+                swimLineMesh.material.uniforms.visibility.value = animateVisibility ? (clock.elapsedTime / 35) % 1.0 : 1.0;
             } else if (params.dataSource == 'skating') {
-                skateLineMesh.material.uniforms.visibility.value = animateVisibility ? (clock.elapsedTime / 50) % 1.0 : 1.0;
+                skateLineMesh.material.uniforms.visibility.value = animateVisibility ? (clock.elapsedTime / 35) % 1.0 : 1.0;
             } else if (params.dataSource == 'bouldering') {
-                boulderLineMesh.material.uniforms.visibility.value = animateVisibility ? (clock.elapsedTime / 50) % 1.0 : 1.0;
+                boulderLineMesh.material.uniforms.visibility.value = animateVisibility ? (clock.elapsedTime / 35) % 1.0 : 1.0;
             }
             if (mixer && animateVisibility) {
                 mixer.update(delta);
@@ -1069,7 +1037,7 @@ d3.csv('data/skate_boulder_swim_labeled.csv', function (data) {
         dataSrc.add(params, 'gravity').onChange(changeVis);
         dataSrc.add(params, 'sound').onChange(changeVis);
         dataSrc.add(params, 'acceleration').onChange(changeVis);
-        dataSrc.add(params, 'animate_acc').onChange(changeVis).name('animate acc');
+        dataSrc.add(params, 'animate_acc').name('animate acc');
         dataSrc.open();
 
         gui.add(params, 'datainfo');
@@ -1094,7 +1062,6 @@ d3.csv('data/skate_boulder_swim_labeled.csv', function (data) {
             if (animateVisibility) {
                 animateVisibility = false;
             } else {
-                // skatelineMesh.material.uniforms.visibility.value = 0;
                 animateVisibility = true;
             }
         };
@@ -1128,6 +1095,7 @@ d3.csv('data/skate_boulder_swim_labeled.csv', function (data) {
 
     function changeInput() {
         changedInput = true;
+        animateVisibility = false;
     }
 
     function changeVis() {
@@ -1154,3 +1122,40 @@ d3.csv('data/skate_boulder_swim_labeled.csv', function (data) {
     lighting();
     animate();
 });
+
+// ---- HELPER FUNCTIONS ----
+function sq(x) {
+    let s = Math.pow(x, 2);
+    return s;
+}
+
+function mapValues(num, in_min, in_max, out_min, out_max) {
+    return ((num - in_min) * (out_max - out_min)) / (in_max - in_min) + out_min;
+}
+
+function fractionate(val, minVal, maxVal) {
+    return (val - minVal) / (maxVal - minVal);
+}
+
+function modulate(val, minVal, maxVal, outMin, outMax) {
+    var fr = fractionate(val, minVal, maxVal);
+    var delta = outMax - outMin;
+    return outMin + fr * delta;
+}
+
+function avg(arr) {
+    var total = arr.reduce(function (sum, b) {
+        return sum + b;
+    }, 0);
+    return total / arr.length;
+}
+
+function max(arr) {
+    return arr.reduce(function (a, b) {
+        return Math.max(a, b);
+    }, 0);
+}
+
+function vec(x, y, z) {
+    return new THREE.Vector3(x, y, z);
+}

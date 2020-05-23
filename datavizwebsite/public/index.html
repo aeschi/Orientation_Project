@@ -35,6 +35,14 @@
     <!-- dat.gui for controls -->
     <script type="text/javascript" src="js/dat.gui.min.js"></script>
 
+    <!-- show hide introduction -->
+    <script>
+        function hideIntro() {
+            let introductionText = document.getElementById('introduction');
+            introductionText.style.display = 'none';
+        } 
+    </script>
+
 </head>
 
 <body>
@@ -42,7 +50,7 @@
     <!-- Navigation -->
     <nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-dark fixed-top">
         <div class="container">
-            <a class="navbar-brand" href="home.html">Home</a>
+            <a class="navbar-brand" href="index.html">Compare Sports</a>
             <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse"
                 data-target="#navbarResponsive" aria-controls="navbarResponsive"
                 aria-expanded="false" aria-label="Toggle navigation">
@@ -50,9 +58,6 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarResponsive">
                 <ul class="navbar-nav ml-auto">
-                    <li class="nav-item active">
-                        <a class="nav-link" href="index.html">Compare Sports</a>
-                    </li>
                     <li class="nav-item">
                         <a class="nav-link" href="about.html">About</a>
                     </li>
@@ -61,6 +66,26 @@
         </div>
     </nav>
     <div style="object-position:center">
+        <div id="introduction">
+            Hi there!
+            <br><br>You can navigate around the data by dragging your mouse around and scrolling in
+            and out.
+            <br><br>The interface on the right side lets you switch between sport disciplines.
+            Click on the different data sources to blend them in and out.
+            <b>Animate acc</b> starts and stops an animation cycle for the acceleration data.
+            To get a better understanding of the data sources, simply click on <b>datainfo</b>.
+            <br><br>If you want to save an image of your current view, press <b>download</b>. This
+            might take a view seconds.
+            <br><br>Afterwards you can check out the <b>About</b> page to learn more about this
+            project.
+            <br><br>Finally, don't forget to turn on your <b>audio</b> to fully explore this
+            visualisation and click
+            <b>sound</b> if the audio hasn't started yet.
+            <br><br>
+            <button type="button" class="btn btn-outline-light" onclick="hideIntro()">Ok got
+                it!</button>
+        </div>
+
         <script src="visualisation.js"></script>
         <div id="dataInfoText">
             The <b>GRAVITY</b> sensor provides a three dimensional vector indicating the direction
@@ -68,8 +93,7 @@
             relative orientation in space.
             <br><br>The <b>SOUND</b> recording is filtered by its frequency levels.
             <br><br>The linear <b>ACCELERATION</b> sensor provides you with a three-dimensional
-            vector representing acceleration along each device axis, excluding gravity. You can use
-            this value to perform gesture detection.
+            vector representing acceleration along each device axis, excluding gravity.
         </div>
     </div>
 

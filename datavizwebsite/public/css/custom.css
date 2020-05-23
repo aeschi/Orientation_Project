@@ -103,3 +103,17 @@ body {
     display: block;
     visibility: hidden;
 }
+
+#introduction {
+    position: absolute;
+    padding: 1% 1%;
+    margin-top: 10%;
+    margin-left: 25%;
+    width: 50%;
+    text-align: justify;
+    background-color: rgba(48, 48, 48, 0.75);
+    border-radius: 5px;
+    z-index: 100;
+    display: block;
+    visibility: visible;
+}
