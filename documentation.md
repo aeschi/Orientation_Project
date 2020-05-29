@@ -4,6 +4,10 @@
 - [ ] need to write better text for about
 
 ------
+### 28.08.20 & 29.05.20
+- prepare presentation
+- Gravity Sensor: The gravity sensor measures the acceleration effect of Earth's gravity on the device enclosing the sensor. It is typically derived from the accelerometer, where other sensors (e.g. the magnetometer and the gyroscope) help to remove linear acceleration from the data. 
+
 ### 23.05.20
 - [x] create product comps
 - [x] explanation window at the beginning + auto rotate
