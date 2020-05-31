@@ -131,7 +131,6 @@ stats.showPanel(0); // 0: fps, 1: ms, 2: mb, 3+: custom
 // ---- SCENE ----
 let scene = new THREE.Scene();
 scene.background = new THREE.Color('#131313'); // dunkel
-// scene.background = new THREE.Color(0xe0e0e0); //hell
 scene.fog = new THREE.FogExp2(scene.background, 0.002);
 
 // ---- DATA ----
@@ -843,7 +842,6 @@ d3.csv('data/skate_boulder_swim_labeled.csv', function (data) {
 
         let pointLight2 = new THREE.PointLight(0xff8336, 1);
         pointLight2.position.set(0, 0, 0);
-        // pointLight2.angle = Math.PI / 3;
         pointLight2.penumbra = 0.05;
         pointLight2.decay = 1.5;
         pointLight2.distance = 300;
@@ -853,19 +851,6 @@ d3.csv('data/skate_boulder_swim_labeled.csv', function (data) {
         pointLight2.shadow.camera.near = 10;
         pointLight2.shadow.camera.far = 400;
         scene.add(pointLight2);
-
-        //  HELPER GRID FOR LIGHTS/CAMERA
-        // lightHelper1 = new THREE.SpotLightHelper(spotLight1);
-        // scene.add(lightHelper1);
-
-        // lightHelper2 = new THREE.SpotLightHelper(spotLight2);
-        // scene.add(lightHelper2);
-
-        // lightHelper3 = new THREE.PointLightHelper(pointLight1);
-        // scene.add(lightHelper3);
-
-        // lightHelper4 = new THREE.PointLightHelper(pointLight2);
-        // scene.add(lightHelper4);
     }
 
     // ---- RENDER ----
@@ -1042,6 +1027,7 @@ d3.csv('data/skate_boulder_swim_labeled.csv', function (data) {
         gui.open();
     }
 
+    // defining GUI parameters
     function Params() {
         this.dataSource = 'skateboarding';
         this.rotate = function () {
@@ -1094,15 +1080,18 @@ d3.csv('data/skate_boulder_swim_labeled.csv', function (data) {
         };
     }
 
+    // part of GUI interaction
     function changeInput() {
         changedInput = true;
         animateVisibility = false;
     }
 
+    // part of GUI interaction
     function changeVis() {
         changedVisibility = true;
     }
 
+    // // part of GUI interaction
     function saveAsImage() {
         renderer.render(scene, camera);
         renderer.domElement.toBlob(
