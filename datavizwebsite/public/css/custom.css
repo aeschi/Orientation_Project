@@ -1,13 +1,5 @@
-/*!
- * Start Bootstrap - Modern Business (https://startbootstrap.com/template-overviews/modern-business)
- * Copyright 2013-2019 Start Bootstrap
- * Licensed under MIT (https://github.com/BlackrockDigital/startbootstrap-logomodern-business-nav/blob/master/LICENSE)
- */
 body {
     background-color: #131313;
-    /* padding-top: 5rem; */
-    /* padding-left: 10%;
-    padding-right: 10%; */
     color: rgb(221, 221, 221);
 }
 
@@ -16,27 +8,30 @@ body {
     background-color: #131313 !important;
 }
 
+/* dat.gui position */
+#gui {
+    position: absolute;
+    top: 80px;
+    right: 50px;
+}
+
 /* dat.gui colors */
 .dg .cr.function {
-    border-left: 3px solid #b885a7;
+    border-left: 0px !important;
 }
 
 .dg .cr.string {
-    border-left: 3px solid #b885a7;
+    border-left: 0px !important;
 }
-
-/* .card {
-    background-color: #131313;
-} */
 
 /*home nav item*/
 .navbar-dark .navbar-brand {
-    color: #898989;
+    color: #b885a7;
 }
 /*home nav hover*/
 .navbar-dark .navbar-brand:hover,
 .navbar-dark .navbar-brand:focus {
-    color: rgb(201, 201, 201);
+    color: #bcbcbc;
 }
 
 /*current page nav*/
@@ -44,7 +39,7 @@ body {
 .navbar-dark .navbar-nav .active > .nav-link,
 .navbar-dark .navbar-nav .nav-link.show,
 .navbar-dark .navbar-nav .nav-link.active {
-    color: #b885a7;
+    color: #898989;
 }
 
 /* hover over*/
@@ -53,26 +48,12 @@ body {
     color: #bcbcbc;
 }
 
-/*footer*/
 .text-white {
     font-size: small;
     color: #898989 !important;
 }
 
-.py-5 {
-    background-color: #131313 !important; /*#785a6e ;*/
-    position: fixed;
-    left: 0;
-    bottom: 0;
-    width: 100%;
-    height: 3%;
-    padding-top: 0.3rem !important;
-    padding-bottom: 1.5rem !important;
-}
-
 .carousel-item {
-    height: 65vh;
-    min-height: 300px;
     background: no-repeat center center scroll;
     -webkit-background-size: cover;
     -moz-background-size: cover;
@@ -80,22 +61,12 @@ body {
     background-size: cover;
 }
 
-.portfolio-item {
-    margin-bottom: 30px;
-}
-
-#gui {
-    position: absolute;
-    top: 80px;
-    right: 50px;
-}
-
 #dataInfoText {
     position: absolute;
     bottom: 70px;
     padding: 1% 2%;
-    margin-left: 10%;
-    width: 80%;
+    margin-left: 20%;
+    width: 60%;
     text-align: justify;
     background-color: rgba(255, 255, 255, 0.05);
     border-radius: 5px;

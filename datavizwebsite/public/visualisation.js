@@ -10,6 +10,7 @@ let params;
 let dataSource;
 let changedInput = false;
 let changedVisibility = false;
+let rotateSpace = false;
 
 // SPHERE VAR
 let sphereGroup;
@@ -29,13 +30,25 @@ let boulderLineMat;
 let boulderLineColors;
 
 // ---- LOAD TEXTURES ----
+
 function textureLoad() {
     var loader = new THREE.TextureLoader();
+    loader.load(
+        'data/textures/griptape_normal_small.png',
+        function (texture) {
+            sphereTexture[1] = texture;
+        },
+        undefined,
+        function (err) {
+            console.error('An error happened.');
+        }
+    );
     loader.load(
         'data/textures/stroke.png',
         function (texture) {
             strokeTexture = texture;
         },
+        undefined,
         function (err) {
             console.error('An error happened.');
         }
@@ -45,15 +58,7 @@ function textureLoad() {
         function (texture) {
             sphereTexture[0] = texture;
         },
-        function (err) {
-            console.error('An error happened.');
-        }
-    );
-    loader.load(
-        'data/textures/griptape_normal_small.png',
-        function (texture) {
-            sphereTexture[1] = texture;
-        },
+        undefined,
         function (err) {
             console.error('An error happened.');
         }
@@ -63,6 +68,7 @@ function textureLoad() {
         function (texture) {
             sphereTexture[2] = texture;
         },
+        undefined,
         function (err) {
             console.error('An error happened.');
         }
@@ -72,6 +78,7 @@ function textureLoad() {
         function (texture) {
             sphereTexture[3] = texture;
         },
+        undefined,
         function (err) {
             console.error('An error happened.');
         }
@@ -81,15 +88,7 @@ function textureLoad() {
         function (texture) {
             sphereTexture[4] = texture;
         },
-        function (err) {
-            console.error('An error happened.');
-        }
-    );
-    loader.load(
-        'data/textures/noise_normal_map.jpg',
-        function (texture) {
-            sphereTexture[5] = texture;
-        },
+        undefined,
         function (err) {
             console.error('An error happened.');
         }
@@ -118,7 +117,7 @@ const controls = new THREE.OrbitControls(camera, renderer.domElement);
 controls.minDistance = 10;
 controls.maxDistance = 450;
 controls.autoRotate = true;
-controls.autoRotateSpeed = 0.3;
+controls.autoRotateSpeed = 0.5;
 controls.enableDamping = true;
 controls.dampingFactor = 0.15;
 controls.maxPolarAngle = (2 * Math.PI) / 3.5;
@@ -127,7 +126,7 @@ controls.zoomSpeed = 0.5;
 // ---- STATS (fps) ----
 let stats = new Stats();
 stats.showPanel(0); // 0: fps, 1: ms, 2: mb, 3+: custom
-document.body.appendChild(stats.dom);
+// document.body.appendChild(stats.dom);
 
 // ---- SCENE ----
 let scene = new THREE.Scene();
@@ -158,7 +157,6 @@ var format = d3.format('+.3f');
 d3.csv('data/skate_boulder_swim_labeled.csv', function (data) {
     var dataValues = d3.values(data)[0]; // top row of columns = names
     var columnNum = Object.keys(dataValues); // putting names into array
-    // console.log(Object.keys(dataValues));
 
     data.forEach(function (mydata, i) {
         // SKATE
@@ -352,28 +350,21 @@ d3.csv('data/skate_boulder_swim_labeled.csv', function (data) {
         var lowerHalfArray = dataArray.slice(0, dataArray.length / 2 - 1);
         var upperHalfArray = dataArray.slice(dataArray.length / 2 - 1, dataArray.length - 1);
 
-        var overallAvg = avg(dataArray);
+        // var overallAvg = avg(dataArray);
         var lowerMax = max(lowerHalfArray);
-        var lowerAvg = avg(lowerHalfArray);
-        var upperMax = max(upperHalfArray);
+        // var lowerAvg = avg(lowerHalfArray);
+        // var upperMax = max(upperHalfArray);
         var upperAvg = avg(upperHalfArray);
 
         var lowerMaxFr = lowerMax / lowerHalfArray.length;
-        var lowerAvgFr = lowerAvg / lowerHalfArray.length;
-        var upperMaxFr = upperMax / upperHalfArray.length;
+        // var lowerAvgFr = lowerAvg / lowerHalfArray.length;
+        // var upperMaxFr = upperMax / upperHalfArray.length;
         var upperAvgFr = upperAvg / upperHalfArray.length;
 
         makeRoughBall(ball, modulate(Math.pow(lowerMaxFr, 0.4), 0, 1, 0, 3), modulate(upperAvgFr, 0, 1, 0, 4));
-
-        // function modulate(val, minVal, maxVal, outMin, outMax) {
-        //     var fr = fractionate(val, minVal, maxVal);
-        //     var delta = outMax - outMin;
-        //     return outMin + fr * delta;
-        // }
     }
 
     // ---- AUDIO VISUALS ----
-
     // Distort Mesh Ball
     let simplexNoise = new SimplexNoise();
     function makeRoughBall(mesh, bassFr, treFr) {
@@ -406,6 +397,9 @@ d3.csv('data/skate_boulder_swim_labeled.csv', function (data) {
     ball.castShadow = true;
     scene.add(ball);
 
+    // ---- MOTION VISUALS ----
+    textureLoad();
+
     // ---- SWIM VISUALS ----
     let swimLineMesh;
     let swimPointCloud;
@@ -423,13 +417,12 @@ d3.csv('data/skate_boulder_swim_labeled.csv', function (data) {
             });
 
             let updateNoise = function () {
-                let time = 0;
                 let k = 1.5;
                 for (let i = 0; i < swimSphereNoise.geometry.faces.length; i++) {
                     let uv = swimSphereNoise.geometry.faceVertexUvs[0][i]; //faceVertexUvs is a huge arrayed stored inside of another array
                     let f = swimSphereNoise.geometry.faces[i];
                     let p = swimSphereNoise.geometry.vertices[f.a]; //take the first vertex from each face
-                    p.normalize().multiplyScalar(1 + 0.2 * noise.perlin3(p.x * k + time, p.y * k, p.z * k + time));
+                    p.normalize().multiplyScalar(1 + 0.2 * noise.perlin3(p.x * k, p.y * k, p.z * k));
                 }
                 swimSphereNoise.geometry.verticesNeedUpdate = true; //must be set or vertices will not update
                 swimSphereNoise.geometry.computeVertexNormals();
@@ -554,19 +547,17 @@ d3.csv('data/skate_boulder_swim_labeled.csv', function (data) {
 
             skateSphereMaterial = new THREE.MeshPhongMaterial({
                 map: sphereTexture[1],
-                // normalMap: sphereTexture[5],
                 specular: 0xc0c0c,
                 shininess: 20,
             });
 
             let updateNoise = function () {
-                let time = 0;
                 let k = 2;
                 for (let i = 0; i < skateSphereNoise.geometry.faces.length; i++) {
                     let uv = skateSphereNoise.geometry.faceVertexUvs[0][i]; //faceVertexUvs is a huge arrayed stored inside of another array
                     let f = skateSphereNoise.geometry.faces[i];
                     let p = skateSphereNoise.geometry.vertices[f.a]; //take the first vertex from each face
-                    p.normalize().multiplyScalar(1.5 + 0.8 * noise.perlin3(p.x * k + time, p.y * k, p.z * k + time));
+                    p.normalize().multiplyScalar(1.5 + 0.8 * noise.perlin3(p.x * k, p.y * k, p.z * k));
                 }
                 skateSphereNoise.geometry.verticesNeedUpdate = true; //must be set or vertices will not update
                 skateSphereNoise.geometry.computeVertexNormals();
@@ -693,13 +684,12 @@ d3.csv('data/skate_boulder_swim_labeled.csv', function (data) {
             });
 
             let updateNoise = function () {
-                let time = 0;
                 let k = 2;
                 for (let i = 0; i < boulderSphereNoise.geometry.faces.length; i++) {
                     let uv = boulderSphereNoise.geometry.faceVertexUvs[0][i]; //faceVertexUvs is a huge arrayed stored inside of another array
                     let f = boulderSphereNoise.geometry.faces[i];
                     let p = boulderSphereNoise.geometry.vertices[f.a]; //take the first vertex from each face
-                    p.normalize().multiplyScalar(1 + 0.5 * noise.perlin3(p.x + time, p.y * k, p.z + time));
+                    p.normalize().multiplyScalar(1 + 0.5 * noise.perlin3(p.x, p.y * k, p.z));
                 }
                 boulderSphereNoise.geometry.verticesNeedUpdate = true; //must be set or vertices will not update
                 boulderSphereNoise.geometry.computeVertexNormals();
@@ -897,7 +887,9 @@ d3.csv('data/skate_boulder_swim_labeled.csv', function (data) {
         window.requestAnimationFrame(animate, renderer.domElement);
 
         // let the camera rotate slowly
-        controls.update();
+        if (rotateSpace) {
+            controls.update();
+        }
 
         render();
     }
@@ -930,7 +922,7 @@ d3.csv('data/skate_boulder_swim_labeled.csv', function (data) {
                 }
             }
 
-            if (params.dataSource == 'skating') {
+            if (params.dataSource == 'skateboarding') {
                 if (acc_vis) {
                     scene.add(skateScatterPlot);
                     scene.add(skateLineMesh);
@@ -976,7 +968,7 @@ d3.csv('data/skate_boulder_swim_labeled.csv', function (data) {
                 stream = audioFile[1];
                 loadAudio();
                 changedInput = false;
-            } else if (params.dataSource == 'skating') {
+            } else if (params.dataSource == 'skateboarding') {
                 scene.remove(swimSphereGroup);
                 scene.remove(swimLineMesh);
                 scene.remove(swimScatterPlot);
@@ -1009,7 +1001,7 @@ d3.csv('data/skate_boulder_swim_labeled.csv', function (data) {
 
             if (params.dataSource == 'swimming') {
                 swimLineMesh.material.uniforms.visibility.value = animateVisibility ? (clock.elapsedTime / 35) % 1.0 : 1.0;
-            } else if (params.dataSource == 'skating') {
+            } else if (params.dataSource == 'skateboarding') {
                 skateLineMesh.material.uniforms.visibility.value = animateVisibility ? (clock.elapsedTime / 35) % 1.0 : 1.0;
             } else if (params.dataSource == 'bouldering') {
                 boulderLineMesh.material.uniforms.visibility.value = animateVisibility ? (clock.elapsedTime / 35) % 1.0 : 1.0;
@@ -1031,13 +1023,14 @@ d3.csv('data/skate_boulder_swim_labeled.csv', function (data) {
         gui.domElement.id = 'gui';
 
         params = new Params();
-        gui.add(params, 'dataSource', ['bouldering', 'skating', 'swimming']).onChange(changeInput).name('Choose sport');
+        gui.add(params, 'dataSource', ['bouldering', 'skateboarding', 'swimming']).onChange(changeInput).name('Choose sport');
+        gui.add(params, 'rotate');
 
         let dataSrc = gui.addFolder('Data Sources');
-        dataSrc.add(params, 'gravity').onChange(changeVis);
         dataSrc.add(params, 'sound').onChange(changeVis);
+        dataSrc.add(params, 'gravity').onChange(changeVis);
         dataSrc.add(params, 'acceleration').onChange(changeVis);
-        dataSrc.add(params, 'animate_acc').name('animate acc');
+        dataSrc.add(params, 'animate_acc').name('animate acceleration');
         dataSrc.open();
 
         gui.add(params, 'datainfo');
@@ -1050,7 +1043,15 @@ d3.csv('data/skate_boulder_swim_labeled.csv', function (data) {
     }
 
     function Params() {
-        this.dataSource = 'skating';
+        this.dataSource = 'skateboarding';
+        this.rotate = function () {
+            if (rotateSpace) {
+                rotateSpace = false;
+            } else {
+                rotateSpace = true;
+            }
+        };
+
         this.acceleration = function () {
             if (acc_vis) {
                 acc_vis = false;

@@ -46,7 +46,6 @@
 </head>
 
 <body>
-
     <!-- Navigation -->
     <nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-dark fixed-top">
         <div class="container">
@@ -65,6 +64,8 @@
             </div>
         </div>
     </nav>
+
+    <!-- introduction text  -->
     <div style="object-position:center">
         <div id="introduction">
             Hi there!
@@ -75,8 +76,8 @@
             <b>Animate acc</b> starts and stops an animation cycle for the acceleration data.
             To get a better understanding of the data sources, simply click on <b>datainfo</b>.
             <br><br>If you want to save an image of your current view, press <b>download</b>. This
-            might take a view seconds.
-            <br><br>Afterwards you can check out the <b>About</b> page to learn more about this
+            might take a few seconds.
+            <br><br>Afterwards, you can check out the <b>About</b> page to learn more about this
             project.
             <br><br>Finally, don't forget to turn on your <b>audio</b> to fully explore this
             visualisation and click
@@ -86,19 +87,21 @@
                 it!</button>
         </div>
 
+        <!-- data info text  -->
         <script src="visualisation.js"></script>
         <div id="dataInfoText">
-            The <b>GRAVITY</b> sensor provides a three dimensional vector indicating the direction
-            and magnitude of gravity. Typically, this sensor is used to determine the device's
-            relative orientation in space.
-            <br><br>The <b>SOUND</b> recording is filtered by its frequency levels.
-            <br><br>The linear <b>ACCELERATION</b> sensor provides you with a three-dimensional
+            All data was recorded with a smartwatch.
+            <br><br>The <b>ACCELERATION</b> sensor provides you with a three-dimensional
             vector representing acceleration along each device axis, excluding gravity.
+            <br><br>The <b>GRAVITY</b> sensor provides a three dimensional vector indicating the
+            direction
+            and magnitude of gravity. Typically, this sensor is used to determine the device's
+            relative orientation in space. Its value is derived from the accelerometer, gyroscope,
+            and magnetometer.
+            <br><br>The <b>SOUND</b> recording is filtered by its frequency levels and used to
+            animate the white mesh ball in the center of the visualisation.
         </div>
     </div>
-
-    <!-- <div id="my-gui-container"></div> -->
-
 
     <!-- Bootstrap core JavaScript -->
     <script src="vendor/jquery/jquery.min.js"></script>
