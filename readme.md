@@ -1,13 +1,22 @@
-### PROJECT DESCRIPTION
-#### ABSTRACT VISUALISATION OF SPORTS
-The idea is to generate a visualisation of several sport disciplines by recording specific data. This can be data sources such as motion, which includes position, acceleration and rotation, but also non-visual factors like sound and pulse of the athletes. Research and assessment of prerecorded data would be an alternative to recording the data manually, depending on the realisable amount of work.
-The captured data will then be processed by developing fitting algorithms, which enable an artistic visualisation. This will be done with the help of libraries such as P5.js or Processing and therefore either in javascript or java. The generated visuals should not be an obvious simulation of the respective sport, but rather an abstract and creative interpretation. However, each visual representation should have a connection to its data source. This could be a fitting color such as blue for swimming or a recognisable pattern typical for a particular sport. The output will be a combination of data-driven movement as well as artistic choices to achieve a visually appealing animation. 
-After completion of the project, the viewer will be able to interact with the visual output. This might include switching and comparing different sports or blending out certain data sources such as audio, which can be used to derive the impact that one data collection has one the whole outcome. Hence, it is important to include a concept of data separation while programming.
-Furthermore, still images will be taken from the animation for a prototypical product design. For example, a still image of a climbing visualisation can be used as a print motif for gear, clothing or posters. 
+### PROJECT DESCRIPTION - Shaped by Motion
 
-#### MOODS (color, shape, pattern)
-![](img/moods/moodboard5.png)
-![](img/moods/moodboard6.png)
+Sports are goal and performance oriented. We often forget about the beauty and poetic perspective of these movements. 
+I want to capture the essence of these motions and accompanying sounds, which are mastered for perfection and reinterpret them through abstract art.
+
+#### CREATING AN ABSTRACT SPORT VISUALISATION
+
+The idea is to generate a visualisation of several sport disciplines by recording specific data with a smart watch. Data sources are <a href="https://www.hindawi.com/journals/js/2019/6514520/">motion sensors</a> such as accelerometer, gyroscope, and magnetometer, which are basic components of most smart devices. Additionally, the sound of the respective sport was recorded with the internal microphone.
+
+The selected sports are skating, bouldering and swimming. Each sport was captured by athletes wearing a smartwatch. 
+
+The captured data is processed by developing fitting algorithms, which enable an artistic visualisation. This is done with the help of libraries such as <a href="https://threejs.org/">three.js</a> and <a href="https://d3js.org/">d3.js</a>. The generated visuals are not an obvious simulation of the respective sport, but rather an abstract and creative interpretation. However, each visual representation has a connection to its data source. The use of fitting colors, textures, sound atmospheres and recognisable patterns links the visualisation to each sport.
+
+The visualisation can be explored by navigating around the virtual space, blending in and out the different data sources and switching between the sport disciplines.
+
+Aside from this website, the generated visualisations can be used as a design for print on sports gear or posters.
+
+Website Link:
+https://abstractsportsviz.herokuapp.com/
 
 ---
 ### WORST CASE
