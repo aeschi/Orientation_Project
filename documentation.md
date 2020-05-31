@@ -1,10 +1,14 @@
-#### Next Steps
-- [ ] prepare presentation (doable)
-- [ ] trailer
-- [ ] need to write better text for about
+[x] done :)
 
-------
-### 28.08.20 & 29.05.20
+https://abstractsportsviz.herokuapp.com/
+
+### 30.05.20 - 31.05.20
+- finalise presentation
+- record everything (demo, presentation, trailer footage)
+- last clean ups and deployment
+- updated the about page
+
+### 28.05.20 & 29.05.20
 - prepare presentation
 - Gravity Sensor: The gravity sensor measures the acceleration effect of Earth's gravity on the device enclosing the sensor. It is typically derived from the accelerometer, where other sensors (e.g. the magnetometer and the gyroscope) help to remove linear acceleration from the data. 
 
