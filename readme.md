@@ -16,7 +16,7 @@ The visualisation can be explored by navigating around the virtual space, blendi
 Aside from this website, the generated visualisations can be used as a design for print on sports gear or posters.
 
 Website Link:
-https://abstractsportsviz.herokuapp.com/
+[Shaped by Motion](https://aeschi.github.io/Orientation_Project/)
 
 ---
 ### WORST CASE
